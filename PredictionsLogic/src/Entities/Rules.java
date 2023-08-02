@@ -3,12 +3,13 @@ package Entities;
 import Entities.Rule;
 
 import java.util.List;
+import java.util.Map;
 
 public class Rules
 {
-    List<Rule> Rules;
+    Map<String, Rule> Rules;
 
-    public Rules(List<Rule> rules) {
+    public Rules(Map<String, Rule> rules) {
         Rules = rules;
     }
 }

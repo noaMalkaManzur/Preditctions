@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/PredictionsLogic/PredictionsLogic.iml" filepath="$PROJECT_DIR$/PredictionsLogic/PredictionsLogic.iml" />
+      <module fileurl="file://$PROJECT_DIR$/PredictionsUI/PredictionsUI.iml" filepath="$PROJECT_DIR$/PredictionsUI/PredictionsUI.iml" />
       <module fileurl="file://$PROJECT_DIR$/Preditctions.iml" filepath="$PROJECT_DIR$/Preditctions.iml" />
     </modules>
   </component>

@@ -4,15 +4,16 @@ import Entities.Entity;
 import Entities.Enviroment;
 
 import java.util.List;
+import java.util.Map;
 
 public class World
 {
     private Enviroment WorldEnviroment;
-    private List<Entity> WorldEntities;
+    private Map<String, EntityProperty> WorldEntities;
     private Rules WorldRules;
     private Termination WorldTermination;
 
-    public World(Enviroment worldEnviroment, List<Entity> worldEntities, Rules worldRules, Termination worldTermination) {
+    public World(Enviroment worldEnviroment, Map<String, EntityProperty> worldEntities, Rules worldRules, Termination worldTermination) {
         WorldEnviroment = worldEnviroment;
         WorldEntities = worldEntities;
         WorldRules = worldRules;
@@ -35,11 +36,11 @@ public class World
         WorldRules = worldRules;
     }
 
-    public List<Entity> getWorldEntities() {
+    public Map<String, EntityProperty> getWorldEntities() {
         return WorldEntities;
     }
 
-    public void setWorldEntities(List<Entity> worldEntities) {
+    public void setWorldEntities(Map<String, EntityProperty> worldEntities) {
         WorldEntities = worldEntities;
     }
 

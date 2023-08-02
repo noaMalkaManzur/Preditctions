@@ -1,20 +1,21 @@
 package Entities;
 
 import java.util.List;
+import java.util.Map;
 
 public class Enviroment
 {
-    private List<EnvProperty> EnvProperties;
+    private Map<String, EnvProperty> EnvProperties;
 
-    public Enviroment(List<EnvProperty> envProperties) {
+    public Enviroment(Map<String, EnvProperty> envProperties) {
         EnvProperties = envProperties;
     }
 
-    public List<EnvProperty> getEnvProperties() {
+    public Map<String, EnvProperty> getEnvProperties() {
         return EnvProperties;
     }
 
-    public void setEnvProperties(List<EnvProperty> envProperties) {
+    public void setEnvProperties(Map<String, EnvProperty> envProperties) {
         EnvProperties =  envProperties;
     }
 }
