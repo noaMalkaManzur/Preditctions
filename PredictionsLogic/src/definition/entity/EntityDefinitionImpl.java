@@ -32,4 +32,9 @@ public class EntityDefinitionImpl implements EntityDefinition {
         return properties;
     }
 
+    @Override
+    public void addPropertyDefinition(PropertyDefinition propertyDefinition) {
+        properties.add(propertyDefinition);
+    }
+
 }
