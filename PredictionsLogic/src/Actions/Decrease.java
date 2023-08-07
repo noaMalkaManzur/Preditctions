@@ -1,55 +1,57 @@
 package Actions;
 
 import Entities.Entity;
+import Entities.EntityInstance;
 import Entities.EntityProperty;
+import Entities.Range;
 import Utilities.Enums;
 
 public class Decrease extends Action{
-    private final Object decrease_val;
-    private final String property;
+    private  double decrease_val;
+    private  String property;
 
-    public Decrease(Entity entity, Object increase_val,String property) {
-        super(entity);
-        this.decrease_val = increase_val;
+    public Decrease(double decrease_val, String property) {
+        this.decrease_val = decrease_val;
         this.property = property;
     }
 
     @Override
-    public void DoAction()
+    public void DoAction(EntityInstance entityInstance)
     {
         try {
-            EntityProperty MyProp = entity.getEntProperties().get(property);
-
+            Object MyProp = entityInstance.getPropValues().get(property);
             if (MyProp != null) {
-                if (MyProp.getType() == Enums.eTypes.eDecimal) {
-                    int MyNewVal = (int) MyProp.getPropVal() - (int) decrease_val;
-                    if(MyNewVal >= MyProp.getRangeFrom())
-                        MyProp.setPropVal(MyNewVal);
-                    else
-                    {
-                        throw new RuntimeException("Value was set under limits!");
+                EntityProperty MyPropData = entityInstance.getEntityData().getEntProperties().get(property);
+                Enums.eTypes MyPropType = MyPropData.getType();
+                Range MyRange = MyPropData.getRange();
+                if (MyPropType == Enums.eTypes.eDecimal) {
+                    int MyRes = (int) MyProp - (int) decrease_val;
+                    if (MyRange != null && MyRes >= MyRange.getRangeFrom())
+                        MyProp = MyRes;
+                    else {
+                        throw new RuntimeException("Value is above Range");
                     }
-                }
-                if (MyProp.getType() == Enums.eTypes.eFloat) {
-                    Double MyVal = (Double)MyProp.getPropVal();
-                    float MyNewVal =  MyVal.floatValue() - ((Number) decrease_val).floatValue();
-                    if(MyNewVal <= MyProp.getRangeTo())
-                        MyProp.setPropVal(MyNewVal);
-                    else
-                    {
-                        throw new RuntimeException("Value was set under limits!");
+                } else if (MyPropType == Enums.eTypes.eFloat) {
+                    double MyRes = (double) MyProp - decrease_val;
+                    if (MyRange != null && MyRes >= MyRange.getRangeFrom())
+                        MyProp = MyRes;
+                    else {
+                        throw new RuntimeException("Value is above Range");
                     }
                 } else {
-                    throw new Exception("Invalid property Type");
+                    throw new RuntimeException("Wrong Type for this action");
                 }
-            } else {
-                throw new Exception("No such property");
             }
-        }catch (Exception ex)
+        }catch (Exception ignore)
         {
-            System.out.println(ex.getMessage());
         }
+    }
 
+    public String getProperty() {
+        return property;
+    }
 
+    public double getDecrease_val() {
+        return decrease_val;
     }
 }

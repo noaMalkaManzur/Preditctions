@@ -8,6 +8,10 @@ import Actions.Increase;
 import Entities.*;
 import static Utilities.Enums.eTypes.*;
 
+import Generated.PRDProperty;
+import Generated.PRDValue;
+import Utilities.Utilities;
+
 public class Main
 {
     public static void main(String[] args) {
@@ -16,18 +20,18 @@ public class Main
         entProperties.put("lung-cancer-progress",new EntityProperty(eFloat,"lung-cancer-progress",0,12,false));
         entProperties.put("age",new EntityProperty(eDecimal,"age",15,50,true));
         entProperties.put("cigarets-per-month",new EntityProperty(eBool,"cigarets-per-month",0,500,true));
-        MyList.add(new Entity("Smoker",100,entProperties));
+        Entity MyEntity = new Entity("Smoker",100,entProperties);
+        PRDProperty prdProperty = new PRDProperty();
+        PRDValue prdValue = new PRDValue();
+        prdValue.setInit("5");
+        prdProperty.setPRDValue(prdValue);
+        EntityInstance myInstance = new EntityInstance(MyEntity,prdProperty);
 
-        for(Entity MyEntity : MyList)
-        {
-            System.out.println(MyEntity.toString());
-        }
-        Action MyAction = new Increase(MyList.get(0),3.5,"lung-cancer-progress");
-        MyAction.DoAction();
-        for(Entity MyEntity : MyList)
-        {
-            System.out.println(MyEntity.toString());
-        }
+
+        System.out.println(Utilities.generateRandomString(50));
+        System.out.println(Utilities.generateRandomString(50));
+        System.out.println(Utilities.random(50));
+
 
 
     }

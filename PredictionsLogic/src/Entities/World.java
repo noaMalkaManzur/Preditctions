@@ -9,11 +9,15 @@ import java.util.Map;
 public class World
 {
     private Enviroment WorldEnviroment;
-    private Map<String, EntityProperty> WorldEntities;
+    /*
+    World Entities defined by Entity Name(such as ent-1,its instance )
+     */
+
+    private Map<String, EntityInstance> WorldEntities;
     private Rules WorldRules;
     private Termination WorldTermination;
 
-    public World(Enviroment worldEnviroment, Map<String, EntityProperty> worldEntities, Rules worldRules, Termination worldTermination) {
+    public World(Enviroment worldEnviroment, Map<String, EntityInstance> worldEntities, Rules worldRules, Termination worldTermination) {
         WorldEnviroment = worldEnviroment;
         WorldEntities = worldEntities;
         WorldRules = worldRules;
@@ -36,11 +40,11 @@ public class World
         WorldRules = worldRules;
     }
 
-    public Map<String, EntityProperty> getWorldEntities() {
+    public Map<String, EntityInstance> getWorldEntities() {
         return WorldEntities;
     }
 
-    public void setWorldEntities(Map<String, EntityProperty> worldEntities) {
+    public void setWorldEntities(Map<String, EntityInstance> worldEntities) {
         WorldEntities = worldEntities;
     }
 
@@ -51,4 +55,5 @@ public class World
     public void setWorldEnviroment(Enviroment worldEnviroment) {
         WorldEnviroment = worldEnviroment;
     }
+
 }

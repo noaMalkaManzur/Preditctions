@@ -18,18 +18,4 @@ public class Termination
         return maxTicks;
     }
 
-    public static class Activation
-    {
-        private int ticks = 1;
-        private float prob;
-        private int ticksSinceLastActivation;
-
-        public int getTicks() {
-            return ticks;
-        }
-
-        public void setTicks(int ticks) {
-            this.ticks = ticks;
-        }
-    }
 }

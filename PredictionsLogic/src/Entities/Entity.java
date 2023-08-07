@@ -9,6 +9,7 @@ public class Entity
     private  int population;
     private Map<String, EntityProperty> EntProperties;
 
+
     public Entity(String name, int population, Map<String, EntityProperty> entProperties) {
         this.name = name;
         this.population = population;

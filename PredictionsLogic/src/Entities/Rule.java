@@ -7,7 +7,7 @@ public class Rule
 {
     private String name;
     private List<Expression> ruleActionList;
-    private Termination.Activation ActivationTerms;
+    private Activation ActivationTerms;
 
     private float probability;
 }
