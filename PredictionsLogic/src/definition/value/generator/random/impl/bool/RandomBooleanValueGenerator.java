@@ -6,6 +6,6 @@ public class RandomBooleanValueGenerator extends AbstractRandomValueGenerator<Bo
 
     @Override
     public Boolean generateValue() {
-        return random.nextDouble() < 0.5;
+        return random.nextBoolean();
     }
 }

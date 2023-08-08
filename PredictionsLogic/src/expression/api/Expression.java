@@ -2,5 +2,5 @@ package expression.api;
 
 public interface Expression {
 
-    void evaluateExpression(String expressionString);
+    Object evaluateExpression(Object arg);
 }
