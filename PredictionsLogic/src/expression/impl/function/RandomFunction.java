@@ -7,14 +7,14 @@ import expression.impl.FunctionExpression;
 import java.util.Random;
 
 class RandomFunction extends FunctionExpression {
-    public RandomFunction(Object arg, eExpression typeExpression, eFunctionExpression typeFunctionExpression) {
+    public RandomFunction(String arg) {
         super(arg, typeExpression.FUNCTION, typeFunctionExpression.RANDOM);
     }
 
     @Override
     public Object calculateExpression(String expressionString) {
         try {
-            int max = Integer.parseInt(arg.toString());
+            int max = Integer.parseInt(arg);
             if (max < 0) {
                 throw new IllegalArgumentException("Argument must be a non-negative number.");
             }

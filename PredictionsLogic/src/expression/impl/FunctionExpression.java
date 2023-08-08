@@ -6,7 +6,8 @@ import expression.api.eExpression;
 import expression.api.eFunctionExpression;
 
 public abstract class FunctionExpression extends AbstractExpression {
-    protected Object arg;
+    protected String arg;
+    protected String functionName;
     protected eFunctionExpression typeFunctionExpression;
 
     public FunctionExpression(Object arg,eExpression typeExpression, eFunctionExpression typeFunctionExpression ) {
