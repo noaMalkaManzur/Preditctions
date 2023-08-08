@@ -1,6 +1,6 @@
-//package Predictions.PredictionsUI;
+package Predictions.PredictionsUI;
 
-//import Predictions.PredictionsLogic;
+
 import action.impl.IncreaseAction;
 import action.impl.KillAction;
 import definition.entity.EntityDefinition;
@@ -16,6 +16,7 @@ import execution.instance.enitty.manager.EntityInstanceManager;
 import execution.instance.enitty.manager.EntityInstanceManagerImpl;
 import execution.instance.environment.api.ActiveEnvironment;
 import execution.instance.property.PropertyInstanceImpl;
+import expression.impl.function.RandomFunction;
 import rule.Rule;
 import rule.RuleImpl;
 
@@ -34,7 +35,12 @@ public class Main {
         // define rules by creating instances of actions
         Rule rule1 = new RuleImpl("rule 1");
         rule1.addAction(new IncreaseAction(smokerEntityDefinition, "age", "1"));
-        rule1.addAction(new IncreaseAction(smokerEntityDefinition, "smokingInDay", "3"));
+        RandomFunction expression = new RandomFunction("10");
+        Object res =expression.calculateExpression("10");
+        System.out.println(res +"    noa");
+        System.out.println(res.toString());
+
+        rule1.addAction(new IncreaseAction(smokerEntityDefinition, "smokingInDay", expression.toString()));
         rule1.addAction(new KillAction(smokerEntityDefinition));
 
         EnvVariablesManager envVariablesManager = new EnvVariableManagerImpl();

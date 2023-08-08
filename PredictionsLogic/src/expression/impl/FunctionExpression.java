@@ -11,7 +11,9 @@ public abstract class FunctionExpression extends AbstractExpression {
     protected eFunctionExpression typeFunctionExpression;
 
     public FunctionExpression(Object arg, eExpression typeExpression, eFunctionExpression typeFunctionExpression) {
-        super(typeExpression); // Pass the typeExpression parameter to the superclass constructor
+        super(typeExpression);
+        this.arg = (String) arg;
+
     }
 
     public abstract Object calculateExpression(String expressionString);
