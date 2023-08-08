@@ -12,7 +12,7 @@ class RandomFunction extends FunctionExpression {
     }
 
     @Override
-    public int calculateExpression(String expressionString) {
+    public Object calculateExpression(String expressionString) {
         try {
             int max = Integer.parseInt(arg.toString());
             if (max < 0) {
