@@ -1,6 +1,6 @@
 package expression.api;
 
-public abstract class AbstractExpression {
+public abstract class AbstractExpression implements  Expression{
 
     protected Object arg;
     protected eExpression typeExpression;
@@ -11,4 +11,5 @@ public abstract class AbstractExpression {
         this.typeExpression = eExpression;
         this.typeFunctionExpression = typeFunctionExpression;
     }
+
 }
