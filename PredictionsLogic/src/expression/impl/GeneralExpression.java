@@ -12,6 +12,7 @@ public class GeneralExpression extends AbstractExpression {
 
     @Override
     public Object calculateExpression(String expressionString) {
-        return 0;
+        //for boolean expression
+        return expressionString.equalsIgnoreCase("true") || expressionString.equalsIgnoreCase("false");
     }
 }

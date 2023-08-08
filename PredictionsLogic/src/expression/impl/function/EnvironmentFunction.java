@@ -8,7 +8,7 @@ import expression.impl.FunctionExpression;
 public class EnvironmentFunction extends FunctionExpression {
     private ActiveEnvironment activeEnvironment;
     public EnvironmentFunction(String arg) {
-        super(arg, typeExpression.FUNCTION, typeFunctionExpression.ENVIRONMENT);
+        super(arg, eExpression.FUNCTION, eFunctionExpression.ENVIRONMENT); // Initialize typeExpression parameter correctly
     }
 
     @Override

@@ -25,7 +25,7 @@ public class IncreaseAction extends AbstractAction {
             throw new IllegalArgumentException("increase action can't operate on a none number property [" + property);
         }
 
-        Integer v = PropertyType.DECIMAL.convert(propertyInstance.getValue());
+        Integer propVal = PropertyType.DECIMAL.convert(propertyInstance.getValue());
 
         // something that evaluates expression to a number, say the result is 5...
         // now you can also access the environment variables through the active environment...
@@ -33,14 +33,13 @@ public class IncreaseAction extends AbstractAction {
         int x = 5;
 
         // actual calculation
-        int result = x + v;
+        int result = x + propVal;
 
         // updating result on the property
         propertyInstance.updateValue(result);
     }
 
     private boolean verifyNumericPropertyTYpe(PropertyInstance propertyValue) {
-        return
-                PropertyType.DECIMAL.equals(propertyValue.getPropertyDefinition().getType()) || PropertyType.FLOAT.equals(propertyValue.getPropertyDefinition().getType());
+        return PropertyType.DECIMAL.equals(propertyValue.getPropertyDefinition().getType()) || PropertyType.FLOAT.equals(propertyValue.getPropertyDefinition().getType());
     }
 }

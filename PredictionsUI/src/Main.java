@@ -1,6 +1,23 @@
-package Predictions.PredictionsUI;
+//package Predictions.PredictionsUI;
 
-import Predictions.PredictionsLogic;
+//import Predictions.PredictionsLogic;
+import action.impl.IncreaseAction;
+import action.impl.KillAction;
+import definition.entity.EntityDefinition;
+import definition.entity.EntityDefinitionImpl;
+import definition.environment.api.EnvVariablesManager;
+import definition.environment.impl.EnvVariableManagerImpl;
+import definition.property.impl.IntegerPropertyDefinition;
+import definition.value.generator.api.ValueGeneratorFactory;
+import execution.context.Context;
+import execution.context.ContextImpl;
+import execution.instance.enitty.EntityInstance;
+import execution.instance.enitty.manager.EntityInstanceManager;
+import execution.instance.enitty.manager.EntityInstanceManagerImpl;
+import execution.instance.environment.api.ActiveEnvironment;
+import execution.instance.property.PropertyInstanceImpl;
+import rule.Rule;
+import rule.RuleImpl;
 
 public class Main {
 
@@ -25,8 +42,6 @@ public class Main {
         envVariablesManager.addEnvironmentVariable(taxAmountEnvironmentVariablePropertyDefinition);
 
 
-
-
         // execution phase - happens upon command 3
 
         // initialization phase
@@ -44,9 +59,9 @@ public class Main {
         // all available environment variable with their definition
 //        for (PropertyDefinition propertyDefinition : envVariablesManager.getEnvVariables()) {
 
-            // collect value from user...
-            int valueFromUser = 54;
-            activeEnvironment.addPropertyInstance(new PropertyInstanceImpl(taxAmountEnvironmentVariablePropertyDefinition, valueFromUser));
+        // collect value from user...
+        int valueFromUser = 54;
+        activeEnvironment.addPropertyInstance(new PropertyInstanceImpl(taxAmountEnvironmentVariablePropertyDefinition, valueFromUser));
 //        }
 
         // all env variable not inserted by user, needs to be generated randomly. lucky we have all data needed for it...
@@ -66,6 +81,5 @@ public class Main {
                             action.invoke(context));
         }
     }
-
-
 }
+

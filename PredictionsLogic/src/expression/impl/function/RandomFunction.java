@@ -8,7 +8,7 @@ import java.util.Random;
 
 class RandomFunction extends FunctionExpression {
     public RandomFunction(String arg) {
-        super(arg, typeExpression.FUNCTION, typeFunctionExpression.RANDOM);
+        super(arg, eExpression.FUNCTION, eFunctionExpression.RANDOM);
     }
 
     @Override
