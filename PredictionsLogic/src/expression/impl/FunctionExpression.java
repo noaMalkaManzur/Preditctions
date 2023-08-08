@@ -1,14 +1,18 @@
 package expression.impl;
 
 
-public abstract class FunctionExpression {
+import expression.api.AbstractExpression;
+import expression.api.eExpression;
+import expression.api.eFunctionExpression;
 
-    private Object arg;
-    FunctionExpression(Object arg){
-        this.arg= arg;
+public class FunctionExpression extends AbstractExpression {
+
+    FunctionExpression(Object arg,eExpression typeExpression, eFunctionExpression typeFunctionExpression ) {
+        super(arg, eExpression.FUNCTION, typeFunctionExpression);
     }
 
-    public abstract Object evaluateExpression(Object arg);
+
+
 }
 
 

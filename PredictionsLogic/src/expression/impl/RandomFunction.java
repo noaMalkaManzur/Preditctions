@@ -1,14 +1,18 @@
 package expression.impl;
 
+import expression.api.eExpression;
+import expression.api.eFunctionExpression;
+
 import java.util.Random;
 
 class RandomFunction extends FunctionExpression {
-    RandomFunction(Object arg) {
-        super(arg);
+
+
+    RandomFunction(Object arg, eExpression typeExpression, eFunctionExpression typeFunctionExpression) {
+        super(arg, typeExpression.FUNCTION, typeFunctionExpression.RANDOM);
     }
 
-    @Override
-    public Object evaluateExpression(Object arg) {
+    public Integer evaluateExpression() {
         try {
             int max = Integer.parseInt(arg.toString());
             if (max < 0) {
