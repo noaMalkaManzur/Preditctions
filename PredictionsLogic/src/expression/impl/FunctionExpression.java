@@ -6,9 +6,11 @@ import expression.api.eExpression;
 import expression.api.eFunctionExpression;
 
 public abstract class FunctionExpression extends AbstractExpression {
+    protected Object arg;
+    protected eFunctionExpression typeFunctionExpression;
 
     public FunctionExpression(Object arg,eExpression typeExpression, eFunctionExpression typeFunctionExpression ) {
-        super(arg, eExpression.FUNCTION, typeFunctionExpression);
+        super(eExpression.FUNCTION);
     }
 
     public abstract int calculateExpression(String expressionString);

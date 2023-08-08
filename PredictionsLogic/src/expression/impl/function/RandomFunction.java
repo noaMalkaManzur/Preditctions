@@ -7,8 +7,7 @@ import expression.impl.FunctionExpression;
 import java.util.Random;
 
 class RandomFunction extends FunctionExpression {
-
-    RandomFunction(Object arg, eExpression typeExpression, eFunctionExpression typeFunctionExpression) {
+    public RandomFunction(Object arg, eExpression typeExpression, eFunctionExpression typeFunctionExpression) {
         super(arg, typeExpression.FUNCTION, typeFunctionExpression.RANDOM);
     }
 
