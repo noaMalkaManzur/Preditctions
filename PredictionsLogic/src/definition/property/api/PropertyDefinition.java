@@ -4,4 +4,5 @@ public interface PropertyDefinition {
     String getName();
     PropertyType getType();
     Object generateValue();
+    Range getRange();
 }

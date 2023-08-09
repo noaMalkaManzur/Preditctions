@@ -1,4 +1,4 @@
-package Entities;
+package definition.property.api;
 
 public class Range
 {

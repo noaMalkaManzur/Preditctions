@@ -1,9 +1,8 @@
 package Actions;
 
-import Entities.Entity;
 import Entities.EntityInstance;
 import Entities.EntityProperty;
-import Entities.Range;
+import definition.property.api.Range;
 import Utilities.Enums;
 
 public class Decrease extends Action{

@@ -1,6 +1,7 @@
 package Entities;
 
 import Utilities.Enums;
+import definition.property.api.Range;
 
 public class Property
 {

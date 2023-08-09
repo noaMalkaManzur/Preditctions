@@ -1,6 +1,7 @@
 package Actions;
 import Entities.*;
 import Utilities.Enums;
+import definition.property.api.Range;
 
 
 public class Increase extends Action

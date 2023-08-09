@@ -6,6 +6,7 @@ import expression.impl.FunctionExpression;
 
 import java.util.Random;
 
+
 public class RandomFunction extends FunctionExpression {
 
 
@@ -19,12 +20,14 @@ public class RandomFunction extends FunctionExpression {
             if (max < 0) {
                 throw new IllegalArgumentException("Argument must be a non-negative number.");
             }
-
-            Random random = new Random();
-            return random.nextInt(max + 1);
+            return random(max);
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Argument is not a valid number.");
         }
+    }
+    private double random(int range) {
+        Random random = new Random();
+        return random.nextDouble() * range;
     }
 }
 /*@Override

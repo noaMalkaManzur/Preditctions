@@ -6,40 +6,56 @@ import definition.entity.EntityDefinition;
 import definition.property.api.PropertyType;
 import execution.context.Context;
 import execution.instance.property.PropertyInstance;
+import expression.api.Expression;
+import expression.impl.function.EnvironmentFunction;
 
 public class IncreaseAction extends AbstractAction {
 
     private final String property;
     private final String byExpression;
-
-    public IncreaseAction(EntityDefinition entityDefinition, String property, String byExpression) {
-        super(ActionType.INCREASE, entityDefinition);
+    private  Expression expression;
+    public IncreaseAction(ActionType actionType, EntityDefinition entityDefinition, String property, String byExpression, Expression expression) {
+        super(actionType, entityDefinition);
         this.property = property;
         this.byExpression = byExpression;
+        this.expression = expression;
     }
-
     @Override
     public void invoke(Context context) {
         PropertyInstance propertyInstance = context.getPrimaryEntityInstance().getPropertyByName(property);
         if (!verifyNumericPropertyTYpe(propertyInstance)) {
-            throw new IllegalArgumentException("increase action can't operate on a none number property [" + property);
+            throw new IllegalArgumentException("increase action can't operate on a none number property [" + property + "]");
         }
+        Object propVal;
+        Object expressionVal;
+        Object updatedVal;
+        double rangeTo = propertyInstance.getPropertyDefinition().getRange().getRangeTo();
 
-        Integer propVal = PropertyType.DECIMAL.convert(propertyInstance.getValue());
-
-        // something that evaluates expression to a number, say the result is 5...
-        // now you can also access the environment variables through the active environment...
-        // PropertyInstance blaPropertyInstance = activeEnvironment.getProperty("bla");
-        int x = 5;
-
-        // actual calculation
-        int result = x + propVal;
-
-        // updating result on the property
-        propertyInstance.updateValue(result);
+        if(PropertyType.DECIMAL.equals(propertyInstance.getPropertyDefinition().getType()))
+        {
+            propVal = PropertyType.DECIMAL.convert(propertyInstance.getValue());
+            expressionVal = PropertyType.DECIMAL.convert(getExpressionVal());
+            updatedVal = (Integer)propVal+(Integer)expressionVal;
+        }
+        else
+        {
+            propVal = PropertyType.FLOAT.convert(propertyInstance.getValue());
+            expressionVal = PropertyType.FLOAT.convert(getExpressionVal());
+            updatedVal = (Double)propVal+(Double)expressionVal;
+        }
+        if(((Number) updatedVal).doubleValue() <= propertyInstance.getPropertyDefinition().getRange().getRangeTo())
+        {
+            propertyInstance.updateValue(updatedVal);
+        }
     }
 
     private boolean verifyNumericPropertyTYpe(PropertyInstance propertyValue) {
         return PropertyType.DECIMAL.equals(propertyValue.getPropertyDefinition().getType()) || PropertyType.FLOAT.equals(propertyValue.getPropertyDefinition().getType());
     }
+    private Object getExpressionVal()
+    {
+        return expression.calculateExpression(byExpression);
+    }
+
+
 }

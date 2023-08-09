@@ -7,11 +7,13 @@ public abstract class AbstractPropertyDefinition<T> implements PropertyDefinitio
     private final String name;
     private final PropertyType propertyType;
     private final ValueGenerator<T> valueGenerator;
+    private final Range range;
 
-    public AbstractPropertyDefinition(String name, PropertyType propertyType, ValueGenerator<T> valueGenerator) {
+    public AbstractPropertyDefinition(String name, PropertyType propertyType, ValueGenerator<T> valueGenerator, Range range) {
         this.name = name;
         this.propertyType = propertyType;
         this.valueGenerator = valueGenerator;
+        this.range = range;
     }
 
     @Override
@@ -28,4 +30,6 @@ public abstract class AbstractPropertyDefinition<T> implements PropertyDefinitio
     public T generateValue() {
         return valueGenerator.generateValue();
     }
+    @Override
+    public Range getRange() {return range;}
 }

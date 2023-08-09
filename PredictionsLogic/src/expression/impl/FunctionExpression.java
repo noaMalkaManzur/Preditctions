@@ -13,7 +13,6 @@ public abstract class FunctionExpression extends AbstractExpression {
     public FunctionExpression(Object arg, eExpression typeExpression, eFunctionExpression typeFunctionExpression) {
         super(typeExpression);
         this.arg = (String) arg;
-
     }
 
     public abstract Object calculateExpression(String expressionString);

@@ -1,6 +1,7 @@
 package Utilities;
 
 import Entities.*;
+import definition.property.api.Range;
 
 import java.util.Random;
 
