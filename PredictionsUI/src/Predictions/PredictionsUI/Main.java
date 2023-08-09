@@ -96,6 +96,8 @@ public class Main {
 //        }
         rule1.getActionsToPerform().forEach(action -> action.invoke(context));
         System.out.println("Added Noam Branch");
+        System.out.println("Added Noa Branch");
+
     }
 }
 
