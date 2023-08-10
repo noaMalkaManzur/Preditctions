@@ -8,9 +8,9 @@ public abstract class FunctionExpression extends AbstractExpression {
     protected String arg;
 
 
-    public FunctionExpression(Object arg, eExpression typeExpression) {
+    public FunctionExpression(String arg, eExpression typeExpression) {
         super(typeExpression);
-        this.arg = (String) arg;
+        this.arg = arg;
     }
 
     public abstract Object calculateExpression();
