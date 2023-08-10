@@ -1,5 +1,6 @@
 package action.impl.condition.impl;
 
+import action.api.Action;
 import action.api.ActionType;
 import action.impl.condition.api.ConditionAction;
 import definition.entity.EntityDefinition;
@@ -8,20 +9,22 @@ import expression.api.Expression;
 
 import java.util.List;
 
-public class Single extends ConditionAction {
+public class SingleAction extends ConditionAction {
 
     String operator;
     List<Expression> expressionList;
-    protected Single(ActionType actionType, EntityDefinition entityDefinition, List<Expression> expressionList, String operator) {
-        super(actionType, entityDefinition, expressionList);
+
+    public SingleAction(ActionType actionType, EntityDefinition entityDefinition, List<Expression> expressionList, String singularity, List<Action> actionList, String operator) {
+        super(actionType, entityDefinition, expressionList, singularity, actionList);
         this.expressionList = expressionList;
         this.operator =operator;
     }
 
+
     @Override
-    public boolean checkOperator(Context context) {
-        Object valueByExpression =expressionList.get(0).calculateExpression();
-        Object propValue =context.getPrimaryEntityInstance().getPropertyByName(getContextEntity().getName());
+    public boolean checkCondition(Context context) {
+        Object valueByExpression = expressionList.get(0).calculateExpression();
+        Object propValue =context.getPrimaryEntityInstance().getPropertyByName(propertyName);
 
         switch (operator) {
             case "=":
@@ -47,16 +50,4 @@ public class Single extends ConditionAction {
         return propertyValue.doubleValue() < valueExpression.doubleValue();
     }
 
-    @Override
-    public void invoke(Context context) {
-        if(checkOperator(context)){
-            actionList.get(0).invoke(context);
-        }
-        else
-        {
-            if(actionList.get(1)!= null){
-                actionList.get(1).invoke(context);
-            }
-        }
-    }
 }

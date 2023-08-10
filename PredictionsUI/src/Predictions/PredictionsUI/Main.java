@@ -1,10 +1,11 @@
 package Predictions.PredictionsUI;
 
 
+import action.api.Action;
 import action.api.ActionType;
-import action.impl.DecreaseAction;
 import action.impl.IncreaseAction;
 import action.impl.calculation.impl.MultiplyAction;
+import action.impl.condition.impl.SingleAction;
 import definition.entity.EntityDefinition;
 import definition.entity.EntityDefinitionImpl;
 import definition.environment.api.EnvVariablesManager;
@@ -22,10 +23,8 @@ import execution.instance.enitty.manager.EntityInstanceManagerImpl;
 import execution.instance.environment.api.ActiveEnvironment;
 import execution.instance.property.PropertyInstanceImpl;
 import expression.api.Expression;
-import expression.api.eExpression;
 import expression.impl.EnvironmentFunction;
 import expression.impl.GeneralExpression;
-import expression.impl.PropertyExpression;
 import expression.impl.RandomFunction;
 import rule.Rule;
 import rule.RuleImpl;
@@ -101,6 +100,22 @@ public class Main {
         // all env variable not inserted by user, needs to be generated randomly. lucky we have all data needed for it...
         //Integer randomEnvVariableValue = taxAmountEnvironmentVariablePropertyDefinition.generateValue();
         //activeEnvironment.addPropertyInstance(new PropertyInstanceImpl(taxAmountEnvironmentVariablePropertyDefinition, randomEnvVariableValue));
+
+        //checking condition:
+        System.out.println();
+        List<Expression> list4 = new ArrayList<>();
+        list4.add(new EnvironmentFunction(cigaretsIncreaseNonSmokerEnvironmentVariablePropertyDefinition.getName(),activeEnvironment));
+        list4.add(new GeneralExpression("40",PropertyType.DECIMAL));
+        List<Action> actionList = new ArrayList<>();
+
+        actionList.add(new IncreaseAction(ActionType.DECREASE, smokerEntityDefinition, list3, agePropertyDefinition.getName()));
+        rule1.addAction(new SingleAction(ActionType.CONDITION, smokerEntityDefinition, list4, "single", actionList, "="));
+
+
+        //List<ConditionAction> conditionActionList = new ArrayList<>();
+        //ConditionAction conditionAction1 = new SingleAction(ActionType.CONDITION, smokerEntityDefinition, list4, "single", actionList, "Bt");
+
+
 
         // during a tick...
 
