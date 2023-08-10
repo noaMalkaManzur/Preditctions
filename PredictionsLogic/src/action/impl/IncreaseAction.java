@@ -29,6 +29,7 @@ public class IncreaseAction extends AbstractAction {
         Object expressionVal;
         Object updatedVal;
         double rangeTo = propertyInstance.getPropertyDefinition().getRange().getRangeTo();
+        //Hi noa
 
         if(PropertyType.DECIMAL.equals(propertyInstance.getPropertyDefinition().getType()))
         {
