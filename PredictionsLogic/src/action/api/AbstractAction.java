@@ -5,14 +5,18 @@ import definition.property.api.PropertyType;
 import execution.instance.property.PropertyInstance;
 import expression.api.Expression;
 
+import java.util.List;
+
 public abstract class AbstractAction implements Action {
 
     private final ActionType actionType;
     private final EntityDefinition entityDefinition;
+    private List<Expression> expressionList;
 
-    protected AbstractAction(ActionType actionType, EntityDefinition entityDefinition) {
+    protected AbstractAction(ActionType actionType, EntityDefinition entityDefinition, List<Expression> expressionList) {
         this.actionType = actionType;
         this.entityDefinition = entityDefinition;
+        this.expressionList = expressionList;
     }
 
     @Override
@@ -25,9 +29,9 @@ public abstract class AbstractAction implements Action {
         return entityDefinition;
     }
     @Override
-    public Object getExpressionVal(Expression expression,String argument)
+    public Object getExpressionVal(Expression expression)
     {
-        return expression.calculateExpression(argument);
+        return expression.calculateExpression();
     }
     @Override
     public boolean verifyNumericPropertyType(PropertyInstance propertyValue) {
@@ -35,6 +39,7 @@ public abstract class AbstractAction implements Action {
     }
 
 
-
-
+    public List<Expression> getExpressionList() {
+        return expressionList;
+    }
 }
