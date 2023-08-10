@@ -53,7 +53,7 @@ public class IncreaseAction extends AbstractAction {
     }
     private Object getExpressionVal()
     {
-        return expression.calculateExpression(byExpression);
+        return expression.calculateExpression();
     }
 
 
