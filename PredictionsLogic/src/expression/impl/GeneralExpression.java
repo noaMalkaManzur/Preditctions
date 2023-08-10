@@ -6,7 +6,7 @@ import expression.api.eExpression;
 public class GeneralExpression extends FunctionExpression {
     private PropertyType propertyType;
 
-    public GeneralExpression(Object arg,PropertyType propertyType) {
+    public GeneralExpression(String arg,PropertyType propertyType) {
         super(arg, eExpression.GENERAL);
         this.propertyType = propertyType;
 
