@@ -25,7 +25,7 @@ public class DivideAction extends CalculationAction {
         Object expVal2 = getExpressionVal(getExpressionList().get(1));
         if(((Number)expVal2).doubleValue() == 0)
             throw new IllegalArgumentException("Argument 2 was equal to 0, cant perform calculation-divide by 0!");
-        Object divRes;
+        Number divRes;
         if(expVal1 instanceof Double || expVal2 instanceof Double)
         {
             Double val1 = PropertyType.FLOAT.convert(expVal1);
@@ -38,18 +38,13 @@ public class DivideAction extends CalculationAction {
             Integer val2 = PropertyType.DECIMAL.convert(expVal2);
             divRes = val1 / val2;
         }
-        if(propertyInstance.getPropertyDefinition().getType() == PropertyType.DECIMAL)
-        {
-            if(divRes instanceof Integer)
-            {
-                propertyInstance.updateValue(divRes);
+        if (propertyInstance.getPropertyDefinition().getRange() != null) {
+            if (divRes.doubleValue() >= propertyInstance.getPropertyDefinition().getRange().getRangeFrom()) {
+                if (propertyInstance.getPropertyDefinition().getType() == PropertyType.DECIMAL) {
+                    propertyInstance.updateValue(divRes);
+                }
             }
-            else
-                throw new NumberFormatException("multiply result didn't match property type");
-        }
-        else
-        {
+        } else
             propertyInstance.updateValue(divRes);
-        }
     }
 }

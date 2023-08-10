@@ -23,33 +23,23 @@ public class MultiplyAction extends CalculationAction {
         }
         Object expVal1 = getExpressionVal(getExpressionList().get(0));
         Object expVal2 = getExpressionVal(getExpressionList().get(1));
-        Object mulRes;
-        if(expVal1 instanceof Double || expVal2 instanceof Double)
-        {
+        Number mulRes;
+        if (expVal1 instanceof Double || expVal2 instanceof Double) {
             Double val1 = PropertyType.FLOAT.convert(expVal1);
             Double val2 = PropertyType.FLOAT.convert(expVal2);
             mulRes = val1 * val2;
-        }
-        else
-        {
+        } else {
             Integer val1 = PropertyType.DECIMAL.convert(expVal1);
             Integer val2 = PropertyType.DECIMAL.convert(expVal2);
             mulRes = val1 * val2;
         }
-        if(propertyInstance.getPropertyDefinition().getType() == PropertyType.DECIMAL)
-        {
-            if(mulRes instanceof Integer)
-            {
-                propertyInstance.updateValue(mulRes);
+        if (propertyInstance.getPropertyDefinition().getRange() != null) {
+            if (mulRes.doubleValue() <= propertyInstance.getPropertyDefinition().getRange().getRangeTo()) {
+                if (propertyInstance.getPropertyDefinition().getType() == PropertyType.DECIMAL) {
+                    propertyInstance.updateValue(mulRes);
+                }
             }
-            else
-                throw new NumberFormatException("multiply result didn't match property type");
-        }
-        else
-        {
+        } else
             propertyInstance.updateValue(mulRes);
-        }
-
-
     }
 }
