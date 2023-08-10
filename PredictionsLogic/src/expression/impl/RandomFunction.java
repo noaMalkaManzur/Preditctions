@@ -8,7 +8,6 @@ import java.util.Random;
 
 public class RandomFunction extends FunctionExpression {
 
-
     public RandomFunction(String arg) {
         super(arg, eExpression.FUNCTION);
     }
@@ -24,8 +23,8 @@ public class RandomFunction extends FunctionExpression {
             throw new IllegalArgumentException("Argument is not a valid number.");
         }
     }
-    private double random(int range) {
+    private Integer random(int range) {
         Random random = new Random();
-        return random.nextDouble() * range;
+        return random.nextInt(range+1);
     }
 }

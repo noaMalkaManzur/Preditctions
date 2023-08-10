@@ -38,6 +38,7 @@ public class Main {
 
         // define rules by creating instances of actions
         Rule rule1 = new RuleImpl("rule 1");
+
         rule1.addAction(new IncreaseAction(ActionType.INCREASE,smokerEntityDefinition, "age", "1",new GeneralExpression("1", eExpression.GENERAL,agePropertyDefinition.getType())));
         //rule1.addAction(new IncreaseAction(ActionType.INCREASE, smokerEntityDefinition, "age", "1", new RandomFunction("10")));
         //RandomFunction expression = new RandomFunction("10");
