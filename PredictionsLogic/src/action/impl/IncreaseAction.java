@@ -8,7 +8,6 @@ import definition.property.api.PropertyType;
 import execution.context.Context;
 import execution.instance.property.PropertyInstance;
 import expression.api.Expression;
-import expression.impl.function.EnvironmentFunction;
 
 public class IncreaseAction extends AbstractAction {
 

@@ -9,7 +9,6 @@ import definition.entity.EntityDefinition;
 import definition.entity.EntityDefinitionImpl;
 import definition.environment.api.EnvVariablesManager;
 import definition.environment.impl.EnvVariableManagerImpl;
-import definition.property.api.PropertyType;
 import definition.property.api.Range;
 import definition.property.impl.IntegerPropertyDefinition;
 import definition.value.generator.api.ValueGeneratorFactory;
@@ -20,9 +19,7 @@ import execution.instance.enitty.manager.EntityInstanceManager;
 import execution.instance.enitty.manager.EntityInstanceManagerImpl;
 import execution.instance.environment.api.ActiveEnvironment;
 import execution.instance.property.PropertyInstanceImpl;
-import expression.api.eExpression;
-import expression.impl.GeneralExpression;
-import expression.impl.function.RandomFunction;
+import expression.impl.function.EnvironmentFunction;
 import rule.Rule;
 import rule.RuleImpl;
 
@@ -34,20 +31,24 @@ public class Main {
         IntegerPropertyDefinition agePropertyDefinition = new IntegerPropertyDefinition("age", ValueGeneratorFactory.createRandomInteger(10, 50),new Range(10,50));
         IntegerPropertyDefinition smokingInDayPropertyDefinition = new IntegerPropertyDefinition("smokingInDay", ValueGeneratorFactory.createFixed(10),null);
 
-        EntityDefinition smokerEntityDefinition = new EntityDefinitionImpl("smoker", 100);
+        EntityDefinition smokerEntityDefinition = new EntityDefinitionImpl("smoker", 5);
         smokerEntityDefinition.getProps().add(agePropertyDefinition);
         smokerEntityDefinition.getProps().add(smokingInDayPropertyDefinition);
 
         // define rules by creating instances of actions
         Rule rule1 = new RuleImpl("rule 1");
-        rule1.addAction(new MultiplyAction(ActionType.CALCULATION,smokerEntityDefinition, "age", "1","6",new GeneralExpression(eExpression.GENERAL, PropertyType.DECIMAL),new RandomFunction("10")));
-        RandomFunction expression = new RandomFunction("10");
+
+        //rule1.addAction(new MultiplyAction(ActionType.CALCULATION,smokerEntityDefinition, "age", "1","6",new GeneralExpression(eExpression.GENERAL, PropertyType.DECIMAL),new RandomFunction("10")));
+        //RandomFunction expression = new RandomFunction("10");
+        //rule1.addAction(new IncreaseAction(ActionType.INCREASE,smokerEntityDefinition, "age", "1",new GeneralExpression(eExpression.GENERAL, PropertyType.DECIMAL)));
+        //rule1.addAction(new IncreaseAction(ActionType.INCREASE, smokerEntityDefinition, "age", "1", new RandomFunction("10")));
+        //RandomFunction expression = new RandomFunction("10");
 
         //rule1.addAction(new IncreaseAction(smokerEntityDefinition, "age", new RandomFunction("10").toString()));
 
-        Object res = expression.calculateExpression("10");
-        System.out.println(res +"    noa");
-        System.out.println(res.toString());
+        //Object res = expression.calculateExpression("10");
+        //System.out.println(res +"    noa");
+        //System.out.println(res.toString());
 
         //rule1.addAction(new IncreaseAction(smokerEntityDefinition, "smokingInDay", expression.toString()));
         rule1.addAction(new KillAction(smokerEntityDefinition));
@@ -55,6 +56,7 @@ public class Main {
         EnvVariablesManager envVariablesManager = new EnvVariableManagerImpl();
         IntegerPropertyDefinition taxAmountEnvironmentVariablePropertyDefinition = new IntegerPropertyDefinition("tax-amount", ValueGeneratorFactory.createRandomInteger(10, 100),new Range(10,100));
         envVariablesManager.addEnvironmentVariable(taxAmountEnvironmentVariablePropertyDefinition);
+
 
 
         // execution phase - happens upon command 3
@@ -78,7 +80,7 @@ public class Main {
         int valueFromUser = 54;
         activeEnvironment.addPropertyInstance(new PropertyInstanceImpl(taxAmountEnvironmentVariablePropertyDefinition, valueFromUser));
 //        }
-
+        rule1.addAction(new IncreaseAction(ActionType.INCREASE, smokerEntityDefinition, "age", "tax-amount", new EnvironmentFunction("10",activeEnvironment)));
         // all env variable not inserted by user, needs to be generated randomly. lucky we have all data needed for it...
         //Integer randomEnvVariableValue = taxAmountEnvironmentVariablePropertyDefinition.generateValue();
         //activeEnvironment.addPropertyInstance(new PropertyInstanceImpl(taxAmountEnvironmentVariablePropertyDefinition, randomEnvVariableValue));
@@ -95,6 +97,7 @@ public class Main {
 //                    .forEach(action ->
 //                            action.invoke(context));
 //        }
+
         rule1.getActionsToPerform().forEach(action -> action.invoke(context));
     }
 }
