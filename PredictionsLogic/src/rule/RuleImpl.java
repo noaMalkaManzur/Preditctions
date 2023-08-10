@@ -14,6 +14,8 @@ public class RuleImpl implements Rule {
     public RuleImpl(String name) {
         this.name = name;
         actions = new ArrayList<>();
+        this.activation = new ActivationImpl();
+
     }
 
     @Override

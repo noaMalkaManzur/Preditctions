@@ -8,42 +8,44 @@ import execution.context.Context;
 import execution.instance.property.PropertyInstance;
 import expression.api.Expression;
 
+import java.util.List;
+
 public class IncreaseAction extends AbstractAction {
 
     private final String property;
-    private final String byExpression;
-    private  Expression expression;
-    public IncreaseAction(ActionType actionType, EntityDefinition entityDefinition, String property, String byExpression, Expression expression) {
-        super(actionType, entityDefinition);
+
+    public IncreaseAction(ActionType actionType, EntityDefinition entityDefinition, List<Expression> expressionList, String property) {
+        super(actionType, entityDefinition, expressionList);
         this.property = property;
-        this.byExpression = byExpression;
-        this.expression = expression;
     }
     @Override
     public void invoke(Context context) {
         PropertyInstance propertyInstance = context.getPrimaryEntityInstance().getPropertyByName(property);
-        if (!verifyNumericPropertyTYpe(propertyInstance)) {
+        if (!verifyNumericPropertyType(propertyInstance)) {
             throw new IllegalArgumentException("increase action can't operate on a none number property [" + property + "]");
         }
         Object propVal;
         Object expressionVal;
-        Object updatedVal;
-        double rangeTo = propertyInstance.getPropertyDefinition().getRange().getRangeTo();
-        //Hi noa
+        Number updatedVal;
 
         if(PropertyType.DECIMAL.equals(propertyInstance.getPropertyDefinition().getType()))
         {
             propVal = PropertyType.DECIMAL.convert(propertyInstance.getValue());
-            expressionVal = PropertyType.DECIMAL.convert(getExpressionVal());
+            expressionVal = PropertyType.DECIMAL.convert(getExpressionVal(getExpressionList().get(0)));
             updatedVal = (Integer)propVal+(Integer)expressionVal;
         }
         else
         {
             propVal = PropertyType.FLOAT.convert(propertyInstance.getValue());
-            expressionVal = PropertyType.FLOAT.convert(getExpressionVal());
+            expressionVal = PropertyType.FLOAT.convert(getExpressionVal(getExpressionList().get(0)));
             updatedVal = (Double)propVal+(Double)expressionVal;
         }
-        if(((Number) updatedVal).doubleValue() <= propertyInstance.getPropertyDefinition().getRange().getRangeTo())
+        if(propertyInstance.getPropertyDefinition().getRange() != null)
+        {
+            if (updatedVal.doubleValue() <= propertyInstance.getPropertyDefinition().getRange().getRangeTo())
+                propertyInstance.updateValue(updatedVal);
+        }
+        else
         {
             propertyInstance.updateValue(updatedVal);
         }

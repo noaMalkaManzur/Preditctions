@@ -6,8 +6,8 @@ import expression.api.eExpression;
 public class GeneralExpression extends FunctionExpression {
     private PropertyType propertyType;
 
-    public GeneralExpression(Object arg, eExpression typeExpression,PropertyType propertyType) {
-        super(arg, typeExpression);
+    public GeneralExpression(Object arg,PropertyType propertyType) {
+        super(arg, eExpression.GENERAL);
         this.propertyType = propertyType;
 
     }

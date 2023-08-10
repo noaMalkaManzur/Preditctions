@@ -27,7 +27,6 @@ public class DecreaseAction extends AbstractAction {
         Object propVal;
         Object expressionVal;
         Number updatedVal;
-        double rangeFrom = propertyInstance.getPropertyDefinition().getRange().getRangeFrom();
 
         if(PropertyType.DECIMAL.equals(propertyInstance.getPropertyDefinition().getType()))
         {
@@ -41,7 +40,12 @@ public class DecreaseAction extends AbstractAction {
             expressionVal = PropertyType.FLOAT.convert(getExpressionVal(getExpressionList().get(0)));
             updatedVal = (Double)propVal-(Double)expressionVal;
         }
-        if(updatedVal.doubleValue() >= rangeFrom)
+        if(propertyInstance.getPropertyDefinition().getRange() != null)
+        {
+            if (updatedVal.doubleValue() >= propertyInstance.getPropertyDefinition().getRange().getRangeFrom())
+                propertyInstance.updateValue(updatedVal);
+        }
+        else
         {
             propertyInstance.updateValue(updatedVal);
         }
