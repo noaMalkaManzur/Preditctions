@@ -1,7 +1,6 @@
-package expression.impl.function;
+package expression.impl;
 
 import expression.api.eExpression;
-import expression.api.eFunctionExpression;
 import expression.impl.FunctionExpression;
 
 import java.util.Random;
@@ -10,10 +9,10 @@ import java.util.Random;
 public class RandomFunction extends FunctionExpression {
 
     public RandomFunction(String arg) {
-        super(arg, eExpression.FUNCTION, eFunctionExpression.RANDOM);
+        super(arg, eExpression.FUNCTION);
     }
     @Override
-    public Object calculateExpression(String expressionString) {
+    public Object calculateExpression() {
         try {
             int max = Integer.parseInt(arg);
             if (max < 0) {
@@ -29,17 +28,3 @@ public class RandomFunction extends FunctionExpression {
         return random.nextInt(range+1);
     }
 }
-/*@Override
-    public Object calculateExpression(String expressionString) {
-        try {
-            int max = Integer.parseInt(arg);
-            if (max < 0) {
-                throw new IllegalArgumentException("Argument must be a non-negative number.");
-            }
-
-            Random random = new Random();
-            return random.nextInt(max + 1);
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Argument is not a valid number.");
-        }
-    }*/

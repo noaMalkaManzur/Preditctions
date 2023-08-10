@@ -1,27 +1,28 @@
 package expression.impl;
 
 import definition.property.api.PropertyType;
-import expression.api.AbstractExpression;
 import expression.api.eExpression;
 
-public class GeneralExpression extends AbstractExpression {
+public class GeneralExpression extends FunctionExpression {
     private PropertyType propertyType;
 
-    public GeneralExpression(eExpression eExpression, PropertyType propertyType) {
-        super(eExpression);
+    public GeneralExpression(Object arg, eExpression typeExpression,PropertyType propertyType) {
+        super(arg, typeExpression);
         this.propertyType = propertyType;
+
     }
+
     @Override
-    public Object calculateExpression(String expressionString) {
+    public Object calculateExpression() {
         switch (propertyType) {
             case DECIMAL:
-                return Integer.parseInt(expressionString);
+                return Integer.parseInt(arg);
             case FLOAT:
-                return Double.parseDouble(expressionString);
+                return Double.parseDouble(arg);
             case BOOLEAN:
-                return Boolean.parseBoolean(expressionString);
+                return Boolean.parseBoolean(arg);
             case STRING:
-                return expressionString;
+                return arg;
             default:
                 return null;
         }

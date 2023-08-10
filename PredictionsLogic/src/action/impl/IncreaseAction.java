@@ -49,9 +49,4 @@ public class IncreaseAction extends AbstractAction {
             propertyInstance.updateValue(updatedVal);
         }
     }
-
-
-
-
-
 }
