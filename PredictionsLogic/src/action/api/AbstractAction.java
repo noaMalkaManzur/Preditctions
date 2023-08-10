@@ -4,7 +4,6 @@ import definition.entity.EntityDefinition;
 import definition.property.api.PropertyType;
 import execution.instance.property.PropertyInstance;
 import expression.api.Expression;
-
 import java.util.List;
 
 public abstract class AbstractAction implements Action {
@@ -37,8 +36,6 @@ public abstract class AbstractAction implements Action {
     public boolean verifyNumericPropertyType(PropertyInstance propertyValue) {
         return PropertyType.DECIMAL.equals(propertyValue.getPropertyDefinition().getType()) || PropertyType.FLOAT.equals(propertyValue.getPropertyDefinition().getType());
     }
-
-
     public List<Expression> getExpressionList() {
         return expressionList;
     }
