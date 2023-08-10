@@ -2,25 +2,22 @@ package action.impl;
 
 import action.api.AbstractAction;
 import action.api.ActionType;
-import com.sun.xml.internal.bind.v2.TODO;
 import definition.entity.EntityDefinition;
 import definition.property.api.PropertyType;
 import execution.context.Context;
 import execution.instance.property.PropertyInstance;
 import expression.api.Expression;
 
+import java.util.List;
+
 public class IncreaseAction extends AbstractAction {
 
     private final String property;
-    private final String byExpression;
-    private  Expression expression;
-    public IncreaseAction(ActionType actionType, EntityDefinition entityDefinition, String property, String byExpression, Expression expression) {
-        super(actionType, entityDefinition);
+
+    public IncreaseAction(ActionType actionType, EntityDefinition entityDefinition, List<Expression> expressionList, String property) {
+        super(actionType, entityDefinition, expressionList);
         this.property = property;
-        this.byExpression = byExpression;
-        this.expression = expression;
     }
-    //ToDo: Check if envariable can be double.
     @Override
     public void invoke(Context context) {
         PropertyInstance propertyInstance = context.getPrimaryEntityInstance().getPropertyByName(property);
@@ -29,22 +26,22 @@ public class IncreaseAction extends AbstractAction {
         }
         Object propVal;
         Object expressionVal;
-        Object updatedVal;
+        Number updatedVal;
         double rangeTo = propertyInstance.getPropertyDefinition().getRange().getRangeTo();
 
         if(PropertyType.DECIMAL.equals(propertyInstance.getPropertyDefinition().getType()))
         {
             propVal = PropertyType.DECIMAL.convert(propertyInstance.getValue());
-            expressionVal = PropertyType.DECIMAL.convert(getExpressionVal(expression,byExpression));
+            expressionVal = PropertyType.DECIMAL.convert(getExpressionVal(getExpressionList().get(0)));
             updatedVal = (Integer)propVal+(Integer)expressionVal;
         }
         else
         {
             propVal = PropertyType.FLOAT.convert(propertyInstance.getValue());
-            expressionVal = PropertyType.FLOAT.convert(getExpressionVal(expression,byExpression));
+            expressionVal = PropertyType.FLOAT.convert(getExpressionVal(getExpressionList().get(0)));
             updatedVal = (Double)propVal+(Double)expressionVal;
         }
-        if(((Number) updatedVal).doubleValue() <= rangeTo)
+        if(updatedVal.doubleValue() <= rangeTo)
         {
             propertyInstance.updateValue(updatedVal);
         }

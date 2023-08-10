@@ -8,9 +8,11 @@ import execution.context.Context;
 import execution.instance.property.PropertyInstance;
 import expression.api.Expression;
 
+import java.util.List;
+
 public class MultiplyAction extends CalculationAction {
-    public MultiplyAction(ActionType actionType, EntityDefinition entityDefinition, String resultProp, String arg1, String arg2, Expression exp1, Expression exp2) {
-        super(actionType, entityDefinition, resultProp, arg1, arg2, exp1, exp2);
+    public MultiplyAction(ActionType actionType, EntityDefinition entityDefinition, List<Expression> expressionList, String resultProp) {
+        super(actionType, entityDefinition, expressionList, resultProp);
     }
 
     @Override
@@ -19,8 +21,8 @@ public class MultiplyAction extends CalculationAction {
         if (!verifyNumericPropertyType(propertyInstance)) {
             throw new IllegalArgumentException("increase action can't operate on a none number property [" + resultProp + "]");
         }
-        Object expVal1 = getExpressionVal(exp1,arg1);
-        Object expVal2 = getExpressionVal(exp2,arg2);
+        Object expVal1 = getExpressionVal(getExpressionList().get(0));
+        Object expVal2 = getExpressionVal(getExpressionList().get(1));
         Object mulRes;
         if(expVal1 instanceof Double || expVal2 instanceof Double)
         {

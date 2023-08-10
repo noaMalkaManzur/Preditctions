@@ -8,7 +8,7 @@ import execution.context.Context;
 public class KillAction extends AbstractAction {
 
     public KillAction(EntityDefinition entityDefinition) {
-        super(ActionType.KILL, entityDefinition);
+        super(ActionType.KILL, entityDefinition,null);
     }
 
     @Override

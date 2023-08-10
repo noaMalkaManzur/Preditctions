@@ -9,7 +9,7 @@ public interface Action {
     void invoke(Context context);
     ActionType getActionType();
     EntityDefinition getContextEntity();
-    Object getExpressionVal(Expression expression, String byExpression);
+    Object getExpressionVal(Expression expression);
     boolean verifyNumericPropertyType(PropertyInstance propertyValue);
 
 }
