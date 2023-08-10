@@ -18,7 +18,9 @@ import execution.instance.enitty.manager.EntityInstanceManager;
 import execution.instance.enitty.manager.EntityInstanceManagerImpl;
 import execution.instance.environment.api.ActiveEnvironment;
 import execution.instance.property.PropertyInstanceImpl;
-import expression.impl.function.EnvironmentFunction;
+import expression.api.eExpression;
+import expression.impl.GeneralExpression;
+import expression.impl.EnvironmentFunction;
 import rule.Rule;
 import rule.RuleImpl;
 
@@ -36,7 +38,7 @@ public class Main {
 
         // define rules by creating instances of actions
         Rule rule1 = new RuleImpl("rule 1");
-        //rule1.addAction(new IncreaseAction(ActionType.INCREASE,smokerEntityDefinition, "age", "1",new GeneralExpression(eExpression.GENERAL, PropertyType.DECIMAL)));
+        rule1.addAction(new IncreaseAction(ActionType.INCREASE,smokerEntityDefinition, "age", "1",new GeneralExpression("1", eExpression.GENERAL,agePropertyDefinition.getType())));
         //rule1.addAction(new IncreaseAction(ActionType.INCREASE, smokerEntityDefinition, "age", "1", new RandomFunction("10")));
         //RandomFunction expression = new RandomFunction("10");
 
