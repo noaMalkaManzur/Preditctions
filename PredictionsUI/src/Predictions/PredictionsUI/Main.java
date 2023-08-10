@@ -4,6 +4,7 @@ package Predictions.PredictionsUI;
 import action.api.ActionType;
 import action.impl.IncreaseAction;
 import action.impl.KillAction;
+import action.impl.calculation.impl.MultiplyAction;
 import definition.entity.EntityDefinition;
 import definition.entity.EntityDefinitionImpl;
 import definition.environment.api.EnvVariablesManager;
@@ -39,7 +40,7 @@ public class Main {
 
         // define rules by creating instances of actions
         Rule rule1 = new RuleImpl("rule 1");
-        rule1.addAction(new IncreaseAction(ActionType.INCREASE,smokerEntityDefinition, "age", "1",new GeneralExpression(eExpression.GENERAL, PropertyType.DECIMAL)));
+        rule1.addAction(new MultiplyAction(ActionType.CALCULATION,smokerEntityDefinition, "age", "1","6",new GeneralExpression(eExpression.GENERAL, PropertyType.DECIMAL),new RandomFunction("10")));
         RandomFunction expression = new RandomFunction("10");
 
         //rule1.addAction(new IncreaseAction(smokerEntityDefinition, "age", new RandomFunction("10").toString()));
@@ -95,9 +96,6 @@ public class Main {
 //                            action.invoke(context));
 //        }
         rule1.getActionsToPerform().forEach(action -> action.invoke(context));
-        System.out.println("Added Noam Branch2");
-        System.out.println("Added Noa Branch");
-
     }
 }
 

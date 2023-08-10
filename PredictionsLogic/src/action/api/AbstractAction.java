@@ -1,6 +1,9 @@
 package action.api;
 
 import definition.entity.EntityDefinition;
+import definition.property.api.PropertyType;
+import execution.instance.property.PropertyInstance;
+import expression.api.Expression;
 
 public abstract class AbstractAction implements Action {
 
@@ -21,4 +24,17 @@ public abstract class AbstractAction implements Action {
     public EntityDefinition getContextEntity() {
         return entityDefinition;
     }
+    @Override
+    public Object getExpressionVal(Expression expression,String argument)
+    {
+        return expression.calculateExpression(argument);
+    }
+    @Override
+    public boolean verifyNumericPropertyType(PropertyInstance propertyValue) {
+        return PropertyType.DECIMAL.equals(propertyValue.getPropertyDefinition().getType()) || PropertyType.FLOAT.equals(propertyValue.getPropertyDefinition().getType());
+    }
+
+
+
+
 }
