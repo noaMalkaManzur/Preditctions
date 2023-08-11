@@ -14,20 +14,25 @@ public class MultipleAction extends ConditionAction {
     String propertyName;
     String logic;
 
-    protected MultipleAction(ActionType actionType, EntityDefinition entityDefinition, List<Expression> expressionList, String propertyName, List<Action> actionList) {
+    public MultipleAction(ActionType actionType, EntityDefinition entityDefinition ,List<Expression> expressionList,String logic,String propertyName, List<Action> actionList,List<ConditionAction> conditionList) {
         super(actionType, entityDefinition, expressionList, propertyName, actionList);
         this.logic= logic;
         this.propertyName= propertyName;
+        this.conditionList = conditionList;
     }
 
 
     @Override
-    public boolean checkCondition(Context context){
-        if(logic.equals("and")){
-            return conditionList.get(0).checkCondition(context) && conditionList.get(1).checkCondition(context);
+    public boolean checkCondition(Context context) {
+        boolean result;
 
+        if (logic.equals("and")) {
+            result = conditionList.stream().allMatch(condition -> condition.checkCondition(context));
+        } else {
+            result = conditionList.stream().anyMatch(condition -> condition.checkCondition(context));
         }
-        return conditionList.get(0).checkCondition(context) || conditionList.get(1).checkCondition(context);
+
+        return result;
     }
 
 }
