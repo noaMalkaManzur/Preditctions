@@ -3,8 +3,11 @@ package Predictions.PredictionsUI;
 
 import action.api.Action;
 import action.api.ActionType;
+import action.impl.DecreaseAction;
 import action.impl.IncreaseAction;
 import action.impl.calculation.impl.MultiplyAction;
+import action.impl.condition.api.ConditionAction;
+import action.impl.condition.impl.MultipleAction;
 import action.impl.condition.impl.SingleAction;
 import definition.entity.EntityDefinition;
 import definition.entity.EntityDefinitionImpl;
@@ -37,7 +40,7 @@ public class Main {
     public static void main(String[] args) {
 
         // definition phase - happens as part of file read and validity checks
-        PropertyDefinition lungCancerProgress = new IntegerPropertyDefinition("lung-cancer-progress", ValueGeneratorFactory.createFixed(100),new Range(0,100));
+        PropertyDefinition lungCancerProgress = new IntegerPropertyDefinition("lung-cancer-progress", ValueGeneratorFactory.createFixed(0),new Range(0,100));
         IntegerPropertyDefinition agePropertyDefinition = new IntegerPropertyDefinition("age", ValueGeneratorFactory.createRandomInteger(15, 50),new Range(15,50));
         PropertyDefinition cigaretsPerMonthPropertyDefinition = new IntegerPropertyDefinition("cigarets-per-month", ValueGeneratorFactory.createRandomInteger(0,500),new Range(0,500));
 
@@ -48,12 +51,12 @@ public class Main {
         smokerEntityDefinition.getProps().add(lungCancerProgress);
 
 
-        List<Expression> list = new ArrayList<>();
-        list.add(new RandomFunction("8"));
-        list.add(new RandomFunction("9"));
-
+//        List<Expression> list = new ArrayList<>();
+//        list.add(new RandomFunction("8"));
+//        list.add(new RandomFunction("9"));
+//
         Rule rule1 = new RuleImpl("rule 1");
-        rule1.addAction(new MultiplyAction(ActionType.DECREASE,smokerEntityDefinition, list, lungCancerProgress.getName()));
+//        rule1.addAction(new MultiplyAction(ActionType.DECREASE,smokerEntityDefinition, list, lungCancerProgress.getName()));
 
 
 
@@ -95,21 +98,29 @@ public class Main {
         //list.add(new EnvironmentFunction("10",activeEnvironment));
         List<Expression> list3 = new ArrayList<>();
         list3.add(new EnvironmentFunction(cigaretsIncreaseAlreadySmokerEnvironmentVariablePropertyDefinition.getName(),activeEnvironment));
-        list3.add(new RandomFunction("9"));
-        rule1.addAction(new MultiplyAction(ActionType.DECREASE, smokerEntityDefinition, list3, cigaretsPerMonthPropertyDefinition.getName()));
-        // all env variable not inserted by user, needs to be generated randomly. lucky we have all data needed for it...
-        //Integer randomEnvVariableValue = taxAmountEnvironmentVariablePropertyDefinition.generateValue();
-        //activeEnvironment.addPropertyInstance(new PropertyInstanceImpl(taxAmountEnvironmentVariablePropertyDefinition, randomEnvVariableValue));
-
-        //checking condition:
-        System.out.println();
+        list3.add(new RandomFunction("5"));
+//        rule1.addAction(new MultiplyAction(ActionType.DECREASE, smokerEntityDefinition, list3, cigaretsPerMonthPropertyDefinition.getName()));
+//        // all env variable not inserted by user, needs to be generated randomly. lucky we have all data needed for it...
+//        //Integer randomEnvVariableValue = taxAmountEnvironmentVariablePropertyDefinition.generateValue();
+//        //activeEnvironment.addPropertyInstance(new PropertyInstanceImpl(taxAmountEnvironmentVariablePropertyDefinition, randomEnvVariableValue));
+//
+//        //checking condition:
+//        System.out.println();
         List<Expression> list4 = new ArrayList<>();
         list4.add(new EnvironmentFunction(cigaretsIncreaseNonSmokerEnvironmentVariablePropertyDefinition.getName(),activeEnvironment));
-        list4.add(new GeneralExpression("40",PropertyType.DECIMAL));
+        //list4.add(new GeneralExpression("40",PropertyType.DECIMAL));
         List<Action> actionList = new ArrayList<>();
+        actionList.add(new IncreaseAction(ActionType.DECREASE, smokerEntityDefinition, list3, lungCancerProgress.getName()));
+        actionList.add(new DecreaseAction(ActionType.DECREASE, smokerEntityDefinition, list3, lungCancerProgress.getName()));
+        List<ConditionAction> conditionList = new ArrayList<>();
 
-        actionList.add(new IncreaseAction(ActionType.DECREASE, smokerEntityDefinition, list3, agePropertyDefinition.getName()));
-        rule1.addAction(new SingleAction(ActionType.CONDITION, smokerEntityDefinition, list4, "single", actionList, "="));
+        conditionList.add(new SingleAction(ActionType.CONDITION, smokerEntityDefinition, list4, "age", actionList, "bt"));
+        conditionList.add(new SingleAction(ActionType.CONDITION, smokerEntityDefinition, list4, cigaretsPerMonthPropertyDefinition.getName(), actionList, "bt"));
+        rule1.addAction(new MultipleAction(ActionType.CONDITION,smokerEntityDefinition,list4,"and", lungCancerProgress.getName(),actionList,conditionList));
+//        actionList.add(new IncreaseAction(ActionType.DECREASE, smokerEntityDefinition, list3, lungCancerProgress.getName()));
+//        rule1.addAction(new SingleAction(ActionType.CONDITION, smokerEntityDefinition, list4, "age", actionList, "bt"));
+
+
 
 
         //List<ConditionAction> conditionActionList = new ArrayList<>();
