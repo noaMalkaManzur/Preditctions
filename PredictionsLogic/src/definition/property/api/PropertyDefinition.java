@@ -5,4 +5,5 @@ public interface PropertyDefinition {
     PropertyType getType();
     Object generateValue();
     Range getRange();
+    Boolean getRandomInit();
 }

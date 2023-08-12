@@ -33,7 +33,7 @@ public abstract class AbstractPropertyDefinition<T> implements PropertyDefinitio
     }
     @Override
     public Range getRange() {return range;}
-
+    @Override
     public Boolean getRandomInit() {
         return isRandomInit;
     }
