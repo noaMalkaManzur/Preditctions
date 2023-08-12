@@ -2,6 +2,7 @@ package execution.instance.enitty.manager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import definition.entity.EntityDefinition;
 import definition.property.api.PropertyDefinition;
@@ -22,17 +23,15 @@ public class EntityInstanceManagerImpl implements EntityInstanceManager {
 
     @Override
     public EntityInstance create(EntityDefinition entityDefinition) {
-
         count++;
         EntityInstance newEntityInstance = new EntityInstanceImpl(entityDefinition, count);
         instances.add(newEntityInstance);
 
-        for (PropertyDefinition propertyDefinition : entityDefinition.getProps()) {
-            Object value = propertyDefinition.generateValue();
-            PropertyInstance newPropertyInstance = new PropertyInstanceImpl(propertyDefinition, value);
+        for (Map.Entry<String, PropertyDefinition> propertyDefinition : entityDefinition.getProps().entrySet()) {
+            Object value = propertyDefinition.getValue().generateValue();
+            PropertyInstance newPropertyInstance = new PropertyInstanceImpl(propertyDefinition.getValue(), value);
             newEntityInstance.addPropertyInstance(newPropertyInstance);
         }
-
         return newEntityInstance;
     }
 

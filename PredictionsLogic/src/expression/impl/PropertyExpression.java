@@ -7,8 +7,8 @@ public class PropertyExpression extends FunctionExpression {
 
     private Context context;
 
-    public PropertyExpression(String arg, eExpression typeExpression, Context context) {
-        super(arg, typeExpression);
+    public PropertyExpression(String arg, Context context) {
+        super(arg,eExpression.PROPERTY);
         this.context = context;
     }
 

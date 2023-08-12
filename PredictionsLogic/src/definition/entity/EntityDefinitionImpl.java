@@ -1,7 +1,9 @@
 package definition.entity;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import definition.property.api.PropertyDefinition;
 
@@ -9,12 +11,12 @@ public class EntityDefinitionImpl implements EntityDefinition {
 
     private final String name;
     private final int population;
-    private final List<PropertyDefinition> properties;
+    private final Map<String,PropertyDefinition> properties;
 
     public EntityDefinitionImpl(String name, int population) {
         this.name = name;
         this.population = population;
-        properties = new ArrayList<>();
+        properties = new HashMap<>();
     }
 
     @Override
@@ -28,13 +30,13 @@ public class EntityDefinitionImpl implements EntityDefinition {
     }
 
     @Override
-    public List<PropertyDefinition> getProps() {
+    public Map<String,PropertyDefinition> getProps() {
         return properties;
     }
 
     @Override
     public void addPropertyDefinition(PropertyDefinition propertyDefinition) {
-        properties.add(propertyDefinition);
+        properties.put(propertyDefinition.getName(),propertyDefinition);
     }
 
 }

@@ -35,9 +35,10 @@ import rule.RuleImpl;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class Main {
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
 
         // definition phase - happens as part of file read and validity checks
         PropertyDefinition lungCancerProgress = new IntegerPropertyDefinition("lung-cancer-progress", ValueGeneratorFactory.createFixed(0),new Range(0,100));
@@ -154,5 +155,12 @@ public class Main {
         System.out.println(context.getPrimaryEntityInstance().getPropertyByName(agePropertyDefinition.getName()).getValue().toString());
         System.out.println(context.getPrimaryEntityInstance().getPropertyByName(cigaretsPerMonthPropertyDefinition.getName()).getValue().toString());
 
+    }*/
+
+    public static void main(String[] args)
+    {
+        PredictionsManagment predictionsManagment = new PredictionsManagment();
+        predictionsManagment.run();
     }
+
 }

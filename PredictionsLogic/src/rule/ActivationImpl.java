@@ -9,11 +9,28 @@ public class ActivationImpl implements Activation{
 
     public ActivationImpl() {
     }
-
     public ActivationImpl(Integer ticks, Double probability) {
         this.ticks = ticks;
         this.probability = probability;
     }
+
+    public Integer getTicks() {
+        return ticks;
+    }
+
+    public void setTicks(Integer ticks) {
+        this.ticks = ticks;
+    }
+
+    public Double getProbability() {
+        return probability;
+    }
+
+    public void setProbability(Double probability) {
+        this.probability = probability;
+    }
+
+
 
     @Override
     public boolean isActive(int tickNumber)
