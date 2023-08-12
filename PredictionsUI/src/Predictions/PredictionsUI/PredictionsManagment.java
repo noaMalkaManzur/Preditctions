@@ -1,26 +1,23 @@
 package Predictions.PredictionsUI;
 
+import definition.world.api.WorldDefinition;
+import definition.world.impl.WorldImpl;
 import engine.api.*;
 import engine.impl.*;
 import exceptions.BadFileSuffixException;
 
 public class PredictionsManagment
 {
+    WorldDefinition myWorld = new WorldImpl();
     Engine engine = new EngineImpl();
     public void run()
     {
-        String fileName = "C:\\Users\\noamz\\Downloads\\ex1-cigarets.xml";
+        //ToDo: Implement user input method.
+        String fileName = "ex1-cigarets.xml";
         try {
             if (engine.isFileExist(fileName)) {
                 if (engine.isXMLFile(fileName))
-                {
                     engine.loadXmlFiles(fileName);
-
-                } else
-                {
-                    throw new BadFileSuffixException("File Suffix wasn't an XML!");
-                }
-
             }
         }
         catch (Exception ex)

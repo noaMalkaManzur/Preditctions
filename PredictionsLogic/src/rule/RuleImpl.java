@@ -15,7 +15,6 @@ public class RuleImpl implements Rule {
         this.name = name;
         actions = new ArrayList<>();
         this.activation = new ActivationImpl();
-
     }
 
     @Override
