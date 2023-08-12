@@ -244,7 +244,7 @@ public class EngineImpl implements Engine
             MyValGen = new FixedValueGenerator(prop.getPRDValue().getInit());
             isRandomInit = false;
         }
-        return new BooleanPropertyDefinition(prop.getPRDName(), PropertyType.DECIMAL,MyValGen,isRandomInit);
+        return new StringPropertyDefinition(prop.getPRDName(), PropertyType.DECIMAL,MyValGen,isRandomInit);
     }
     public boolean isBoolean(String value) {
         return value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false");
@@ -263,6 +263,7 @@ public class EngineImpl implements Engine
 
     private Rule convertRule(PRDRule rule)
     {
+        //ToDo:See how to implement activation terms
         Rule newRule = new RuleImpl(rule.getName());
         for(PRDAction action : rule.getPRDActions().getPRDAction())
             newRule.addAction(convertActionFromXML(action));
