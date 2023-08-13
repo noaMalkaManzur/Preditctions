@@ -1,11 +1,9 @@
 package definition.entity;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import definition.property.api.PropertyDefinition;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class EntityDefinitionImpl implements EntityDefinition {
 

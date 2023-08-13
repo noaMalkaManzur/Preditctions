@@ -1,7 +1,6 @@
 package action.impl;
 
 import action.api.AbstractAction;
-import action.api.ActionType;
 import definition.entity.EntityDefinition;
 import definition.property.api.PropertyType;
 import execution.context.Context;
@@ -14,8 +13,8 @@ public class IncreaseAction extends AbstractAction {
 
     private final String property;
 
-    public IncreaseAction(ActionType actionType, EntityDefinition entityDefinition, List<Expression> expressionList, String property) {
-        super(actionType, entityDefinition, expressionList);
+    public IncreaseAction(EntityDefinition entityDefinition, List<Expression> expressionList, String property) {
+        super(entityDefinition, expressionList);
         this.property = property;
     }
     @Override

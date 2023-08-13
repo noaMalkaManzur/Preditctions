@@ -1,6 +1,6 @@
 package Defenitions;
 
-import action.api.ActionType;
+import Enums.ActionType;
 
 public class ActionDTO {
     private final ActionType type;

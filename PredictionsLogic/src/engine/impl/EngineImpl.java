@@ -2,7 +2,6 @@ package engine.impl;
 
 import Generated.*;
 import action.api.Action;
-import action.api.ActionType;
 import action.impl.IncreaseAction;
 import definition.entity.EntityDefinition;
 import definition.entity.EntityDefinitionImpl;
@@ -28,7 +27,6 @@ import definition.world.impl.WorldImpl;
 import engine.api.Engine;
 import exceptions.*;
 import expression.api.Expression;
-import expression.impl.EnvironmentFunction;
 import expression.impl.GeneralExpression;
 import expression.impl.RandomFunction;
 import rule.Rule;
@@ -39,7 +37,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -279,7 +276,7 @@ public class EngineImpl implements Engine
         switch (action.getType().toUpperCase())
         {
             case "INCREASE":
-                return new IncreaseAction(ActionType.INCREASE,world.getEntities().get(action.getEntity()),getExpressionBy(action), action.getProperty());
+                return new IncreaseAction(world.getEntities().get(action.getEntity()),getExpressionBy(action), action.getProperty());
         }
         return null;
     }
