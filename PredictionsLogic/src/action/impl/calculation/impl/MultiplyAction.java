@@ -1,6 +1,5 @@
 package action.impl.calculation.impl;
 
-import action.api.ActionType;
 import action.impl.calculation.api.CalculationAction;
 import definition.entity.EntityDefinition;
 import definition.property.api.PropertyType;
@@ -11,8 +10,8 @@ import expression.api.Expression;
 import java.util.List;
 
 public class MultiplyAction extends CalculationAction {
-    public MultiplyAction(ActionType actionType, EntityDefinition entityDefinition, List<Expression> expressionList, String resultProp) {
-        super(actionType, entityDefinition, expressionList, resultProp);
+    public MultiplyAction(EntityDefinition entityDefinition, List<Expression> expressionList, String resultProp) {
+        super(entityDefinition, expressionList, resultProp);
     }
 
     @Override
