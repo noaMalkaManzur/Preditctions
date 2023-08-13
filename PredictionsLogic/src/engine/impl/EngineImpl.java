@@ -69,19 +69,24 @@ public class EngineImpl implements Engine
     public void loadXmlFiles(String fileName)
     {
         try {
-            File file = new File(fileName);
-            JAXBContext jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
-            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            PRDWorld prdWorld = (PRDWorld) jaxbUnmarshaller.unmarshal(file);
-            EnvVariablesManager envManager = new EnvVariableManagerImpl();
-            setEnvVariablesFromXML(envManager,prdWorld.getPRDEvironment().getPRDEnvProperty());
-            world.setEnvVariables(envManager);
-            world.setEntities(getEntitiesFromXML(prdWorld.getPRDEntities()));
-            world.setRules(getRulesFromXML(prdWorld.getPRDRules()));
-            world.setTerminationTerm(getTerminationTermFromXML(prdWorld.getPRDTermination()));
-
-        } catch (JAXBException e) {
-            e.printStackTrace();
+            if(isFileExist(fileName))
+            {
+                if(isXMLFile(fileName))
+                {
+                    File file = new File(fileName);
+                    JAXBContext jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
+                    Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+                    PRDWorld prdWorld = (PRDWorld) jaxbUnmarshaller.unmarshal(file);
+                    EnvVariablesManager envManager = new EnvVariableManagerImpl();
+                    setEnvVariablesFromXML(envManager,prdWorld.getPRDEvironment().getPRDEnvProperty());
+                    world.setEnvVariables(envManager);
+                    world.setEntities(getEntitiesFromXML(prdWorld.getPRDEntities()));
+                    world.setRules(getRulesFromXML(prdWorld.getPRDRules()));
+                    world.setTerminationTerm(getTerminationTermFromXML(prdWorld.getPRDTermination()));
+                }
+            }
+        } catch (JAXBException | FileNotFoundException | BadFileSuffixException e) {
+            throw new RuntimeException(e);
         }
     }
     //region Enviroment

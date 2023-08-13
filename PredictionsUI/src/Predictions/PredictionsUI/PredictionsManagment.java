@@ -15,10 +15,7 @@ public class PredictionsManagment
         //ToDo: Implement user input method.
         String fileName = "ex1-cigarets.xml";
         try {
-            if (engine.isFileExist(fileName)) {
-                if (engine.isXMLFile(fileName))
-                    engine.loadXmlFiles(fileName);
-            }
+            engine.loadXmlFiles(fileName);
         }
         catch (Exception ex)
         {
