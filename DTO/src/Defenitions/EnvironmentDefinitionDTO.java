@@ -4,13 +4,14 @@ import java.util.Map;
 
 public class EnvironmentDefinitionDTO
 {
-    private final Map<String,PropertyDefinitionDTO> envProps;
+    private final Map<String, EnvPropertyDefinitionDTO> envProps;
 
-    public EnvironmentDefinitionDTO(Map<String, PropertyDefinitionDTO> envProps) {
+    public EnvironmentDefinitionDTO(Map<String, EnvPropertyDefinitionDTO> envProps) {
         this.envProps = envProps;
     }
 
-    public Map<String, PropertyDefinitionDTO> getEnvProps() {
+    public Map<String, EnvPropertyDefinitionDTO> getEnvProps() {
         return envProps;
     }
+
 }

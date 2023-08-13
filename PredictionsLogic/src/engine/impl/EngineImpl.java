@@ -28,6 +28,10 @@ import definition.world.impl.TerminationImpl;
 import definition.world.impl.WorldImpl;
 import engine.api.Engine;
 import exceptions.*;
+import execution.context.Context;
+import execution.instance.environment.api.ActiveEnvironment;
+import execution.instance.environment.impl.ActiveEnvironmentImpl;
+import execution.instance.property.PropertyInstanceImpl;
 import expression.api.Expression;
 import expression.impl.GeneralExpression;
 import expression.impl.RandomFunction;
@@ -47,6 +51,10 @@ import java.util.Map;
 public class EngineImpl implements Engine
 {
     private WorldDefinition world = new WorldImpl();
+    private Context context;
+    private ActiveEnvironment activeEnvironment = new ActiveEnvironmentImpl();
+
+    //region Command number 1
     @Override
     public boolean isFileExist(String fileName) throws FileNotFoundException {
         File file = new File(fileName);
@@ -79,9 +87,9 @@ public class EngineImpl implements Engine
                     EnvVariablesManager envManager = new EnvVariableManagerImpl();
                     setEnvVariablesFromXML(envManager,prdWorld.getPRDEvironment().getPRDEnvProperty());
                     world.setEnvVariables(envManager);
-                    world.setEntities(getEntitiesFromXML(prdWorld.getPRDEntities()));
-                    world.setRules(getRulesFromXML(prdWorld.getPRDRules()));
-                    world.setTerminationTerm(getTerminationTermFromXML(prdWorld.getPRDTermination()));
+//                    world.setEntities(getEntitiesFromXML(prdWorld.getPRDEntities()));
+//                    world.setRules(getRulesFromXML(prdWorld.getPRDRules()));
+//                    world.setTerminationTerm(getTerminationTermFromXML(prdWorld.getPRDTermination()));
                 }
             }
         } catch (JAXBException | FileNotFoundException | BadFileSuffixException e) {
@@ -348,19 +356,20 @@ public class EngineImpl implements Engine
             throw new InvalidTerminationTermsException("Simulation Termination terms are invalid Please check them again!");
     }
     //endregion
-
+    //endregion
+    //region Command number 2
     private List<EntityDefinitionDTO> getEntityDTO()
     {
         List<EntityDefinitionDTO> entityDTO = new ArrayList<>();
-        Map<String,PropertyDefinitionDTO> propsDTO = new HashMap<>();
+        Map<String, EntityPropDefinitionDTO> propsDTO = new HashMap<>();
         for(Map.Entry<String,EntityDefinition> entDef : world.getEntities().entrySet())
         {
             String name = entDef.getKey();
             int pop = entDef.getValue().getPopulation();
-            PropertyDefinitionDTO propertyDefinitionDTO;
+            EntityPropDefinitionDTO propertyDefinitionDTO;
             for(Map.Entry<String,PropertyDefinition> propDef : entDef.getValue().getProps().entrySet())
             {
-                propertyDefinitionDTO = new PropertyDefinitionDTO(propDef.getKey(),propDef.getValue().getType(),propDef.getValue().getRandomInit(),propDef.getValue().getRange());
+                propertyDefinitionDTO = new EntityPropDefinitionDTO(propDef.getKey(),propDef.getValue().getType(),propDef.getValue().getRandomInit(),propDef.getValue().getRange());
                 propsDTO.put(propertyDefinitionDTO.getName(),propertyDefinitionDTO);
             }
             entityDTO.add(new EntityDefinitionDTO(name,pop,propsDTO));
@@ -391,6 +400,52 @@ public class EngineImpl implements Engine
         return terminitionDTO;
 
     }
+    //endregion
+    //region Command number 3
+    @Override
+    public EnvironmentDefinitionDTO getEnvDTO()
+    {
+        Map<String, EnvPropertyDefinitionDTO> envVariables = new HashMap<>();
+        for(Map.Entry<String,PropertyDefinition> prop :world.getEnvVariables().getEnvVariables().entrySet())
+        {
+            envVariables.put(prop.getKey(),new EnvPropertyDefinitionDTO(prop.getKey(),
+                    prop.getValue().getType(), prop.getValue().getRange()));
+        }
+        return new EnvironmentDefinitionDTO(envVariables);
+    }
+    //region validation
+    //ToDo:Implement me!
+    @Override
+    public boolean isValidIntegerVar(String userInput, Range range) {
+        return false;
+    }
+
+    @Override
+    public boolean isValidDoubleVar(String userInput, Range range) {
+        return false;
+    }
+
+    @Override
+    public boolean isValidBooleanVar(String userInput) {
+        return false;
+    }
+
+    @Override
+    public boolean isValidStringVar(String userInput) {
+        return false;
+    }
+
+    @Override
+    public void addEnvVarToActiveEnv(Object userValue, String name) {
+        PropertyDefinition myPropDef = world.getEnvVariables().getEnvVariables().get(name);
+        if(userValue != null)
+            activeEnvironment.addPropertyInstance(new PropertyInstanceImpl(myPropDef,userValue));
+        else
+            activeEnvironment.addPropertyInstance(new PropertyInstanceImpl(myPropDef,myPropDef.generateValue()));
+
+    }
+    //endregion
+    //endregion
 
 
 }
