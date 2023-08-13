@@ -1,5 +1,7 @@
 package engine.impl;
 
+import Defenitions.EntityDefinitionDTO;
+import Defenitions.PropertyDefinitionDTO;
 import Generated.*;
 import action.api.Action;
 import action.impl.IncreaseAction;
@@ -346,6 +348,25 @@ public class EngineImpl implements Engine
             throw new InvalidTerminationTermsException("Simulation Termination terms are invalid Please check them again!");
     }
     //endregion
+
+    private List<EntityDefinitionDTO> getEntityDTO()
+    {
+        List<EntityDefinitionDTO> entityDTO = new ArrayList<>();
+        Map<String,PropertyDefinitionDTO> propsDTO = new HashMap<>();
+        for(Map.Entry<String,EntityDefinition> entDef : world.getEntities().entrySet())
+        {
+            String name = entDef.getKey();
+            int pop = entDef.getValue().getPopulation();
+            PropertyDefinitionDTO propertyDefinitionDTO;
+            for(Map.Entry<String,PropertyDefinition> propDef : entDef.getValue().getProps().entrySet())
+            {
+                propertyDefinitionDTO = new PropertyDefinitionDTO(propDef.getKey(),propDef.getValue().getType(),propDef.getValue().getRandomInit(),propDef.getValue().getRange());
+                propsDTO.put(propertyDefinitionDTO.getName(),propertyDefinitionDTO);
+            }
+            entityDTO.add(new EntityDefinitionDTO(name,pop,propsDTO));
+        }
+        return entityDTO;
+    }
 
 
 
