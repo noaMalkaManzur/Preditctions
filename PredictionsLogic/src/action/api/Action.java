@@ -7,7 +7,6 @@ import expression.api.Expression;
 
 public interface Action {
     void invoke(Context context);
-    ActionType getActionType();
     EntityDefinition getContextEntity();
     Object getExpressionVal(Expression expression, Context context);
     boolean verifyNumericPropertyType(PropertyInstance propertyValue);

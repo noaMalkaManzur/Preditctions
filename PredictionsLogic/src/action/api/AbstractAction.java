@@ -9,20 +9,16 @@ import java.util.List;
 
 public abstract class AbstractAction implements Action {
 
-    private final ActionType actionType;
+
     private final EntityDefinition entityDefinition;
     private List<Expression> expressionList;
 
-    protected AbstractAction(ActionType actionType, EntityDefinition entityDefinition, List<Expression> expressionList) {
-        this.actionType = actionType;
+    protected AbstractAction(EntityDefinition entityDefinition, List<Expression> expressionList) {
+
         this.entityDefinition = entityDefinition;
         this.expressionList = expressionList;
     }
 
-    @Override
-    public ActionType getActionType() {
-        return actionType;
-    }
 
     @Override
     public EntityDefinition getContextEntity() {

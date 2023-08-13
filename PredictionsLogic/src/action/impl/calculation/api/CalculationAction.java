@@ -1,7 +1,6 @@
 package action.impl.calculation.api;
 
 import action.api.AbstractAction;
-import action.api.ActionType;
 import definition.entity.EntityDefinition;
 import execution.context.Context;
 import expression.api.Expression;
@@ -12,8 +11,8 @@ public abstract class CalculationAction extends AbstractAction {
 
     protected String resultProp;
 
-    public CalculationAction(ActionType actionType, EntityDefinition entityDefinition, List<Expression> expressionList, String resultProp) {
-        super(actionType, entityDefinition, expressionList);
+    public CalculationAction(EntityDefinition entityDefinition, List<Expression> expressionList, String resultProp) {
+        super(entityDefinition, expressionList);
         this.resultProp = resultProp;
     }
 
