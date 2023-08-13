@@ -1,13 +1,16 @@
 package action.impl;
 
 import action.api.AbstractAction;
+import action.api.ActionType;
 import definition.entity.EntityDefinition;
 import execution.context.Context;
+import expression.api.Expression;
+
+import java.util.List;
 
 public class KillAction extends AbstractAction {
-
-    public KillAction(EntityDefinition entityDefinition) {
-        super(entityDefinition,null);
+    public KillAction(ActionType actionType, EntityDefinition entityDefinition, List<Expression> expressionList) {
+        super(actionType, entityDefinition, null);
     }
 
     @Override

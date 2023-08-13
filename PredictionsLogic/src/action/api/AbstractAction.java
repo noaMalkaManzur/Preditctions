@@ -8,13 +8,12 @@ import expression.api.Expression;
 import java.util.List;
 
 public abstract class AbstractAction implements Action {
-
-
+    private ActionType actionType;
     private final EntityDefinition entityDefinition;
     private List<Expression> expressionList;
 
-    protected AbstractAction(EntityDefinition entityDefinition, List<Expression> expressionList) {
-
+    protected AbstractAction(ActionType actionType, EntityDefinition entityDefinition, List<Expression> expressionList) {
+        this.actionType= actionType;
         this.entityDefinition = entityDefinition;
         this.expressionList = expressionList;
     }

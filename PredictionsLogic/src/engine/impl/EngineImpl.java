@@ -1,9 +1,9 @@
 package engine.impl;
 
-import Defenitions.EntityDefinitionDTO;
-import Defenitions.PropertyDefinitionDTO;
+import Defenitions.*;
 import Generated.*;
 import action.api.Action;
+import action.api.ActionType;
 import action.impl.IncreaseAction;
 import definition.entity.EntityDefinition;
 import definition.entity.EntityDefinitionImpl;
@@ -278,7 +278,7 @@ public class EngineImpl implements Engine
         switch (action.getType().toUpperCase())
         {
             case "INCREASE":
-                return new IncreaseAction(world.getEntities().get(action.getEntity()),getExpressionBy(action), action.getProperty());
+                return new IncreaseAction(ActionType.INCREASE,world.getEntities().get(action.getEntity()),getExpressionBy(action), action.getProperty());
         }
         return null;
     }
@@ -367,7 +367,30 @@ public class EngineImpl implements Engine
         }
         return entityDTO;
     }
+    private List<RulesDTO> getRulesDTO(){
+        List<RulesDTO> rulesDTO = new ArrayList<>();
+        List<ActionDTO> actionDTOS = new ArrayList<>();
+        for(Map.Entry<String, Rule> ruleDTO : world.getRules().entrySet()){
+            String name = ruleDTO.getKey();
+            ActivationDTO activationDTO = new ActivationDTO(ruleDTO.getValue().getActivation().getProbability(), ruleDTO.getValue().getActivation().getTicks());
+            //actionDTOS = new ActionDTO(world.getRules().get(name).);
+        }
 
+
+        return rulesDTO;
+
+
+    }
+    /*
+
+    private final List<ActionDTO> actions;*/
+
+
+    private TerminitionDTO getTerminationDTO(){
+        TerminitionDTO terminitionDTO = new TerminitionDTO(world.getTerminationTerm().getBySeconds(), world.getTerminationTerm().getByTicks());
+        return terminitionDTO;
+
+    }
 
 
 }
