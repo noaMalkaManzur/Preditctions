@@ -10,5 +10,4 @@ public interface EntityDefinition {
     Map<String,PropertyDefinition> getProps();
     void addPropertyDefinition(PropertyDefinition propertyDefinition);
 
-
     }

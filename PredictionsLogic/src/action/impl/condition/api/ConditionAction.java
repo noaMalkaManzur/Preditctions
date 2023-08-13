@@ -2,6 +2,7 @@ package action.impl.condition.api;
 
 import action.api.AbstractAction;
 import action.api.Action;
+import action.api.ActionType;
 import definition.entity.EntityDefinition;
 import execution.context.Context;
 import expression.api.Expression;
@@ -13,11 +14,13 @@ public abstract class ConditionAction extends AbstractAction {
     protected List<Action> actionList;
     protected String propertyName;
 
-    protected ConditionAction(EntityDefinition entityDefinition, List<Expression> expressionList, String propertyName, List<Action> actionList) {
-        super(entityDefinition, expressionList);
+    protected ConditionAction(ActionType actionType, EntityDefinition entityDefinition, List<Expression> expressionList, List<Action> actionList,String propertyName ) {
+        super(actionType, entityDefinition, expressionList);
         this.actionList =actionList;
         this.propertyName = propertyName;
     }
+
+
     public abstract boolean checkCondition(Context context);
 
     @Override

@@ -1,6 +1,7 @@
 package action.impl.condition.impl;
 
 import action.api.Action;
+import action.api.ActionType;
 import action.impl.condition.api.ConditionAction;
 import definition.entity.EntityDefinition;
 import execution.context.Context;
@@ -13,12 +14,13 @@ public class MultipleAction extends ConditionAction {
     String propertyName;
     String logic;
 
-    public MultipleAction(EntityDefinition entityDefinition ,List<Expression> expressionList,String logic,String propertyName, List<Action> actionList,List<ConditionAction> conditionList) {
-        super(entityDefinition, expressionList, propertyName, actionList);
+    protected MultipleAction(ActionType actionType, EntityDefinition entityDefinition, List<Expression> expressionList, List<Action> actionList, String propertyName, String logic, List<ConditionAction> conditionList) {
+        super(actionType, entityDefinition, expressionList, actionList, propertyName);
         this.logic= logic;
         this.propertyName= propertyName;
         this.conditionList = conditionList;
     }
+
 
     @Override
     public boolean checkCondition(Context context) {

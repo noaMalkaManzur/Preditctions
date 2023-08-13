@@ -1,4 +1,4 @@
-package Enums;
+package action.api;
 
 public enum ActionType {
 
@@ -10,6 +10,7 @@ public enum ActionType {
         KILL,
         REPLACE,
         PROXIMITY
+
 
 
 }

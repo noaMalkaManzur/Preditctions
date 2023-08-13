@@ -1,15 +1,15 @@
 package Defenitions;
 
-import Enums.ActionType;
+import Enums.ActionTypeDTO;
 
 public class ActionDTO {
-    private final ActionType type;
+    private final ActionTypeDTO type;
 
-    public ActionDTO(ActionType type) {
+    public ActionDTO(ActionTypeDTO type) {
         this.type = type;
     }
 
-    public ActionType getType() {
+    public ActionTypeDTO getType() {
         return type;
     }
 }
