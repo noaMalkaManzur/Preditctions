@@ -1,7 +1,6 @@
 package action.impl;
 
 import action.api.AbstractAction;
-import action.api.ActionType;
 import definition.entity.EntityDefinition;
 import execution.context.Context;
 import execution.instance.property.PropertyInstance;
@@ -13,8 +12,8 @@ public class SetAction extends AbstractAction
 {
     String property;
 
-    public SetAction(ActionType actionType, EntityDefinition entityDefinition, List<Expression> expressionList, String property) {
-        super(actionType, entityDefinition, expressionList);
+    public SetAction(EntityDefinition entityDefinition, List<Expression> expressionList, String property) {
+        super(entityDefinition, expressionList);
         this.property = property;
     }
 

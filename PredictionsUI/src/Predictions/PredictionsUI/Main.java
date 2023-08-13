@@ -1,41 +1,6 @@
 package Predictions.PredictionsUI;
 
 
-import action.api.Action;
-import action.api.ActionType;
-import action.impl.DecreaseAction;
-import action.impl.IncreaseAction;
-import action.impl.calculation.impl.MultiplyAction;
-import action.impl.condition.api.ConditionAction;
-import action.impl.condition.impl.MultipleAction;
-import action.impl.condition.impl.SingleAction;
-import definition.entity.EntityDefinition;
-import definition.entity.EntityDefinitionImpl;
-import definition.environment.api.EnvVariablesManager;
-import definition.environment.impl.EnvVariableManagerImpl;
-import definition.property.api.PropertyDefinition;
-import definition.property.api.PropertyType;
-import definition.property.api.Range;
-import definition.property.impl.IntegerPropertyDefinition;
-import definition.value.generator.api.ValueGeneratorFactory;
-import execution.context.Context;
-import execution.context.ContextImpl;
-import execution.instance.enitty.EntityInstance;
-import execution.instance.enitty.manager.EntityInstanceManager;
-import execution.instance.enitty.manager.EntityInstanceManagerImpl;
-import execution.instance.environment.api.ActiveEnvironment;
-import execution.instance.property.PropertyInstanceImpl;
-import expression.api.Expression;
-import expression.impl.EnvironmentFunction;
-import expression.impl.GeneralExpression;
-import expression.impl.RandomFunction;
-import rule.Rule;
-import rule.RuleImpl;
-
-import java.util.ArrayList;
-import java.util.List;
-
-
 public class Main {
 
     /*public static void main(String[] args) {
