@@ -1,6 +1,5 @@
 package definition.environment.impl;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,7 +27,7 @@ public class EnvVariableManagerImpl implements EnvVariablesManager {
     }
 
     @Override
-    public Collection<PropertyDefinition> getEnvVariables() {
-        return propNameToPropDefinition.values();
+    public Map<String, PropertyDefinition> getEnvVariables() {
+        return propNameToPropDefinition;
     }
 }

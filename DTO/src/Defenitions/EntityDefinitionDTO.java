@@ -6,9 +6,9 @@ public class EntityDefinitionDTO
 {
     private final String name;
     private final int population;
-    private final Map<String, PropertyDefinitionDTO> propertyDefinition;
+    private final Map<String, EntityPropDefinitionDTO> propertyDefinition;
 
-    public EntityDefinitionDTO(String name, int population, Map<String, PropertyDefinitionDTO> propertyDefinition) {
+    public EntityDefinitionDTO(String name, int population, Map<String, EntityPropDefinitionDTO> propertyDefinition) {
         this.name = name;
         this.population = population;
         this.propertyDefinition = propertyDefinition;
@@ -21,7 +21,7 @@ public class EntityDefinitionDTO
         return population;
     }
 
-    public Map<String, PropertyDefinitionDTO> getPropertyDefinition() {
+    public Map<String, EntityPropDefinitionDTO> getPropertyDefinition() {
         return propertyDefinition;
     }
 }
