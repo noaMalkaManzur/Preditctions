@@ -1,19 +1,20 @@
 package expression.impl;
 
-import execution.instance.environment.api.ActiveEnvironment;
+import execution.context.Context;
 import expression.api.eExpression;
-import expression.impl.FunctionExpression;
 
 public class EnvironmentFunction extends FunctionExpression {
-    private ActiveEnvironment activeEnvironment;
-    public EnvironmentFunction(String arg, ActiveEnvironment activeEnvironment) {
+
+    public EnvironmentFunction(String arg) {
         super(arg, eExpression.FUNCTION);
-        this.activeEnvironment = activeEnvironment;
+
     }
+
 
     @Override
-    public Object calculateExpression() {
-        return activeEnvironment.getProperty(arg).getValue();
-
+    public Object calculateExpression(Context context) {
+        return context.getEnvironmentVariable(arg).getValue();
     }
+
+
 }

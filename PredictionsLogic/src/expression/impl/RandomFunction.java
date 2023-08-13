@@ -1,7 +1,7 @@
 package expression.impl;
 
+import execution.context.Context;
 import expression.api.eExpression;
-import expression.impl.FunctionExpression;
 
 import java.util.Random;
 
@@ -12,7 +12,7 @@ public class RandomFunction extends FunctionExpression {
         super(arg, eExpression.FUNCTION);
     }
     @Override
-    public Object calculateExpression() {
+    public Object calculateExpression(Context context) {
         try {
             int max = Integer.parseInt(arg);
             if (max < 0) {
@@ -27,4 +27,6 @@ public class RandomFunction extends FunctionExpression {
         Random random = new Random();
         return random.nextInt(range+1);
     }
+
+
 }

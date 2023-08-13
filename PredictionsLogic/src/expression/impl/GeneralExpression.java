@@ -1,6 +1,7 @@
 package expression.impl;
 
 import definition.property.api.PropertyType;
+import execution.context.Context;
 import expression.api.eExpression;
 
 public class GeneralExpression extends FunctionExpression {
@@ -13,7 +14,7 @@ public class GeneralExpression extends FunctionExpression {
     }
 
     @Override
-    public Object calculateExpression() {
+    public Object calculateExpression(Context context) {
         switch (propertyType) {
             case DECIMAL:
                 return Integer.parseInt(arg);
@@ -27,4 +28,5 @@ public class GeneralExpression extends FunctionExpression {
                 return null;
         }
     }
+
 }

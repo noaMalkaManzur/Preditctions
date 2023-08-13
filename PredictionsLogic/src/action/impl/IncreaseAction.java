@@ -31,13 +31,13 @@ public class IncreaseAction extends AbstractAction {
         if(PropertyType.DECIMAL.equals(propertyInstance.getPropertyDefinition().getType()))
         {
             propVal = PropertyType.DECIMAL.convert(propertyInstance.getValue());
-            expressionVal = PropertyType.DECIMAL.convert(getExpressionVal(getExpressionList().get(0)));
+            expressionVal = PropertyType.DECIMAL.convert(getExpressionVal(getExpressionList().get(0), context));
             updatedVal = (Integer)propVal+(Integer)expressionVal;
         }
         else
         {
             propVal = PropertyType.FLOAT.convert(propertyInstance.getValue());
-            expressionVal = PropertyType.FLOAT.convert(getExpressionVal(getExpressionList().get(0)));
+            expressionVal = PropertyType.FLOAT.convert(getExpressionVal(getExpressionList().get(0), context));
             updatedVal = (Double)propVal+(Double)expressionVal;
         }
         if(propertyInstance.getPropertyDefinition().getRange() != null)

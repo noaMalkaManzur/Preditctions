@@ -21,7 +21,6 @@ public class MultipleAction extends ConditionAction {
         this.conditionList = conditionList;
     }
 
-
     @Override
     public boolean checkCondition(Context context) {
         boolean result;
