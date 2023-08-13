@@ -21,8 +21,8 @@ public class DivideAction extends CalculationAction {
         if (!verifyNumericPropertyType(propertyInstance)) {
             throw new IllegalArgumentException("increase action can't operate on a none number property [" + resultProp + "]");
         }
-        Object expVal1 = getExpressionVal(getExpressionList().get(0));
-        Object expVal2 = getExpressionVal(getExpressionList().get(1));
+        Object expVal1 = getExpressionVal(getExpressionList().get(0), context);
+        Object expVal2 = getExpressionVal(getExpressionList().get(1), context);
         if(((Number)expVal2).doubleValue() == 0)
             throw new IllegalArgumentException("Argument 2 was equal to 0, cant perform calculation-divide by 0!");
         Number divRes;

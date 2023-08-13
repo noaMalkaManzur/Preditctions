@@ -21,8 +21,8 @@ public class MultiplyAction extends CalculationAction {
         if (!verifyNumericPropertyType(propertyInstance)) {
             throw new IllegalArgumentException("increase action can't operate on a none number property [" + resultProp + "]");
         }
-        Object expVal1 = getExpressionVal(getExpressionList().get(0));
-        Object expVal2 = getExpressionVal(getExpressionList().get(1));
+        Object expVal1 = getExpressionVal(getExpressionList().get(0), context);
+        Object expVal2 = getExpressionVal(getExpressionList().get(1), context);
         Number mulRes;
         if (expVal1 instanceof Double || expVal2 instanceof Double) {
             Double val1 = PropertyType.FLOAT.convert(expVal1);

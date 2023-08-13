@@ -1,5 +1,7 @@
 package expression.api;
 
+import execution.context.Context;
+
 public interface Expression {
-    Object calculateExpression();
+    Object calculateExpression(Context context);
 }

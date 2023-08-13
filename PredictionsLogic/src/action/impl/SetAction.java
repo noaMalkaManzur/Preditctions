@@ -24,7 +24,7 @@ public class SetAction extends AbstractAction
         if (!verifyNumericPropertyType(propertyInstance)) {
             throw new IllegalArgumentException("increase action can't operate on a none number property [" + property + "]");
         }
-        Object expVal = getExpressionVal(getExpressionList().get(0));
+        Object expVal = getExpressionVal(getExpressionList().get(0), context);
         if(expVal instanceof Double || expVal instanceof Integer)
         {
             Number numVal = (Number)expVal;
