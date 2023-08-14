@@ -1,5 +1,6 @@
 package action.api;
 
+import Enums.ActionTypeDTO;
 import definition.entity.EntityDefinition;
 import definition.property.api.PropertyType;
 import execution.context.Context;
@@ -9,11 +10,11 @@ import expression.api.Expression;
 import java.util.List;
 
 public abstract class AbstractAction implements Action {
-    private ActionType actionType;
+    private ActionTypeDTO actionType;
     private final EntityDefinition entityDefinition;
     private List<Expression> expressionList;
 
-    protected AbstractAction(ActionType actionType, EntityDefinition entityDefinition, List<Expression> expressionList) {
+    protected AbstractAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList) {
         this.actionType= actionType;
         this.entityDefinition = entityDefinition;
         this.expressionList = expressionList;
@@ -36,5 +37,5 @@ public abstract class AbstractAction implements Action {
     public List<Expression> getExpressionList() {
         return expressionList;
     }
-    public ActionType getActionType(){return actionType;}
+    public ActionTypeDTO getActionType(){return actionType;}
 }

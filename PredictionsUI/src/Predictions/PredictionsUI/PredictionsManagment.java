@@ -1,13 +1,12 @@
 package Predictions.PredictionsUI;
 
-import Defenitions.EnvPropertyDefinitionDTO;
-import Defenitions.EnvironmentDefinitionDTO;
+import Defenitions.*;
 import definition.property.api.PropertyType;
 import definition.world.api.WorldDefinition;
 import definition.world.impl.WorldImpl;
-import engine.api.*;
-import engine.impl.*;
-import exceptions.BadFileSuffixException;
+import engine.api.Engine;
+import engine.impl.EngineImpl;
+import simulationInfo.SimulationInfoDTO;
 
 import java.util.Scanner;
 
@@ -34,6 +33,8 @@ public class PredictionsManagment
                     getUserEnvValues(myEnvDef);
                     break;
                 case 2:
+                    SimulationInfoDTO simulationInfoDTO = new SimulationInfoDTO(engine.getEntityDTO(),engine.getRulesDTO(),engine.getTerminationDTO());
+                    printSimulation(simulationInfoDTO);
                     break;
                 case 3:
                     //EnvironmentDefinitionDTO myEnvDef =  engine.getEnvDTO();
@@ -46,6 +47,8 @@ public class PredictionsManagment
             System.out.println(ex.getMessage());
         }
     }
+
+
 
     private void getUserEnvValues(EnvironmentDefinitionDTO myEnvDef) {
         myEnvDef.getEnvProps().values().forEach(envDef -> {
@@ -100,5 +103,65 @@ public class PredictionsManagment
                 .append("4. Show past simulations.").append(System.lineSeparator())
                 .append("5. Exit.").append(System.lineSeparator());
         System.out.println(menu);
+    }
+
+    private void printSimulation(SimulationInfoDTO simulationInfoDTO) {
+        StringBuilder simulationInfo = new StringBuilder();
+        gettingEntitiesInfo(simulationInfoDTO, simulationInfo);
+        gettingRulesInfo(simulationInfoDTO, simulationInfo);
+        gettingTerminationInfo(simulationInfoDTO, simulationInfo);
+
+        System.out.println(simulationInfo);
+
+
+    }
+
+    private void gettingTerminationInfo(SimulationInfoDTO simulationInfoDTO, StringBuilder simulationInfo) {
+
+        simulationInfo.append("The first term of use is by seconds: ").append(simulationInfoDTO.getTerms().getBySeconds()).append("\n");
+        simulationInfo.append("The second term of use is by ticks: ").append(simulationInfoDTO.getTerms().getByTicks()).append("\n");
+
+    }
+
+    private void gettingRulesInfo(SimulationInfoDTO simulationInfoDTO, StringBuilder simulationInfo) {
+        for(RulesDTO ruleDTO:simulationInfoDTO.getRules().values()){
+            simulationInfo.append("Rules:").append("\n");
+            simulationInfo.append("Rule name:").append(ruleDTO.getName()).append("\n");
+            simulationInfo.append("Is applied by ticks: ").
+                    append(ruleDTO.getActivation().getTicks()).append("and by: ").
+                    append(ruleDTO.getActivation().getProbabilty()).append("\n");
+            simulationInfo.append("Amount of action: ").append(ruleDTO.getActions().size()).append("\n");
+            for(ActionDTO actionDTO: ruleDTO.getActions()){
+                simulationInfo.append("Action type names:").append(actionDTO.getType());
+            }
+        }
+    }
+
+    void gettingEntitiesInfo(SimulationInfoDTO simulationInfoDTO,StringBuilder simulationInfo ) {
+        for (EntityDefinitionDTO entityDefDTO : simulationInfoDTO.getEntities().values()) {
+            simulationInfo.append("Entity name: ").append(entityDefDTO.getName()).append("\n");
+            simulationInfo.append("Population: ").append(entityDefDTO.getPopulation()).append("\n");
+            simulationInfo.append("Properties: ").append("\n");
+
+            for (EntityPropDefinitionDTO propertyDefDTO : entityDefDTO.getPropertyDefinition().values()) {
+                simulationInfo.append("Property name: ").append(propertyDefDTO.getName()).append("\n");
+                simulationInfo.append("Property type: ").append(propertyDefDTO.getType()).append("\n");
+
+
+                if (propertyDefDTO.getRange() != null) {
+                    simulationInfo.append("Property range from: ")
+                            .append(propertyDefDTO.getRange().getRangeFrom())
+                            .append(" to: ")
+                            .append(propertyDefDTO.getRange().getRangeTo())
+                            .append("\n");
+                }
+                if (propertyDefDTO.isRandomInit()) {
+                    simulationInfo.append("Property is initialized randomly\n");
+                } else {
+                    simulationInfo.append("Property is not initialized randomly\n");
+                }
+
+            }
+        }
     }
 }

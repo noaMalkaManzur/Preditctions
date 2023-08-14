@@ -1,7 +1,7 @@
 package action.impl;
 
+import Enums.ActionTypeDTO;
 import action.api.AbstractAction;
-import action.api.ActionType;
 import definition.entity.EntityDefinition;
 import execution.context.Context;
 import expression.api.Expression;
@@ -9,7 +9,7 @@ import expression.api.Expression;
 import java.util.List;
 
 public class KillAction extends AbstractAction {
-    public KillAction(ActionType actionType, EntityDefinition entityDefinition, List<Expression> expressionList) {
+    public KillAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList) {
         super(actionType.KILL, entityDefinition, null);
     }
 
