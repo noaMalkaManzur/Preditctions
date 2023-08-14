@@ -50,7 +50,7 @@ public class PredictionsManagment
     private void getUserEnvValues(EnvironmentDefinitionDTO myEnvDef) {
         myEnvDef.getEnvProps().values().forEach(envDef -> {
             System.out.println("Please insert Environment variable value:");
-            Object userValue;
+            Object userValue = null;
             boolean isValidInput = false;
             while(!isValidInput) {
                 String userInput = scanner.nextLine();
@@ -60,18 +60,18 @@ public class PredictionsManagment
                         case DECIMAL: {
                             isValidInput = engine.isValidIntegerVar(userInput, envDef.getRange());
                             if(isValidInput) {
-                                userValue = PropertyType.DECIMAL.convert(userInput);
+                                userValue = PropertyType.DECIMAL.parse(userInput);
                             }
                         }
                         case FLOAT:
                             isValidInput = engine.isValidDoubleVar(userInput, envDef.getRange());
                             if(isValidInput) {
-                                userValue = PropertyType.FLOAT.convert(userInput);
+                                userValue = PropertyType.FLOAT.parse(userInput);
                             }
                         case BOOLEAN:
                             isValidInput = engine.isValidBooleanVar(userInput);
                             if(isValidInput) {
-                                userValue = PropertyType.BOOLEAN.convert(userInput);
+                                userValue = PropertyType.BOOLEAN.parse(userInput);
                             }
                         case STRING:
                             isValidInput = engine.isValidStringVar(userInput);
@@ -81,12 +81,11 @@ public class PredictionsManagment
                         default:
                             userValue = null;
                     }
-                    engine.addEnvVarToActiveEnv(userValue,envDef.getName());
-
                 }
-                else {
+                engine.addEnvVarToActiveEnv(userValue,envDef.getName());
+                isValidInput = true;
 
-                }
+
             }
         });
     }

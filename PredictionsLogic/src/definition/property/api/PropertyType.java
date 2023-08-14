@@ -1,5 +1,7 @@
 package definition.property.api;
 
+import exceptions.InvalidInputException;
+
 public enum PropertyType {
     DECIMAL {
 
@@ -9,6 +11,16 @@ public enum PropertyType {
             }
             return (Integer) value;
         }
+        public Integer parse(String value)
+        {
+            try {
+                return Integer.parseInt(value);
+            }
+            catch (NumberFormatException ex)
+            {
+                throw new InvalidInputException("Input value " + value + " is not of a DECIMAL type (expected Integer class)");
+            }
+        }
     }, BOOLEAN {
 
         public Boolean convert(Object value) {
@@ -16,6 +28,16 @@ public enum PropertyType {
                 throw new IllegalArgumentException("value " + value + " is not of a BOOLEAN type (expected Boolean class)");
             }
             return (Boolean) value;
+        }
+        public Boolean parse(String value)
+        {
+            try {
+                return Boolean.parseBoolean(value);
+            }
+            catch (NumberFormatException ex)
+            {
+                throw new InvalidInputException("Input value " + value + " is not of a BOOLEAN type (expected Boolean class)");
+            }
         }
     }, FLOAT {
 
@@ -25,6 +47,16 @@ public enum PropertyType {
             }
             return (Double) value;
         }
+        public Double parse(String value)
+        {
+            try {
+                return Double.parseDouble(value);
+            }
+            catch (NumberFormatException ex)
+            {
+                throw new InvalidInputException("Input value " + value + " is not of a FLOAT type (expected Double class)");
+            }
+        }
     }, STRING {
 
         public String convert(Object value) {
@@ -33,7 +65,13 @@ public enum PropertyType {
             }
             return (String) value;
         }
+        public String parse(String value)
+        {
+            return value;
+        }
     };
 
     public abstract <T> T convert(Object value);
+    public abstract <T> T parse(String value);
+
 }
