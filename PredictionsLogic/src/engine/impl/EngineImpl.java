@@ -378,14 +378,15 @@ public class EngineImpl implements Engine
     }
     private List<RulesDTO> getRulesDTO(){
         List<RulesDTO> rulesDTO = new ArrayList<>();
-        List<ActionDTO> actionDTOS = new ArrayList<>();
+        List<ActionDTO> actionsDTOS = new ArrayList<>();
         for(Map.Entry<String, Rule> ruleDTO : world.getRules().entrySet()){
             String name = ruleDTO.getKey();
             ActivationDTO activationDTO = new ActivationDTO(ruleDTO.getValue().getActivation().getProbability(), ruleDTO.getValue().getActivation().getTicks());
-            //actionDTOS = new ActionDTO(world.getRules().get(name).);
+          for(Action action: ruleDTO.getValue().getActionsToPerform()){
+              //actionsDTOS.add(action.getActionType().toString());
+            }
+
         }
-
-
         return rulesDTO;
 
 

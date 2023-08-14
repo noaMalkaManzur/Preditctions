@@ -5,6 +5,7 @@ import definition.property.api.PropertyType;
 import execution.context.Context;
 import execution.instance.property.PropertyInstance;
 import expression.api.Expression;
+
 import java.util.List;
 
 public abstract class AbstractAction implements Action {
@@ -35,4 +36,5 @@ public abstract class AbstractAction implements Action {
     public List<Expression> getExpressionList() {
         return expressionList;
     }
+    public ActionType getActionType(){return actionType;}
 }

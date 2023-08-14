@@ -15,7 +15,7 @@ public class IncreaseAction extends AbstractAction {
     private final String property;
 
     public IncreaseAction(ActionType actionType, EntityDefinition entityDefinition, List<Expression> expressionList, String property) {
-        super(actionType, entityDefinition, expressionList);
+        super(actionType.INCREASE, entityDefinition, expressionList);
         this.property = property;
     }
 

@@ -14,7 +14,7 @@ public class DecreaseAction extends AbstractAction {
     private final String property;
 
     protected DecreaseAction(ActionType actionType, EntityDefinition entityDefinition, List<Expression> expressionList, String property) {
-        super(actionType, entityDefinition, expressionList);
+        super(actionType.DECREASE, entityDefinition, expressionList);
         this.property = property;
     }
 

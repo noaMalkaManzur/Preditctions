@@ -10,5 +10,6 @@ public interface Action {
     EntityDefinition getContextEntity();
     Object getExpressionVal(Expression expression, Context context);
     boolean verifyNumericPropertyType(PropertyInstance propertyValue);
+     ActionType getActionType();
 
 }

@@ -13,7 +13,7 @@ public abstract class CalculationAction extends AbstractAction {
     protected String resultProp;
 
     protected CalculationAction(ActionType actionType, EntityDefinition entityDefinition, List<Expression> expressionList, String resultProp) {
-        super(actionType, entityDefinition, expressionList);
+        super(actionType.CALCULATION, entityDefinition, expressionList);
         this.resultProp =  resultProp;
     }
 

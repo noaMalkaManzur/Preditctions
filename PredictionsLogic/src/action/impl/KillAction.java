@@ -10,7 +10,7 @@ import java.util.List;
 
 public class KillAction extends AbstractAction {
     public KillAction(ActionType actionType, EntityDefinition entityDefinition, List<Expression> expressionList) {
-        super(actionType, entityDefinition, null);
+        super(actionType.KILL, entityDefinition, null);
     }
 
     @Override
