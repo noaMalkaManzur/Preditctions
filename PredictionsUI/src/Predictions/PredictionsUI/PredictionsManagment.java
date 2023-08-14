@@ -33,6 +33,8 @@ public class PredictionsManagment
                     getUserEnvValues(myEnvDef);
                     break;
                 case 2:
+                    //ToDo:Change this function.
+                    //SimulationInfoDTO simulationInfoDTO = engine.getSimulationDetails();
                     SimulationInfoDTO simulationInfoDTO = new SimulationInfoDTO(engine.getEntityDTO(),engine.getRulesDTO(),engine.getTerminationDTO());
                     printSimulation(simulationInfoDTO);
                     break;
