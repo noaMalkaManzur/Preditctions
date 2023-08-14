@@ -317,8 +317,6 @@ public class EngineImpl implements Engine {
         return conditionActionList;
     }
 
-
-
     private Action SingleConditionCal(PRDAction action){
         List<Action> actionListSingle = createActionListSingleCondition(action);
         String propName= action.getPRDCondition().getProperty();
@@ -375,8 +373,22 @@ public class EngineImpl implements Engine {
                 throw new InvalidByArgument("we do not support this kind of argument expression!");
             }
         }
+        //ToDo:Check if need getPRDCondition().getProperty or any other way to get the correct property to work on
         else if(action.getPRDCondition().getValue() != null)
         {
+            if (action.getPRDCondition().getValue().contains("environment")) {
+                handleEnvironmentFunction(action, myExpression);
+            } else if (action.getPRDCondition().getValue().contains("random")) {
+                handleRandomFunction(action,myExpression);
+            } else if (isNumeric(action.getBy())) {
+                myExpression.add(new GeneralExpression(action.getPRDCondition().getValue(), world.getEntities().get(action.getEntity()).getProps().get(action.getProperty()).getType()));
+            } else if (world.getEntities().values().contains(action.getBy())) {
+                myExpression.add(new PropertyExpression(action.getBy()));
+            }
+            else
+            {
+                throw new InvalidByArgument("we do not support this kind of argument expression!");
+            }
 
         }
         else if((action.getPRDMultiply().getArg1() != null) && (action.getPRDMultiply().getArg2() != null))
