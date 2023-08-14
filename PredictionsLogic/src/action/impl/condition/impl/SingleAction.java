@@ -1,7 +1,7 @@
 package action.impl.condition.impl;
 
+import Enums.ActionTypeDTO;
 import action.api.Action;
-import action.api.ActionType;
 import action.impl.condition.api.ConditionAction;
 import definition.entity.EntityDefinition;
 import execution.context.Context;
@@ -13,7 +13,7 @@ public class SingleAction extends ConditionAction {
 
     String operator;
 
-    protected SingleAction(ActionType actionType, EntityDefinition entityDefinition, List<Expression> expressionList, List<Action> actionList, String propertyName,String operator ) {
+    public SingleAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList, List<Action> actionList, String propertyName, String operator) {
         super(actionType, entityDefinition, expressionList, actionList, propertyName);
         this.operator =operator;
     }

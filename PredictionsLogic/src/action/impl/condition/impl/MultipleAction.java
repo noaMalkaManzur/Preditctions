@@ -1,7 +1,7 @@
 package action.impl.condition.impl;
 
+import Enums.ActionTypeDTO;
 import action.api.Action;
-import action.api.ActionType;
 import action.impl.condition.api.ConditionAction;
 import definition.entity.EntityDefinition;
 import execution.context.Context;
@@ -14,7 +14,7 @@ public class MultipleAction extends ConditionAction {
     String propertyName;
     String logic;
 
-    protected MultipleAction(ActionType actionType, EntityDefinition entityDefinition, List<Expression> expressionList, List<Action> actionList, String propertyName, String logic, List<ConditionAction> conditionList) {
+    public MultipleAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList, List<Action> actionList, String propertyName, String logic, List<ConditionAction> conditionList) {
         super(actionType, entityDefinition, expressionList, actionList, propertyName);
         this.logic= logic;
         this.propertyName= propertyName;

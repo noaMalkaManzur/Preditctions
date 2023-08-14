@@ -1,10 +1,14 @@
 package engine.api;
 
+import Defenitions.EntityDefinitionDTO;
 import Defenitions.EnvironmentDefinitionDTO;
+import Defenitions.RulesDTO;
+import Defenitions.TerminitionDTO;
 import definition.property.api.Range;
 import exceptions.BadFileSuffixException;
 
 import java.io.FileNotFoundException;
+import java.util.Map;
 
 public interface Engine
 {
@@ -13,7 +17,6 @@ public interface Engine
     void loadXmlFiles(String fileName);
 
     EnvironmentDefinitionDTO getEnvDTO();
-
 
     boolean isValidIntegerVar(String userInput, Range range);
 
@@ -24,4 +27,7 @@ public interface Engine
     boolean isValidStringVar(String userInput);
 
     void addEnvVarToActiveEnv(Object userValue, String name);
+    public  Map<String, RulesDTO> getRulesDTO();
+    public TerminitionDTO getTerminationDTO();
+    public Map<String, EntityDefinitionDTO> getEntityDTO();
 }

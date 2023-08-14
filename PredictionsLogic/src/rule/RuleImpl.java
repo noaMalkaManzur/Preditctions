@@ -1,15 +1,17 @@
 package rule;
 
+import action.api.Action;
+import action.api.ActionType;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import action.api.Action;
 
 public class RuleImpl implements Rule {
 
     private final String name;
     private Activation activation;
     private final List<Action> actions;
+    private ActionType actionType;
 
     public RuleImpl(String name) {
         this.name = name;
@@ -36,4 +38,5 @@ public class RuleImpl implements Rule {
     public void addAction(Action action) {
         actions.add(action);
     }
+
 }

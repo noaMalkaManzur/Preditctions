@@ -1,7 +1,7 @@
 package action.impl;
 
+import Enums.ActionTypeDTO;
 import action.api.AbstractAction;
-import action.api.ActionType;
 import definition.entity.EntityDefinition;
 import execution.context.Context;
 import execution.instance.property.PropertyInstance;
@@ -13,8 +13,8 @@ public class SetAction extends AbstractAction
 {
     String property;
 
-    protected SetAction(ActionType actionType, EntityDefinition entityDefinition, List<Expression> expressionList, String property) {
-        super(actionType, entityDefinition, expressionList);
+    protected SetAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList, String property) {
+        super(actionType.SET, entityDefinition, expressionList);
         this.property = property;
     }
 

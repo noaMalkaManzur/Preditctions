@@ -1,7 +1,7 @@
 package action.impl;
 
+import Enums.ActionTypeDTO;
 import action.api.AbstractAction;
-import action.api.ActionType;
 import definition.entity.EntityDefinition;
 import definition.property.api.PropertyType;
 import execution.context.Context;
@@ -13,8 +13,8 @@ import java.util.List;
 public class DecreaseAction extends AbstractAction {
     private final String property;
 
-    protected DecreaseAction(ActionType actionType, EntityDefinition entityDefinition, List<Expression> expressionList, String property) {
-        super(actionType, entityDefinition, expressionList);
+    public DecreaseAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList, String property) {
+        super(actionType.DECREASE, entityDefinition, expressionList);
         this.property = property;
     }
 
