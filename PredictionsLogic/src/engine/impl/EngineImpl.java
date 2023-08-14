@@ -41,6 +41,7 @@ import execution.instance.property.PropertyInstanceImpl;
 import expression.api.Expression;
 import expression.impl.EnvironmentFunction;
 import expression.impl.GeneralExpression;
+import expression.impl.PropertyExpression;
 import expression.impl.RandomFunction;
 import rule.Rule;
 import rule.RuleImpl;
@@ -92,7 +93,7 @@ public class EngineImpl implements Engine {
                     world.setEnvVariables(envManager);
                     world.setEntities(getEntitiesFromXML(prdWorld.getPRDEntities()));
                     world.setRules(getRulesFromXML(prdWorld.getPRDRules()));
-//                    world.setTerminationTerm(getTerminationTermFromXML(prdWorld.getPRDTermination()));
+                    world.setTerminationTerm(getTerminationTermFromXML(prdWorld.getPRDTermination()));
                 }
             }
         } catch (JAXBException | FileNotFoundException | BadFileSuffixException e) {
@@ -296,20 +297,20 @@ public class EngineImpl implements Engine {
     }
 
     private Action MultipleCondition(PRDAction action) {
-        List<Action> actionList = createActionListSingleCondition(action);
-        List<ConditionAction> conditionActionList = createConditionList(action, actionList);
+
+        List<ConditionAction> conditionActionList = createConditionList(action);
         String logic = action.getPRDCondition().getLogical();
         String propName = action.getPRDCondition().getProperty();
-        return new MultipleAction(ActionTypeDTO.CONDITION, world.getEntities().get(action.getEntity()), getExpressionBy(action), actionList, propName, logic, conditionActionList);
+        return new MultipleAction(ActionTypeDTO.CONDITION, world.getEntities().get(action.getEntity()), getExpressionBy(action), null, propName, logic, conditionActionList);
     }
 
-    private List<ConditionAction> createConditionList(PRDAction action, List<Action> actionList) {
+    private List<ConditionAction> createConditionList(PRDAction action) {
         List<ConditionAction> conditionActionList = new ArrayList<>();
         for (PRDCondition prdCondition : action.getPRDCondition().getPRDCondition()) {
             if (prdCondition.getSingularity().equals("single")) {
-                conditionActionList.add(new SingleAction(ActionTypeDTO.CONDITION, world.getEntities().get(action.getEntity()), getExpressionBy(action), actionList, action.getProperty(), prdCondition.getOperator()));
+                conditionActionList.add(new SingleAction(ActionTypeDTO.CONDITION, world.getEntities().get(action.getEntity()), getExpressionBy(action), null, prdCondition.getProperty(), prdCondition.getOperator()));
             } else if (prdCondition.getSingularity().equals("multi")) {
-                conditionActionList.add(new MultipleAction(ActionTypeDTO.CONDITION, world.getEntities().get(action.getEntity()), getExpressionBy(action), actionList, action.getProperty(), prdCondition.getLogical(), conditionActionList));
+                conditionActionList.add(new MultipleAction(ActionTypeDTO.CONDITION, world.getEntities().get(action.getEntity()), getExpressionBy(action), null, action.getProperty(), prdCondition.getLogical(), conditionActionList));
 
             }
         }
@@ -335,7 +336,7 @@ public class EngineImpl implements Engine {
         else{
             throw new IllegalArgumentException("Argument THEN was null");
         }
-        if(action.getPRDElse().getPRDAction()!= null) {
+        if(action.getPRDElse() != null) {
             for (PRDAction indexAction : action.getPRDElse().getPRDAction()) {
                 actionListSingle.add(convertActionFromXML(indexAction));
             }
@@ -355,7 +356,8 @@ public class EngineImpl implements Engine {
          throw new IllegalArgumentException("Input doesn't match the expected format");
     }
 
-
+    //ToDo:Make function generic for all types of parameters.
+    //ToDo:Add PropertyExpression
     private List<Expression> getExpressionBy(PRDAction action) {
         List<Expression> myExpression = new ArrayList<>();
         if (action.getBy() != null) {
@@ -365,7 +367,25 @@ public class EngineImpl implements Engine {
                 handleRandomFunction(action,myExpression);
             } else if (isNumeric(action.getBy())) {
                 myExpression.add(new GeneralExpression(action.getBy(), world.getEntities().get(action.getEntity()).getProps().get(action.getProperty()).getType()));
+            } else if (world.getEntities().values().contains(action.getBy())) {
+                myExpression.add(new PropertyExpression(action.getBy()));
             }
+            else
+            {
+                throw new InvalidByArgument("we do not support this kind of argument expression!");
+            }
+        }
+        else if(action.getPRDCondition().getValue() != null)
+        {
+
+        }
+        else if((action.getPRDMultiply().getArg1() != null) && (action.getPRDMultiply().getArg2() != null))
+        {
+
+        }
+        else if((action.getPRDDivide().getArg1() != null) && (action.getPRDDivide().getArg2() != null))
+        {
+
         }
         return myExpression;
     }
@@ -456,7 +476,6 @@ public class EngineImpl implements Engine {
         }
         return entityDTO;
     }
-    //todo: ask aviad about return actiontypeDTO instead of actionType
     public  Map<String, RulesDTO> getRulesDTO(){
         Map<String, RulesDTO> rulesDTO = new HashMap<>();
         List<ActionDTO> actionsDTOS = new ArrayList<>();

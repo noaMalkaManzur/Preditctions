@@ -10,7 +10,6 @@ import java.util.Map;
 public class SimulationInfoDTO {
     private final Map<String, EntityDefinitionDTO> entities;
     private final Map<String, RulesDTO> rules;
-
     private final TerminitionDTO terms;
 
     public SimulationInfoDTO(Map<String, EntityDefinitionDTO> entities, Map<String, RulesDTO> rules, TerminitionDTO terms) {
