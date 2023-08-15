@@ -272,15 +272,15 @@ public class EngineImpl implements Engine {
     private Action convertActionFromXML(PRDAction action) {
         switch (action.getType().toUpperCase()) {
             case "INCREASE":
-                return new IncreaseAction(ActionTypeDTO.INCREASE, world.getEntities().get(action.getEntity()), getExpression(action, action.getBy()), action.getProperty());
+                return new IncreaseAction(ActionTypeDTO.INCREASE, world.getEntities().get(action.getEntity()), getExpression(action.getEntity(), action.getProperty(), action.getBy()), action.getProperty());
             case "DECREASE":
-                return new DecreaseAction(ActionTypeDTO.DECREASE, world.getEntities().get(action.getEntity()), getExpression(action, action.getBy()), action.getProperty());
+                return new DecreaseAction(ActionTypeDTO.DECREASE, world.getEntities().get(action.getEntity()), getExpression(action.getEntity(), action.getProperty(), action.getBy()), action.getProperty());
             case "CALCULATION":
                 return calculateAccordingToMultiOrDivide(action);
             case "CONDITION":
                 return ConditionActionBySingleOrByMulti(action);
             case "SET":
-                return new SetAction(ActionTypeDTO.SET,world.getEntities().get(action.getEntity()) , getExpression(action, action.getValue()) , action.getProperty());
+                return new SetAction(ActionTypeDTO.SET,world.getEntities().get(action.getEntity()) , getExpression(action.getEntity(), action.getProperty(), action.getValue()) , action.getProperty());
             case "KILL":
                 return new KillAction(ActionTypeDTO.KILL,world.getEntities().get(action.getEntity()), null);
 
@@ -308,7 +308,7 @@ public class EngineImpl implements Engine {
         List<ConditionAction> conditionActionList = createConditionList(action);
         String logic = action.getPRDCondition().getLogical();
         String propName = action.getPRDCondition().getProperty();
-        return new MultipleAction(ActionTypeDTO.CONDITION, world.getEntities().get(action.getEntity()), getExpression(action, action.getValue()), null, propName, logic, conditionActionList);
+        return new MultipleAction(ActionTypeDTO.CONDITION, world.getEntities().get(action.getEntity()), getExpression(action.getEntity(), action.getProperty(), action.getValue()), null, propName, logic, conditionActionList);
     }
 
     private List<ConditionAction> createConditionList(PRDAction action) {
@@ -317,11 +317,9 @@ public class EngineImpl implements Engine {
         if(action.getPRDCondition().getPRDCondition().size() !=0) {
             for (PRDCondition prdCondition : action.getPRDCondition().getPRDCondition()) {
                 if (prdCondition.getSingularity().equals("single")) {
-                    conditionActionList.add(new SingleAction(ActionTypeDTO.CONDITION, world.getEntities().get(action.getEntity()), getExpression(action, action.getPRDCondition().getPRDCondition().get(i).getValue()), null, prdCondition.getProperty(), prdCondition.getOperator()));
-                    i++;
+                    conditionActionList.add(new SingleAction(ActionTypeDTO.CONDITION, world.getEntities().get(action.getEntity()), getExpression(action.getEntity(), action.getProperty(), action.getPRDCondition().getPRDCondition().get(i).getValue()), null, prdCondition.getProperty(), prdCondition.getOperator()));
                 } else if (prdCondition.getSingularity().equals("multi")) {
-                    conditionActionList.add(new MultipleAction(ActionTypeDTO.CONDITION, world.getEntities().get(action.getEntity()), getExpression(action, action.getPRDCondition().getPRDCondition().get(i).getValue()), null, action.getProperty(), prdCondition.getLogical(), conditionActionList));
-                    i++;
+                    conditionActionList.add(new MultipleAction(ActionTypeDTO.CONDITION, world.getEntities().get(action.getEntity()), getExpression(action.getEntity(), action.getProperty(), action.getPRDCondition().getPRDCondition().get(i).getValue()), null, action.getProperty(), prdCondition.getLogical(), conditionActionList));
                 }
             }
         }
@@ -335,7 +333,7 @@ public class EngineImpl implements Engine {
         List<Action> actionListSingle = createActionListSingleCondition(action);
         String propName= action.getPRDCondition().getProperty();
         String operator = action.getPRDCondition().getOperator();
-        return new SingleAction(ActionTypeDTO.CONDITION,world.getEntities().get(action.getEntity()), getExpression(action, action.getValue()), actionListSingle, propName, operator);
+        return new SingleAction(ActionTypeDTO.CONDITION,world.getEntities().get(action.getEntity()), getExpression(action.getEntity(), action.getProperty(), action.getValue()), actionListSingle, propName, operator);
     }
 
     private List<Action> createActionListSingleCondition(PRDAction action) {
@@ -359,43 +357,19 @@ public class EngineImpl implements Engine {
     private Action calculateAccordingToMultiOrDivide(PRDAction action) {
         List<Expression> myExpression= new ArrayList<>();
         if(action.getPRDDivide() != null){
-            myExpression.add(getExpression(action,action.getPRDDivide().getArg1()).get(0));
-            myExpression.add(getExpression(action,action.getPRDDivide().getArg2()).get(0));
+            myExpression.add(getExpression(action.getEntity(), action.getProperty(),action.getPRDDivide().getArg1()).get(0));
+            myExpression.add(getExpression(action.getEntity(), action.getProperty(),action.getPRDDivide().getArg2()).get(0));
             return new DivideAction(ActionTypeDTO.CALCULATION, world.getEntities().get(action.getEntity()), myExpression,action.getResultProp());
         }
         else if(action.getPRDMultiply() != null){
-            myExpression.add(getExpression(action,action.getPRDMultiply().getArg1()).get(0));
-            myExpression.add(getExpression(action,action.getPRDMultiply().getArg2()).get(0));
+            myExpression.add(getExpression(action.getEntity(), action.getProperty(),action.getPRDMultiply().getArg1()).get(0));
+            myExpression.add(getExpression(action.getEntity(), action.getProperty(),action.getPRDMultiply().getArg2()).get(0));
             return new MultiplyAction(ActionTypeDTO.CALCULATION, world.getEntities().get(action.getEntity()), myExpression,action.getResultProp());
         }
          throw new IllegalArgumentException("Input doesn't match the expected format");
     }
 
 
-    /*private List<Expression> getExpressionValue(PRDAction action) {
-
-        List<Expression> myExpression = new ArrayList<>();
-
-        if(action.getPRDCondition().getPRDCondition().size() != 0)
-        {
-            for(PRDCondition prdCondition: action.getPRDCondition().getPRDCondition()) {
-                if (prdCondition.getValue().contains("environment")) {
-                    handleRandomEnvironmenExpression(action.getPRDCondition().getValue(), myExpression);
-                } else if (prdCondition.getValue().contains("random")) {
-                    handleRandomFunctionExpressionValue(prdCondition, myExpression);
-                } else if (isNumeric(prdCondition.getValue())) {
-                    myExpression.add(new GeneralExpression(prdCondition.getValue(), world.getEntities().get(prdCondition.getEntity()).getProps().get(prdCondition.getProperty()).getType()));
-                } else if (world.getEntities().values().contains(action.getPRDCondition().getValue())) {
-                    myExpression.add(new PropertyExpression(prdCondition.getValue()));
-                } else {
-                    throw new InvalidByArgument("we do not support this kind of argument expression!");
-                }
-            }
-
-        }
-
-        return myExpression;
-    }*/
     List<Expression> getExpressionBy(PRDAction action){
         List<Expression> myExpression = new ArrayList<>();
         if (action.getBy() != null) {
@@ -415,7 +389,7 @@ public class EngineImpl implements Engine {
         }
         return myExpression;
     }
-    List<Expression> getExpression(PRDAction action,String expressionVal){
+    List<Expression> getExpression(String entityName, String propName,String expressionVal){
         List<Expression> myExpression = new ArrayList<>();
         if (expressionVal != null) {
             if (expressionVal.contains("environment")) {
@@ -424,8 +398,8 @@ public class EngineImpl implements Engine {
                 handleRandomFunctionExpression(expressionVal,myExpression);
                 //todo:check if it will work byChecking numeric only
             } else if (isNumeric(expressionVal)) {
-                myExpression.add(new GeneralExpression(expressionVal, world.getEntities().get(action.getEntity()).getProps().get(action.getProperty()).getType()));
-            } else if (world.getEntities().values().contains(action.getBy())) {
+                myExpression.add(new GeneralExpression(expressionVal, world.getEntities().get(entityName).getProps().get(propName).getType()));
+            } else if (world.getEntities().values().contains(expressionVal)) {
                 myExpression.add(new PropertyExpression(expressionVal));
             }
             else
