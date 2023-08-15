@@ -318,10 +318,8 @@ public class EngineImpl implements Engine {
             for (PRDCondition prdCondition : action.getPRDCondition().getPRDCondition()) {
                 if (prdCondition.getSingularity().equals("single")) {
                     conditionActionList.add(new SingleAction(ActionTypeDTO.CONDITION, world.getEntities().get(action.getEntity()), getExpression(action.getEntity(), action.getProperty(), action.getPRDCondition().getPRDCondition().get(i).getValue()), null, prdCondition.getProperty(), prdCondition.getOperator()));
-                    i++;
                 } else if (prdCondition.getSingularity().equals("multi")) {
                     conditionActionList.add(new MultipleAction(ActionTypeDTO.CONDITION, world.getEntities().get(action.getEntity()), getExpression(action.getEntity(), action.getProperty(), action.getPRDCondition().getPRDCondition().get(i).getValue()), null, action.getProperty(), prdCondition.getLogical(), conditionActionList));
-                    i++;
                 }
             }
         }
