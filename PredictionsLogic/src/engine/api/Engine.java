@@ -32,4 +32,6 @@ public interface Engine
     TerminitionDTO getTerminationDTO();
     Map<String, EntityDefinitionDTO> getEntityDTO();
     public SimulationInfoDTO getSimulationInfo();
+
+    void ShowUserEnvVariables();
 }

@@ -104,6 +104,7 @@ public class PredictionsManagment
                 }
             }
         });
+        engine.ShowUserEnvVariables();
     }
 
     private void printMenu()
