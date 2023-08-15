@@ -13,7 +13,7 @@ public class SetAction extends AbstractAction
 {
     String property;
 
-    protected SetAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList, String property) {
+    public SetAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList, String property) {
         super(actionType.SET, entityDefinition, expressionList);
         this.property = property;
     }
