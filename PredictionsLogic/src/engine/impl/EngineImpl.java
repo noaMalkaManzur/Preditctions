@@ -308,18 +308,27 @@ public class EngineImpl implements Engine {
         List<ConditionAction> conditionActionList = createConditionList(action);
         String logic = action.getPRDCondition().getLogical();
         String propName = action.getPRDCondition().getProperty();
-        return new MultipleAction(ActionTypeDTO.CONDITION, world.getEntities().get(action.getEntity()), getExpression(action.getEntity(), action.getProperty(), action.getValue()), null, propName, logic, conditionActionList);
+        List<Action> actionList= createActionListSingleCondition(action);
+        return new MultipleAction(ActionTypeDTO.CONDITION, world.getEntities().get(action.getEntity()), getExpression(action.getEntity(), action.getProperty(), action.getValue()), actionList, propName, logic, conditionActionList);
     }
 
     private List<ConditionAction> createConditionList(PRDAction action) {
         int i=0;
         List<ConditionAction> conditionActionList = new ArrayList<>();
+        List<Action> actionList = createActionListSingleCondition(action);
         if(action.getPRDCondition().getPRDCondition().size() !=0) {
             for (PRDCondition prdCondition : action.getPRDCondition().getPRDCondition()) {
                 if (prdCondition.getSingularity().equals("single")) {
-                    conditionActionList.add(new SingleAction(ActionTypeDTO.CONDITION, world.getEntities().get(action.getEntity()), getExpression(action.getEntity(), action.getProperty(), action.getPRDCondition().getPRDCondition().get(i).getValue()), null, prdCondition.getProperty(), prdCondition.getOperator()));
+                    String valExpression = action.getPRDCondition().getPRDCondition().get(i).getValue();
+                    String propertyName = action.getPRDCondition().getPRDCondition().get(i).getProperty();
+                    conditionActionList.add(new SingleAction(ActionTypeDTO.CONDITION, world.getEntities().get(action.getEntity()), getExpression(action.getEntity(), propertyName, valExpression), actionList, prdCondition.getProperty(), prdCondition.getOperator()));
+                    i++;
                 } else if (prdCondition.getSingularity().equals("multi")) {
-                    conditionActionList.add(new MultipleAction(ActionTypeDTO.CONDITION, world.getEntities().get(action.getEntity()), getExpression(action.getEntity(), action.getProperty(), action.getPRDCondition().getPRDCondition().get(i).getValue()), null, action.getProperty(), prdCondition.getLogical(), conditionActionList));
+                    //todo:check with noam if the index is ok for the multi or to keep other index?
+                    String valExpression = action.getPRDCondition().getPRDCondition().get(i).getValue();
+                    String propertyName = action.getPRDCondition().getPRDCondition().get(i).getProperty();
+                    conditionActionList.add(new MultipleAction(ActionTypeDTO.CONDITION, world.getEntities().get(action.getEntity()), getExpression(action.getEntity(), propertyName, valExpression), actionList, action.getProperty(), prdCondition.getLogical(), conditionActionList));
+                    i++;
                 }
             }
         }
