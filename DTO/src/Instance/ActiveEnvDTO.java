@@ -4,13 +4,13 @@ import java.util.Map;
 
 public class ActiveEnvDTO
 {
-    private final Map<String,PropertyInstanceDTO> envPropInstances;
+    private final Map<String, EnvPropertyInstanceDTO> envPropInstances;
 
-    public ActiveEnvDTO(Map<String, PropertyInstanceDTO> envPropInstances) {
+    public ActiveEnvDTO(Map<String, EnvPropertyInstanceDTO> envPropInstances) {
         this.envPropInstances = envPropInstances;
     }
 
-    public Map<String, PropertyInstanceDTO> getEnvPropInstances() {
+    public Map<String, EnvPropertyInstanceDTO> getEnvPropInstances() {
         return envPropInstances;
     }
 }

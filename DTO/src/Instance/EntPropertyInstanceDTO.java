@@ -2,12 +2,12 @@ package Instance;
 
 import Defenitions.EntityPropDefinitionDTO;
 
-public class PropertyInstanceDTO
+public class EntPropertyInstanceDTO
 {
     private final EntityPropDefinitionDTO propDef;
     private final Object val;
 
-    public PropertyInstanceDTO(EntityPropDefinitionDTO propDef, Object val) {
+    public EntPropertyInstanceDTO(EntityPropDefinitionDTO propDef, Object val) {
         this.propDef = propDef;
         this.val = val;
     }

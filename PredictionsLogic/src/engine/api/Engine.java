@@ -4,6 +4,7 @@ import Defenitions.EntityDefinitionDTO;
 import Defenitions.EnvironmentDefinitionDTO;
 import Defenitions.RulesDTO;
 import Defenitions.TerminitionDTO;
+import Instance.ActiveEnvDTO;
 import definition.property.api.Range;
 import exceptions.BadFileSuffixException;
 import simulationInfo.SimulationInfoDTO;
@@ -33,5 +34,7 @@ public interface Engine
     Map<String, EntityDefinitionDTO> getEntityDTO();
     public SimulationInfoDTO getSimulationInfo();
 
-    void ShowUserEnvVariables();
+    ActiveEnvDTO ShowUserEnvVariables();
+
+    void runSimulation();
 }

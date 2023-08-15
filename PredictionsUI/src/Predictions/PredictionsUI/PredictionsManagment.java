@@ -1,6 +1,7 @@
 package Predictions.PredictionsUI;
 
 import Defenitions.*;
+import Instance.ActiveEnvDTO;
 import definition.property.api.PropertyType;
 import definition.property.api.Range;
 import definition.world.api.WorldDefinition;
@@ -14,99 +15,46 @@ import java.util.Scanner;
 public class PredictionsManagment
 {
     int userChoice;
-    WorldDefinition myWorld = new WorldImpl();
+    boolean Exit = false;
     Engine engine = new EngineImpl();
-    private static Scanner scanner = new Scanner(System.in);
+    Scanner scanner = new Scanner(System.in);
     public void run()
     {
         //ToDo: Implement user input method.
         String fileName = "ex1-cigarets.xml";
         System.out.println("Hello There! Welcome to our Predictions simulation System!\n");
-        System.out.println("Please choose command from the list!");
-        printMenu();
-        try {
-            userChoice = 1;
-            switch (userChoice)
-            {
-                case 1:
-                    engine.loadXmlFiles(fileName);
-                    EnvironmentDefinitionDTO myEnvDef =  engine.getEnvDTO();
-                    getUserEnvValues(myEnvDef);
-                    break;
-                case 2:
-                    SimulationInfoDTO simulationInfoDTO = engine.getSimulationInfo();
-                    printSimulation(simulationInfoDTO);
-                    break;
-                case 3:
-                    //EnvironmentDefinitionDTO myEnvDef =  engine.getEnvDTO();
+        while(!Exit) {
+            printMenu();
+            try {
+                userChoice = scanner.nextInt();
+                switch (userChoice) {
+                    case 1:
+                        loadSimulationDetails(fileName);
+                        System.out.println("Successfully loaded file:"+fileName);
+                        break;
+                    case 2:
+                        SimulationInfoDTO simulationInfoDTO = engine.getSimulationInfo();
+                        printSimulation(simulationInfoDTO);
+                        break;
+                    case 3:
+                        ExecuteSimulation();
+                    case 4:
+                        //Handle case 4
+                        break;
+                    case 5:
+                        System.out.println("Thank you for being with us!");
+                        Exit = true;
+                        break;
 
 
+                }
+            } catch (Exception ex) {
+                System.out.println(ex.getMessage());
             }
         }
-        catch (Exception ex)
-        {
-            System.out.println(ex.getMessage());
-        }
+        System.exit(0);
     }
-
-
-
-    private void getUserEnvValues(EnvironmentDefinitionDTO myEnvDef) {
-        myEnvDef.getEnvProps().values().forEach(envDef -> {
-            printEnvVarInfo(envDef);
-            Object userValue = null;
-            boolean isValidInput = false;
-            while(!isValidInput) {
-                String userInput = scanner.nextLine();
-                if (!userInput.isEmpty()) {
-                    switch (envDef.getType()) {
-                        case DECIMAL: {
-                            isValidInput = engine.isValidIntegerVar(userInput, envDef.getRange());
-                            if(isValidInput) {
-                                userValue = PropertyType.DECIMAL.parse(userInput);
-                            }
-                            break;
-                        }
-                        case FLOAT:
-                            isValidInput = engine.isValidDoubleVar(userInput, envDef.getRange());
-                            if(isValidInput) {
-                                userValue = PropertyType.FLOAT.parse(userInput);
-                            }
-                            break;
-
-                        case BOOLEAN:
-                            isValidInput = engine.isValidBooleanVar(userInput);
-                            if(isValidInput) {
-                                userValue = PropertyType.BOOLEAN.parse(userInput);
-                            }
-                            break;
-
-                        case STRING:
-                            isValidInput = engine.isValidStringVar(userInput);
-                            if(isValidInput) {
-                                userValue = PropertyType.STRING.convert(userInput);
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-
-                }
-                else
-                {
-                    isValidInput = true;
-                }
-                if(isValidInput)
-                    engine.addEnvVarToActiveEnv(userValue,envDef.getName());
-                else
-                {
-                    System.out.println("Please insert a valid input\n");
-                }
-            }
-        });
-        engine.ShowUserEnvVariables();
-    }
-
+    //region Common functions
     private void printMenu()
     {
         StringBuilder menu = new StringBuilder();
@@ -118,7 +66,13 @@ public class PredictionsManagment
                 .append("5. Exit.").append(System.lineSeparator());
         System.out.println(menu);
     }
-
+    //endregion
+    //region Command 1
+    private void loadSimulationDetails(String fileName) {
+        engine.loadXmlFiles(fileName);
+    }
+    //endregion
+    //region Command 2
     private void printSimulation(SimulationInfoDTO simulationInfoDTO) {
         StringBuilder simulationInfo = new StringBuilder();
         gettingEntitiesInfo(simulationInfoDTO, simulationInfo);
@@ -178,16 +132,89 @@ public class PredictionsManagment
             }
         }
     }
-
+    //endregion
+    //region Command 3
     private void printEnvVarInfo(EnvPropertyDefinitionDTO envDefDTO)
     {
         StringBuilder envString = new StringBuilder();
-        envString.append("Please insert value for the next environment variable").append(System.lineSeparator())
+        envString.append("Please insert value for the next environment variable, " +
+                        "if you don't want to insert a value just press enter and we will make a random value for you").append(System.lineSeparator())
                 .append("Name:").append(envDefDTO.getName()).append(System.lineSeparator())
                 .append("Type:").append(envDefDTO.getType()).append(System.lineSeparator())
                 .append("Range:").append(envDefDTO.getRange().getRangeFrom()).append("-")
                 .append(envDefDTO.getRange().getRangeTo()).append(System.lineSeparator());
         System.out.println(envString);
     }
+    private void ExecuteSimulation() {
+        EnvironmentDefinitionDTO myEnvDef = engine.getEnvDTO();
+        getUserEnvValues(myEnvDef);
+        engine.runSimulation();
+    }
+    private void getUserEnvValues(EnvironmentDefinitionDTO myEnvDef) {
+        scanner.nextLine();
+        myEnvDef.getEnvProps().values().forEach(envDef -> {
+            printEnvVarInfo(envDef);
+            Object userValue = null;
+            boolean isValidInput = false;
+            while(!isValidInput) {
+                String userInput = scanner.nextLine();
+                if (!userInput.isEmpty()) {
+                    switch (envDef.getType()) {
+                        case DECIMAL: {
+                            isValidInput = engine.isValidIntegerVar(userInput, envDef.getRange());
+                            if(isValidInput) {
+                                userValue = PropertyType.DECIMAL.parse(userInput);
+                            }
+                            break;
+                        }
+                        case FLOAT:
+                            isValidInput = engine.isValidDoubleVar(userInput, envDef.getRange());
+                            if(isValidInput) {
+                                userValue = PropertyType.FLOAT.parse(userInput);
+                            }
+                            break;
+                        case BOOLEAN:
+                            isValidInput = engine.isValidBooleanVar(userInput);
+                            if(isValidInput) {
+                                userValue = PropertyType.BOOLEAN.parse(userInput);
+                            }
+                            break;
+                        case STRING:
+                            isValidInput = engine.isValidStringVar(userInput);
+                            if(isValidInput) {
+                                userValue = PropertyType.STRING.convert(userInput);
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+
+                }
+                else
+                {
+                    isValidInput = true;
+                }
+                if(isValidInput)
+                    engine.addEnvVarToActiveEnv(userValue,envDef.getName());
+                else
+                {
+                    System.out.println("Please insert a valid input\n");
+                }
+            }
+        });
+        printActiveEnv(engine.ShowUserEnvVariables());
+    }
+
+    private void printActiveEnv(ActiveEnvDTO activeEnvDTO)
+    {
+        StringBuilder ActiveEnv = new StringBuilder();
+        activeEnvDTO.getEnvPropInstances().forEach((key,value)->
+                {
+                    ActiveEnv.append("Name:").append(key).append("  ")
+                            .append("Value:").append(value.getVal()).append(System.lineSeparator());
+                });
+        System.out.println(ActiveEnv);
+    }
+    //endregion
 
 }
