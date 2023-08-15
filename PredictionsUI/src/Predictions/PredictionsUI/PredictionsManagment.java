@@ -2,6 +2,7 @@ package Predictions.PredictionsUI;
 
 import Defenitions.*;
 import definition.property.api.PropertyType;
+import definition.property.api.Range;
 import definition.world.api.WorldDefinition;
 import definition.world.impl.WorldImpl;
 import engine.api.Engine;
@@ -52,48 +53,60 @@ public class PredictionsManagment
 
     private void getUserEnvValues(EnvironmentDefinitionDTO myEnvDef) {
         myEnvDef.getEnvProps().values().forEach(envDef -> {
-            System.out.println("Please insert Environment variable value:");
+            printEnvVarInfo(envDef);
             Object userValue = null;
             boolean isValidInput = false;
             while(!isValidInput) {
                 String userInput = scanner.nextLine();
                 if (!userInput.isEmpty()) {
                     switch (envDef.getType()) {
-                        //ToDo: Implement validation funcs
                         case DECIMAL: {
                             isValidInput = engine.isValidIntegerVar(userInput, envDef.getRange());
                             if(isValidInput) {
                                 userValue = PropertyType.DECIMAL.parse(userInput);
                             }
+                            break;
                         }
                         case FLOAT:
                             isValidInput = engine.isValidDoubleVar(userInput, envDef.getRange());
                             if(isValidInput) {
                                 userValue = PropertyType.FLOAT.parse(userInput);
                             }
+                            break;
+
                         case BOOLEAN:
                             isValidInput = engine.isValidBooleanVar(userInput);
                             if(isValidInput) {
                                 userValue = PropertyType.BOOLEAN.parse(userInput);
                             }
+                            break;
+
                         case STRING:
                             isValidInput = engine.isValidStringVar(userInput);
                             if(isValidInput) {
                                 userValue = PropertyType.STRING.convert(userInput);
                             }
+                            break;
                         default:
-                            userValue = null;
+                            break;
                     }
+
                 }
-                engine.addEnvVarToActiveEnv(userValue,envDef.getName());
-                isValidInput = true;
-
-
+                else
+                {
+                    isValidInput = true;
+                }
+                if(isValidInput)
+                    engine.addEnvVarToActiveEnv(userValue,envDef.getName());
+                else
+                {
+                    System.out.println("Please insert a valid input\n");
+                }
             }
         });
     }
 
-    public void printMenu()
+    private void printMenu()
     {
         StringBuilder menu = new StringBuilder();
         menu.append("Please choose one of the following operations:").append(System.lineSeparator())
@@ -137,7 +150,7 @@ public class PredictionsManagment
         }
     }
 
-    void gettingEntitiesInfo(SimulationInfoDTO simulationInfoDTO,StringBuilder simulationInfo ) {
+    private void gettingEntitiesInfo(SimulationInfoDTO simulationInfoDTO,StringBuilder simulationInfo ) {
         for (EntityDefinitionDTO entityDefDTO : simulationInfoDTO.getEntities().values()) {
             simulationInfo.append("Entity name: ").append(entityDefDTO.getName()).append("\n");
             simulationInfo.append("Population: ").append(entityDefDTO.getPopulation()).append("\n");
@@ -164,4 +177,16 @@ public class PredictionsManagment
             }
         }
     }
+
+    private void printEnvVarInfo(EnvPropertyDefinitionDTO envDefDTO)
+    {
+        StringBuilder envString = new StringBuilder();
+        envString.append("Please insert value for the next environment variable").append(System.lineSeparator())
+                .append("Name:").append(envDefDTO.getName()).append(System.lineSeparator())
+                .append("Type:").append(envDefDTO.getType()).append(System.lineSeparator())
+                .append("Range:").append(envDefDTO.getRange().getRangeFrom()).append("-")
+                .append(envDefDTO.getRange().getRangeTo()).append(System.lineSeparator());
+        System.out.println(envString);
+    }
+
 }
