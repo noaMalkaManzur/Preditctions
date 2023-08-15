@@ -3,6 +3,8 @@ package engine.impl;
 import Defenitions.*;
 import Enums.ActionTypeDTO;
 import Generated.*;
+import Instance.ActiveEnvDTO;
+import Instance.EnvPropertyInstanceDTO;
 import action.api.Action;
 import action.impl.DecreaseAction;
 import action.impl.IncreaseAction;
@@ -37,8 +39,13 @@ import definition.world.impl.WorldImpl;
 import engine.api.Engine;
 import exceptions.*;
 import execution.context.Context;
+import execution.context.ContextImpl;
+import execution.instance.enitty.EntityInstance;
+import execution.instance.enitty.manager.EntityInstanceManager;
+import execution.instance.enitty.manager.EntityInstanceManagerImpl;
 import execution.instance.environment.api.ActiveEnvironment;
 import execution.instance.environment.impl.ActiveEnvironmentImpl;
+import execution.instance.property.PropertyInstance;
 import execution.instance.property.PropertyInstanceImpl;
 import expression.api.Expression;
 import expression.impl.EnvironmentFunction;
@@ -530,11 +537,6 @@ public class EngineImpl implements Engine {
         return simulationInfoDTO;
     }
 
-    @Override
-    public void ShowUserEnvVariables() {
-
-    }
-
     //endregion
     //region Command number 3
     @Override
@@ -592,6 +594,39 @@ public class EngineImpl implements Engine {
         else
             activeEnvironment.addPropertyInstance(new PropertyInstanceImpl(myPropDef,myPropDef.generateValue()));
 
+    }
+    public ActiveEnvDTO ShowUserEnvVariables() {
+        Map<String, EnvPropertyInstanceDTO> envPropertyInstanceDTO = new HashMap<>();
+        activeEnvironment.getProperties().forEach((key, value) ->
+                {
+                    envPropertyInstanceDTO.put(key,new EnvPropertyInstanceDTO(
+                            new EnvPropertyDefinitionDTO(value.getPropertyDefinition().getName(),value.getPropertyDefinition().getType(),
+                                    value.getPropertyDefinition().getRange()),value.getValue()));
+                });
+        return new ActiveEnvDTO(envPropertyInstanceDTO);
+    }
+
+    @Override
+    public void runSimulation()
+    {
+        createContext();
+        System.out.println(context.getPrimaryEntityInstance().getId());
+
+    }
+
+    private void createContext() {
+        EntityInstanceManager entityInstanceManager = new EntityInstanceManagerImpl();
+        EntityInstance primaryEntityInstance = null;
+        world.getEntities().forEach((key,value)->
+                {
+                    for(int i = 0;i < value.getPopulation();i++)
+                    {
+                        entityInstanceManager.create(value);
+                    }
+
+                });
+        primaryEntityInstance = entityInstanceManager.getInstances().get(0);
+        context = new ContextImpl(primaryEntityInstance,entityInstanceManager,activeEnvironment);
     }
     //endregion
     //endregion
