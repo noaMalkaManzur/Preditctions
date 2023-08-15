@@ -45,6 +45,7 @@ import expression.impl.PropertyExpression;
 import expression.impl.RandomFunction;
 import rule.Rule;
 import rule.RuleImpl;
+import simulationInfo.SimulationInfoDTO;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -488,6 +489,12 @@ public class EngineImpl implements Engine {
         }
         return entityDTO;
     }
+
+    @Override
+    public SimulationInfoDTO getSimulationInfo() {
+        return null;
+    }
+
     public  Map<String, RulesDTO> getRulesDTO(){
         Map<String, RulesDTO> rulesDTO = new HashMap<>();
         List<ActionDTO> actionsDTOS = new ArrayList<>();
@@ -524,22 +531,36 @@ public class EngineImpl implements Engine {
     //ToDo:Implement me!
     @Override
     public boolean isValidIntegerVar(String userInput, Range range) {
-        return false;
+        try {
+            int value = Integer.parseInt(userInput);
+            if(range != null)
+                return value >= range.getRangeFrom() && value <= range.getRangeTo();
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     @Override
     public boolean isValidDoubleVar(String userInput, Range range) {
-        return false;
+        try {
+            double value = Double.parseDouble(userInput);
+            if(range != null)
+                return value >= range.getRangeFrom() && value <= range.getRangeTo();
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     @Override
     public boolean isValidBooleanVar(String userInput) {
-        return false;
+        return userInput.equalsIgnoreCase("true") || userInput.equalsIgnoreCase("false");
     }
 
     @Override
     public boolean isValidStringVar(String userInput) {
-        return false;
+        return true;
     }
 
     @Override
