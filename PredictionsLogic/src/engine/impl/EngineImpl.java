@@ -45,13 +45,13 @@ import execution.instance.enitty.manager.EntityInstanceManager;
 import execution.instance.enitty.manager.EntityInstanceManagerImpl;
 import execution.instance.environment.api.ActiveEnvironment;
 import execution.instance.environment.impl.ActiveEnvironmentImpl;
-import execution.instance.property.PropertyInstance;
 import execution.instance.property.PropertyInstanceImpl;
 import expression.api.Expression;
 import expression.impl.EnvironmentFunction;
 import expression.impl.GeneralExpression;
 import expression.impl.PropertyExpression;
 import expression.impl.RandomFunction;
+import rule.ActivationImpl;
 import rule.Rule;
 import rule.RuleImpl;
 import simulationInfo.SimulationInfoDTO;
@@ -259,7 +259,6 @@ public class EngineImpl implements Engine {
 
     //endregion
     //region Rules
-    //ToDo:We need to think how our expressions are created we have problems with Environemt,Property.(Maybe we should send Context to calculate Expression method)
     private Map<String, Rule> getRulesFromXML(PRDRules prdRules) {
         Map<String, Rule> convertedRules = new HashMap<>();
         for (PRDRule rule : prdRules.getPRDRule()) {
@@ -270,10 +269,26 @@ public class EngineImpl implements Engine {
 
     private Rule convertRule(PRDRule rule) {
         //ToDo:See how to implement activation terms
-        Rule newRule = new RuleImpl(rule.getName());
+        ActivationImpl activation = convertActivationFromXML(rule);
+        Rule newRule = new RuleImpl(rule.getName(), activation);
         for (PRDAction action : rule.getPRDActions().getPRDAction())
             newRule.addAction(convertActionFromXML(action));
         return newRule;
+    }
+
+    private ActivationImpl convertActivationFromXML(PRDRule rule) {
+        ActivationImpl activation = new ActivationImpl();
+        if(rule.getPRDActivation()== null){
+            return activation;
+        }
+        if (rule.getPRDActivation().getProbability() != null) {
+            activation.setProbability(rule.getPRDActivation().getProbability());
+        }
+        if (rule.getPRDActivation().getTicks() != null) {
+            activation.setTicks(rule.getPRDActivation().getTicks());
+        }
+
+        return activation;
     }
 
     private Action convertActionFromXML(PRDAction action) {
@@ -385,26 +400,6 @@ public class EngineImpl implements Engine {
          throw new IllegalArgumentException("Input doesn't match the expected format");
     }
 
-
-    List<Expression> getExpressionBy(PRDAction action){
-        List<Expression> myExpression = new ArrayList<>();
-        if (action.getBy() != null) {
-            if (action.getBy().contains("environment")) {
-                handleEnvironmentFunctionExpression(action.getBy(), myExpression);
-            } else if (action.getBy().contains("random")) {
-                handleRandomFunctionExpression(action.getBy(),myExpression);
-            } else if (isNumeric(action.getBy())) {
-                myExpression.add(new GeneralExpression(action.getBy(), world.getEntities().get(action.getEntity()).getProps().get(action.getProperty()).getType()));
-            } else if (world.getEntities().values().contains(action.getBy())) {
-                myExpression.add(new PropertyExpression(action.getBy()));
-            }
-            else
-            {
-                throw new InvalidByArgument("we do not support this kind of argument expression!");
-            }
-        }
-        return myExpression;
-    }
     List<Expression> getExpression(String entityName, String propName,String expressionVal){
         List<Expression> myExpression = new ArrayList<>();
         if (expressionVal != null) {
@@ -412,8 +407,8 @@ public class EngineImpl implements Engine {
                 handleEnvironmentFunctionExpression(expressionVal, myExpression);
             } else if (expressionVal.contains("random")) {
                 handleRandomFunctionExpression(expressionVal,myExpression);
-                //todo:check if it will work byChecking numeric only
-            } else if (isNumeric(expressionVal)) {
+                //todo:check about getting a string
+            } else if (isNumeric(expressionVal) || isBoolean(expressionVal)) {
                 myExpression.add(new GeneralExpression(expressionVal, world.getEntities().get(entityName).getProps().get(propName).getType()));
             } else if (world.getEntities().values().contains(expressionVal)) {
                 myExpression.add(new PropertyExpression(expressionVal));
