@@ -548,10 +548,6 @@ public class EngineImpl implements Engine {
         }
         return entityDTO;
     }
-  @Override
-    public SimulationInfoDTO getSimulationInfo() {
-        return null;
-    }
     
     public  Map<String, RulesDTO> getRulesDTO(){
 
@@ -576,6 +572,12 @@ public class EngineImpl implements Engine {
         SimulationInfoDTO simulationInfoDTO = new SimulationInfoDTO(getEntityDTO(),getRulesDTO(),getTerminationDTO());
         return simulationInfoDTO;
     }
+
+    @Override
+    public void ShowUserEnvVariables() {
+
+    }
+
     //endregion
     //region Command number 3
     @Override
