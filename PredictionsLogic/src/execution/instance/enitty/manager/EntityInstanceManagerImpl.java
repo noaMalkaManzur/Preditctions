@@ -13,18 +13,20 @@ import execution.instance.property.PropertyInstanceImpl;
 
 public class EntityInstanceManagerImpl implements EntityInstanceManager {
 
-    private int count;
+    private int entitiesCount;
     private List<EntityInstance> instances;
+    private  int currPopulation;
+    private List<Integer> killList;
 
     public EntityInstanceManagerImpl() {
-        count = 0;
+        entitiesCount = 0;
         instances = new ArrayList<>();
+        killList = new ArrayList<>();
     }
-
     @Override
     public EntityInstance create(EntityDefinition entityDefinition) {
-        count++;
-        EntityInstance newEntityInstance = new EntityInstanceImpl(entityDefinition, count);
+        entitiesCount++;
+        EntityInstance newEntityInstance = new EntityInstanceImpl(entityDefinition, entitiesCount);
         instances.add(newEntityInstance);
 
         for (Map.Entry<String, PropertyDefinition> propertyDefinition : entityDefinition.getProps().entrySet()) {
@@ -42,6 +44,32 @@ public class EntityInstanceManagerImpl implements EntityInstanceManager {
 
     @Override
     public void killEntity(int id) {
-        instances.remove(id);
+        killList.add(id-1);
+    }
+    @Override
+    public void executeKill(int id) {
+        instances.removeIf(item -> item.getId() == id);
+        setCurrPopulation(instances.size());
+    }
+    @Override
+    public int getCurrPopulation() {
+        return currPopulation;
+    }
+    @Override
+    public void setCurrPopulation(int currPopulation) {
+        this.currPopulation = currPopulation;
+    }
+    @Override
+    public List<Integer> getKillList() {
+        return killList;
+    }
+    @Override
+    public void clearKillList()
+    {
+        killList.clear();
+    }
+    @Override
+    public void setKillList(List<Integer> killList) {
+        this.killList = killList;
     }
 }

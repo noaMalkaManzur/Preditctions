@@ -35,7 +35,7 @@ public class PredictionsManagment
                         printSimulation(simulationInfoDTO);
                         break;
                     case 3:
-                        ExecuteSimulation();
+                        System.out.println(ExecuteSimulation()+ "\n");
                     case 4:
                         //Handle case 4
                         break;
@@ -138,10 +138,10 @@ public class PredictionsManagment
                 .append(envDefDTO.getRange().getRangeTo()).append(System.lineSeparator());
         System.out.println(envString);
     }
-    private void ExecuteSimulation() {
+    private String ExecuteSimulation() {
         EnvironmentDefinitionDTO myEnvDef = engine.getEnvDTO();
         getUserEnvValues(myEnvDef);
-        engine.runSimulation();
+        return engine.runSimulation();
     }
     private void getUserEnvValues(EnvironmentDefinitionDTO myEnvDef) {
         scanner.nextLine();

@@ -11,13 +11,11 @@ import java.util.List;
 
 public class MultipleAction extends ConditionAction {
     List<ConditionAction> conditionList;
-    String propertyName;
     String logic;
 
     public MultipleAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList, List<Action> actionList, String propertyName, String logic, List<ConditionAction> conditionList) {
         super(actionType, entityDefinition, expressionList, actionList, propertyName);
         this.logic= logic;
-        this.propertyName= propertyName;
         this.conditionList = conditionList;
     }
 

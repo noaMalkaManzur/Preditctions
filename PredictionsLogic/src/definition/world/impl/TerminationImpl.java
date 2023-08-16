@@ -6,7 +6,7 @@ public class TerminationImpl implements Termination {
     private final double bySeconds;
     private final double byTicks;
 
-    public TerminationImpl(double bySeconds, double byTicks){
+    public TerminationImpl(double byTicks,double bySeconds){
         this.bySeconds= bySeconds;
         this.byTicks = byTicks;
     }
