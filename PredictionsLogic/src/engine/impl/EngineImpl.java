@@ -53,7 +53,6 @@ import expression.impl.EnvironmentFunction;
 import expression.impl.GeneralExpression;
 import expression.impl.PropertyExpression;
 import expression.impl.RandomFunction;
-import histogramDTO.HistogramByAmountEntitiesDTO;
 import rule.ActivationImpl;
 import rule.Rule;
 import rule.RuleImpl;
@@ -679,11 +678,11 @@ public class EngineImpl implements Engine {
     }
     //endregion
     //endregion
-    public HistogramByAmountEntitiesDTO createHistogramByAmountEntitiesDTO(){
+    //public HistogramByAmountEntitiesDTO createHistogramByAmountEntitiesDTO(){
 
-        HistogramByAmountEntitiesDTO histogramByAmountEntitiesDTO = new HistogramByAmountEntitiesDTO(entityInstanceManager.getCurrPopulation());
-        return histogramByAmountEntitiesDTO;
-    }
+        //HistogramByAmountEntitiesDTO histogramByAmountEntitiesDTO = new HistogramByAmountEntitiesDTO(entityInstanceManager.getCurrPopulation());
+       // return histogramByAmountEntitiesDTO;
+    //}
 
 }
 
