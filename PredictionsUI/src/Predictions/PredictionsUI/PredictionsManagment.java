@@ -3,9 +3,6 @@ package Predictions.PredictionsUI;
 import Defenitions.*;
 import Instance.ActiveEnvDTO;
 import definition.property.api.PropertyType;
-import definition.property.api.Range;
-import definition.world.api.WorldDefinition;
-import definition.world.impl.WorldImpl;
 import engine.api.Engine;
 import engine.impl.EngineImpl;
 import simulationInfo.SimulationInfoDTO;
@@ -33,6 +30,7 @@ public class PredictionsManagment
                         System.out.println("Successfully loaded file:"+fileName);
                         break;
                     case 2:
+                        loadSimulationDetails(fileName);
                         SimulationInfoDTO simulationInfoDTO = engine.getSimulationInfo();
                         printSimulation(simulationInfoDTO);
                         break;
@@ -78,29 +76,24 @@ public class PredictionsManagment
         gettingEntitiesInfo(simulationInfoDTO, simulationInfo);
         gettingRulesInfo(simulationInfoDTO, simulationInfo);
         gettingTerminationInfo(simulationInfoDTO, simulationInfo);
-
         System.out.println(simulationInfo);
-
-
     }
 
     private void gettingTerminationInfo(SimulationInfoDTO simulationInfoDTO, StringBuilder simulationInfo) {
 
         simulationInfo.append("The first term of use is by seconds: ").append(simulationInfoDTO.getTerms().getBySeconds()).append("\n");
         simulationInfo.append("The second term of use is by ticks: ").append(simulationInfoDTO.getTerms().getByTicks()).append("\n");
-
     }
-
     private void gettingRulesInfo(SimulationInfoDTO simulationInfoDTO, StringBuilder simulationInfo) {
         for(RulesDTO ruleDTO:simulationInfoDTO.getRules().values()){
             simulationInfo.append("Rules:").append("\n");
-            simulationInfo.append("Rule name:").append(ruleDTO.getName()).append("\n");
+            simulationInfo.append("Rule name: ").append(ruleDTO.getName()).append("\n");
             simulationInfo.append("Is applied by ticks: ").
-                    append(ruleDTO.getActivation().getTicks()).append("and by: ").
+                    append(ruleDTO.getActivation().getTicks()).append(" and by: ").
                     append(ruleDTO.getActivation().getProbabilty()).append("\n");
-            simulationInfo.append("Amount of action: ").append(ruleDTO.getActions().size()).append("\n");
+            simulationInfo.append("Amount of action for this role: ").append(ruleDTO.getActions().size()).append("\n");
             for(ActionDTO actionDTO: ruleDTO.getActions()){
-                simulationInfo.append("Action type names:").append(actionDTO.getType());
+                simulationInfo.append("Action type names: ").append(actionDTO.getType()).append("\n");
             }
         }
     }
