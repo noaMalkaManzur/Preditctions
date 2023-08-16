@@ -8,6 +8,7 @@ public class EntityDefinitionDTO
     private final int population;
     private final Map<String, EntityPropDefinitionDTO> propertyDefinition;
 
+
     public EntityDefinitionDTO(String name, int population, Map<String, EntityPropDefinitionDTO> propertyDefinition) {
         this.name = name;
         this.population = population;

@@ -3,6 +3,8 @@ package engine.impl;
 import Defenitions.*;
 import Enums.ActionTypeDTO;
 import Generated.*;
+import Histogram.api.Histogram;
+import Histogram.impl.HistogramImpl;
 import Instance.ActiveEnvDTO;
 import Instance.EnvPropertyInstanceDTO;
 import action.api.Action;
@@ -51,6 +53,7 @@ import expression.impl.EnvironmentFunction;
 import expression.impl.GeneralExpression;
 import expression.impl.PropertyExpression;
 import expression.impl.RandomFunction;
+import histogramDTO.HistogramByAmountEntitiesDTO;
 import rule.ActivationImpl;
 import rule.Rule;
 import rule.RuleImpl;
@@ -618,6 +621,7 @@ public class EngineImpl implements Engine {
         Date currDate = new Date();
         String HistogramDate = sdf.format(currDate);
         Instant simulationStart = Instant.now();
+        Histogram histogram = new HistogramImpl(Guid,HistogramDate);
         //endregion
         createContext();
         int ticks = 0;
@@ -675,7 +679,11 @@ public class EngineImpl implements Engine {
     }
     //endregion
     //endregion
+    public HistogramByAmountEntitiesDTO createHistogramByAmountEntitiesDTO(){
 
+        HistogramByAmountEntitiesDTO histogramByAmountEntitiesDTO = new HistogramByAmountEntitiesDTO(entityInstanceManager.getCurrPopulation());
+        return histogramByAmountEntitiesDTO;
+    }
 
 }
 

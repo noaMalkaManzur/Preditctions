@@ -209,5 +209,29 @@ public class PredictionsManagment
         System.out.println(ActiveEnv);
     }
     //endregion
+    //todo: i am sending the entityDEfinistion after user Choice
+    private void showHistogram(EntityDefinitionDTO entityDefinitionDTO){
+        StringBuilder propertyToUser  = new StringBuilder();
+        System.out.println("Please select property Name:");
+        for(int i =0; i<entityDefinitionDTO.getPropertyDefinition().size(); i++) {
+            propertyToUser.append(i + 1).append(entityDefinitionDTO.getPropertyDefinition().get(i).getName());
+        }
+        System.out.println(propertyToUser);
+        int userInput = scanner.nextInt();
 
+        while (userInput >= 1 && userInput <= entityDefinitionDTO.getPropertyDefinition().size()){
+            System.out.println("Please choose for histogram by Amount entites or by histogram\n 1.Amount entites\n2.histogram");
+            int userInputForHistory = scanner.nextInt();
+            if(userInputForHistory ==1){
+
+            }
+            else if(userInputForHistory ==2){
+
+            }
+
+        }
+
+
+
+    }
 }
