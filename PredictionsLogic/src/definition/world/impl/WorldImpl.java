@@ -1,6 +1,5 @@
 package definition.world.impl;
 
-import Generated.PRDWorld;
 import definition.entity.EntityDefinition;
 import definition.environment.api.EnvVariablesManager;
 import definition.world.api.Termination;

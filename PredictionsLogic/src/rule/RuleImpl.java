@@ -1,7 +1,6 @@
 package rule;
 
 import action.api.Action;
-import action.api.ActionType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,13 +10,7 @@ public class RuleImpl implements Rule {
     private final String name;
     private Activation activation;
     private final List<Action> actions;
-    private ActionType actionType;
 
-    /*public RuleImpl(String name) {
-        this.name = name;
-        actions = new ArrayList<>();
-        this.activation = new ActivationImpl();
-    }*/
     public RuleImpl(String name, Activation activation) {
         this.name = name;
         actions = new ArrayList<>();
@@ -43,4 +36,5 @@ public class RuleImpl implements Rule {
     public void addAction(Action action) {
         actions.add(action);
     }
+
 }

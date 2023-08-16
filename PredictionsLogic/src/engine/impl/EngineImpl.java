@@ -268,7 +268,6 @@ public class EngineImpl implements Engine {
     }
 
     private Rule convertRule(PRDRule rule) {
-        //ToDo:See how to implement activation terms
         ActivationImpl activation = convertActivationFromXML(rule);
         Rule newRule = new RuleImpl(rule.getName(), activation);
         for (PRDAction action : rule.getPRDActions().getPRDAction())
@@ -278,7 +277,7 @@ public class EngineImpl implements Engine {
 
     private ActivationImpl convertActivationFromXML(PRDRule rule) {
         ActivationImpl activation = new ActivationImpl();
-        if(rule.getPRDActivation()== null){
+        if (rule.getPRDActivation() == null) {
             return activation;
         }
         if (rule.getPRDActivation().getProbability() != null) {
@@ -302,9 +301,9 @@ public class EngineImpl implements Engine {
             case "CONDITION":
                 return ConditionActionBySingleOrByMulti(action);
             case "SET":
-                return new SetAction(ActionTypeDTO.SET,world.getEntities().get(action.getEntity()) , getExpression(action.getEntity(), action.getProperty(), action.getValue()) , action.getProperty());
+                return new SetAction(ActionTypeDTO.SET, world.getEntities().get(action.getEntity()), getExpression(action.getEntity(), action.getProperty(), action.getValue()), action.getProperty());
             case "KILL":
-                return new KillAction(ActionTypeDTO.KILL,world.getEntities().get(action.getEntity()), null);
+                return new KillAction(ActionTypeDTO.KILL, world.getEntities().get(action.getEntity()), null);
 
         }
         return null;
@@ -330,15 +329,15 @@ public class EngineImpl implements Engine {
         List<ConditionAction> conditionActionList = createConditionList(action);
         String logic = action.getPRDCondition().getLogical();
         String propName = action.getPRDCondition().getProperty();
-        List<Action> actionList= createActionListSingleCondition(action);
+        List<Action> actionList = createActionListSingleCondition(action);
         return new MultipleAction(ActionTypeDTO.CONDITION, world.getEntities().get(action.getEntity()), getExpression(action.getEntity(), action.getProperty(), action.getValue()), actionList, propName, logic, conditionActionList);
     }
 
     private List<ConditionAction> createConditionList(PRDAction action) {
-        int i=0;
+        int i = 0;
         List<ConditionAction> conditionActionList = new ArrayList<>();
         List<Action> actionList = createActionListSingleCondition(action);
-        if(action.getPRDCondition().getPRDCondition().size() !=0) {
+        if (action.getPRDCondition().getPRDCondition().size() != 0) {
             for (PRDCondition prdCondition : action.getPRDCondition().getPRDCondition()) {
                 if (prdCondition.getSingularity().equals("single")) {
                     String valExpression = action.getPRDCondition().getPRDCondition().get(i).getValue();
@@ -353,31 +352,29 @@ public class EngineImpl implements Engine {
                     i++;
                 }
             }
-        }
-        else{
+        } else {
             throw new IllegalArgumentException("Condition list is empty!");
         }
         return conditionActionList;
     }
 
-    private Action SingleConditionCal(PRDAction action){
+    private Action SingleConditionCal(PRDAction action) {
         List<Action> actionListSingle = createActionListSingleCondition(action);
-        String propName= action.getPRDCondition().getProperty();
+        String propName = action.getPRDCondition().getProperty();
         String operator = action.getPRDCondition().getOperator();
-        return new SingleAction(ActionTypeDTO.CONDITION,world.getEntities().get(action.getEntity()), getExpression(action.getEntity(), action.getProperty(), action.getValue()), actionListSingle, propName, operator);
+        return new SingleAction(ActionTypeDTO.CONDITION, world.getEntities().get(action.getEntity()), getExpression(action.getEntity(), action.getProperty(), action.getValue()), actionListSingle, propName, operator);
     }
 
     private List<Action> createActionListSingleCondition(PRDAction action) {
         List<Action> actionListSingle = new ArrayList<>();
-        if(action.getPRDThen().getPRDAction()!= null){
+        if (action.getPRDThen().getPRDAction() != null) {
             for (PRDAction indexAction : action.getPRDThen().getPRDAction()) {
                 actionListSingle.add(convertActionFromXML(indexAction));
             }
-        }
-        else{
+        } else {
             throw new IllegalArgumentException("Argument THEN was null");
         }
-        if(action.getPRDElse() != null) {
+        if (action.getPRDElse() != null) {
             for (PRDAction indexAction : action.getPRDElse().getPRDAction()) {
                 actionListSingle.add(convertActionFromXML(indexAction));
             }
@@ -386,67 +383,64 @@ public class EngineImpl implements Engine {
     }
 
     private Action calculateAccordingToMultiOrDivide(PRDAction action) {
-        List<Expression> myExpression= new ArrayList<>();
-        if(action.getPRDDivide() != null){
-            myExpression.add(getExpression(action.getEntity(), action.getProperty(),action.getPRDDivide().getArg1()).get(0));
-            myExpression.add(getExpression(action.getEntity(), action.getProperty(),action.getPRDDivide().getArg2()).get(0));
-            return new DivideAction(ActionTypeDTO.CALCULATION, world.getEntities().get(action.getEntity()), myExpression,action.getResultProp());
+        List<Expression> myExpression = new ArrayList<>();
+        if (action.getPRDDivide() != null) {
+            myExpression.add(getExpression(action.getEntity(), action.getProperty(), action.getPRDDivide().getArg1()).get(0));
+            myExpression.add(getExpression(action.getEntity(), action.getProperty(), action.getPRDDivide().getArg2()).get(0));
+            return new DivideAction(ActionTypeDTO.CALCULATION, world.getEntities().get(action.getEntity()), myExpression, action.getResultProp());
+        } else if (action.getPRDMultiply() != null) {
+            myExpression.add(getExpression(action.getEntity(), action.getProperty(), action.getPRDMultiply().getArg1()).get(0));
+            myExpression.add(getExpression(action.getEntity(), action.getProperty(), action.getPRDMultiply().getArg2()).get(0));
+            return new MultiplyAction(ActionTypeDTO.CALCULATION, world.getEntities().get(action.getEntity()), myExpression, action.getResultProp());
         }
-        else if(action.getPRDMultiply() != null){
-            myExpression.add(getExpression(action.getEntity(), action.getProperty(),action.getPRDMultiply().getArg1()).get(0));
-            myExpression.add(getExpression(action.getEntity(), action.getProperty(),action.getPRDMultiply().getArg2()).get(0));
-            return new MultiplyAction(ActionTypeDTO.CALCULATION, world.getEntities().get(action.getEntity()), myExpression,action.getResultProp());
-        }
-         throw new IllegalArgumentException("Input doesn't match the expected format");
+        throw new IllegalArgumentException("Input doesn't match the expected format");
     }
 
-    List<Expression> getExpression(String entityName, String propName,String expressionVal){
+    List<Expression> getExpression(String entityName, String propName, String expressionVal) {
         List<Expression> myExpression = new ArrayList<>();
         if (expressionVal != null) {
             if (expressionVal.contains("environment")) {
                 handleEnvironmentFunctionExpression(expressionVal, myExpression);
             } else if (expressionVal.contains("random")) {
-                handleRandomFunctionExpression(expressionVal,myExpression);
+                handleRandomFunctionExpression(expressionVal, myExpression);
                 //todo:check about getting a string
             } else if (isNumeric(expressionVal) || isBoolean(expressionVal)) {
                 myExpression.add(new GeneralExpression(expressionVal, world.getEntities().get(entityName).getProps().get(propName).getType()));
             } else if (world.getEntities().values().contains(expressionVal)) {
                 myExpression.add(new PropertyExpression(expressionVal));
-            }
-            else
-            {
+            } else {
                 throw new InvalidByArgument("we do not support this kind of argument expression!");
             }
         }
         return myExpression;
     }
 
-   void handleRandomFunctionExpression(String ExpressionVal, List<Expression> myExpression){
-
-       int startIndex = ExpressionVal.indexOf('(') + 1;
-       int endIndex = ExpressionVal.indexOf(')');
-
-       if (startIndex != 0 && endIndex != -1) {
-           String arg = ExpressionVal.substring(startIndex, endIndex);
-           if (isNumeric(arg) || world.getEnvVariables().getEnvVariables().containsKey(arg)) {
-               myExpression.add(new RandomFunction(arg));
-           } else {
-               throw new IllegalArgumentException("Invalid arg for function expression");
-           }
-       } else {
-           throw new IllegalArgumentException("Input doesn't match the expected format");
-       }
-   }
-
-
-    void handleEnvironmentFunctionExpression(String ExpressionVal, List<Expression> myExpression){
+    void handleRandomFunctionExpression(String ExpressionVal, List<Expression> myExpression) {
 
         int startIndex = ExpressionVal.indexOf('(') + 1;
         int endIndex = ExpressionVal.indexOf(')');
 
         if (startIndex != 0 && endIndex != -1) {
             String arg = ExpressionVal.substring(startIndex, endIndex);
-            if (isNumeric(arg) ||  world.getEnvVariables().getEnvVariables().containsKey(arg)) {
+            if (isNumeric(arg) || world.getEnvVariables().getEnvVariables().containsKey(arg)) {
+                myExpression.add(new RandomFunction(arg));
+            } else {
+                throw new IllegalArgumentException("Invalid arg for function expression");
+            }
+        } else {
+            throw new IllegalArgumentException("Input doesn't match the expected format");
+        }
+    }
+
+
+    void handleEnvironmentFunctionExpression(String ExpressionVal, List<Expression> myExpression) {
+
+        int startIndex = ExpressionVal.indexOf('(') + 1;
+        int endIndex = ExpressionVal.indexOf(')');
+
+        if (startIndex != 0 && endIndex != -1) {
+            String arg = ExpressionVal.substring(startIndex, endIndex);
+            if (isNumeric(arg) || world.getEnvVariables().getEnvVariables().containsKey(arg)) {
                 myExpression.add(new EnvironmentFunction(arg));
             } else {
                 throw new IllegalArgumentException("Invalid arg for function expression");
@@ -455,6 +449,7 @@ public class EngineImpl implements Engine {
             throw new IllegalArgumentException("Input doesn't match the expected format");
         }
     }
+
     private boolean isNumeric(String numberStr) {
         if (numberStr == null || numberStr.isEmpty()) {
             return false;
@@ -467,10 +462,11 @@ public class EngineImpl implements Engine {
         return true;
 
     }
+
     //endregion
     //region Termination
-    private Termination getTerminationTermFromXML(PRDTermination prdTermination){
-        int ticksCount =-1;
+    private Termination getTerminationTermFromXML(PRDTermination prdTermination) {
+        int ticksCount = -1;
         int secondCount = -1;
         for (Object obj : prdTermination.getPRDByTicksOrPRDBySecond()) {
             if (obj instanceof PRDByTicks) {
@@ -481,47 +477,48 @@ public class EngineImpl implements Engine {
                 secondCount = prdBySecond.getCount();
             }
         }
-        if(ticksCount > 0 && secondCount > 0)
-            return new TerminationImpl(ticksCount,secondCount);
+        if (ticksCount > 0 && secondCount > 0)
+            return new TerminationImpl(ticksCount, secondCount);
         else
             throw new InvalidTerminationTermsException("Simulation Termination terms are invalid Please check them again!");
     }
+
     //endregion
     //endregion
     //region Command number 2
-    public Map<String, EntityDefinitionDTO> getEntityDTO()
-    {
-        Map<String, EntityDefinitionDTO> entityDTO = new  HashMap<>();
+    public Map<String, EntityDefinitionDTO> getEntityDTO() {
+        Map<String, EntityDefinitionDTO> entityDTO = new HashMap<>();
         Map<String, EntityPropDefinitionDTO> propsDTO = new HashMap<>();
-        for(Map.Entry<String,EntityDefinition> entDef : world.getEntities().entrySet())
-        {
+        for (Map.Entry<String, EntityDefinition> entDef : world.getEntities().entrySet()) {
             String name = entDef.getKey();
             int pop = entDef.getValue().getPopulation();
             EntityPropDefinitionDTO propertyDefinitionDTO;
-            for(Map.Entry<String,PropertyDefinition> propDef : entDef.getValue().getProps().entrySet())
-            {
-                propertyDefinitionDTO = new EntityPropDefinitionDTO(propDef.getKey(),propDef.getValue().getType(),propDef.getValue().getRandomInit(),propDef.getValue().getRange());
-                propsDTO.put(propertyDefinitionDTO.getName(),propertyDefinitionDTO);
+            for (Map.Entry<String, PropertyDefinition> propDef : entDef.getValue().getProps().entrySet()) {
+                propertyDefinitionDTO = new EntityPropDefinitionDTO(propDef.getKey(), propDef.getValue().getType(), propDef.getValue().getRandomInit(), propDef.getValue().getRange());
+                propsDTO.put(propertyDefinitionDTO.getName(), propertyDefinitionDTO);
             }
-            entityDTO.put(name,new EntityDefinitionDTO(name,pop,propsDTO));
+            entityDTO.put(name, new EntityDefinitionDTO(name, pop, propsDTO));
         }
         return entityDTO;
     }
-    
-    public  Map<String, RulesDTO> getRulesDTO(){
+
+    public Map<String, RulesDTO> getRulesDTO() {
 
         Map<String, RulesDTO> rulesDTO = new HashMap<>();
-        List<ActionDTO> actionsDTOS = new ArrayList<>();
-        for(Map.Entry<String, Rule> ruleDTO : world.getRules().entrySet()){
-            String name = ruleDTO.getKey();
-            ActivationDTO activationDTO = new ActivationDTO(ruleDTO.getValue().getActivation().getProbability(), ruleDTO.getValue().getActivation().getTicks());
-          for(Action action: ruleDTO.getValue().getActionsToPerform()){
-              actionsDTOS.add(new ActionDTO(action.getActionType()));
+        for (Map.Entry<String, Rule> ruleEntry : world.getRules().entrySet()) {
+            String ruleName = ruleEntry.getKey();
+            Rule rule = ruleEntry.getValue();
+            ActivationDTO activationDTO = new ActivationDTO(rule.getActivation().getProbability(), rule.getActivation().getTicks());
+            List<ActionDTO> actionsDTOS = new ArrayList<>();
+            for (Action action : rule.getActionsToPerform()) {
+                actionsDTOS.add(new ActionDTO(action.getActionType()));
             }
-          rulesDTO.put(name,new RulesDTO(name, activationDTO, actionsDTOS));
+            rulesDTO.put(ruleName, new RulesDTO(ruleName, activationDTO, actionsDTOS));
         }
         return rulesDTO;
     }
+
+
 
     public TerminitionDTO getTerminationDTO(){
         TerminitionDTO terminitionDTO = new TerminitionDTO(world.getTerminationTerm().getBySeconds(), world.getTerminationTerm().getByTicks());
