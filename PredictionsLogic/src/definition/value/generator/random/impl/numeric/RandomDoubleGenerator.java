@@ -11,6 +11,10 @@ public class RandomDoubleGenerator extends AbstractNumericRandomGenerator<Double
     @Override
 
     public Double generateValue() {
-        return from + (to - from) * random.nextDouble();
+        if(from != null && to != null)
+            return from + (to - from) * random.nextDouble();
+
+        else
+            return random.nextDouble() * random.nextInt();
     }
 }

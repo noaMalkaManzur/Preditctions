@@ -97,7 +97,6 @@ public class Main {
         // during a tick...
 
 // given an instance...
-        EntityInstance entityInstance = entityInstanceManager.getInstances().get(0);
         // create a context (per instance)
         Context context = new ContextImpl(entityInstance, entityInstanceManager, activeEnvironment);
         List<Expression> list2 = new ArrayList<>();

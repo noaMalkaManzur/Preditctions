@@ -8,6 +8,9 @@ public class RandomIntegerGenerator extends AbstractNumericRandomGenerator<Integ
 
     @Override
     public Integer generateValue() {
-        return random.nextInt(to - from + 1) + from;
+        if(from != null && to != null)
+            return random.nextInt(to - from + 1) + from;
+        else
+            return random.nextInt();
     }
 }

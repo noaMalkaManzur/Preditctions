@@ -36,5 +36,5 @@ public interface Engine
 
     ActiveEnvDTO ShowUserEnvVariables();
 
-    void runSimulation();
+    String runSimulation();
 }
