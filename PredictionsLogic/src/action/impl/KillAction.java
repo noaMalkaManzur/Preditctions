@@ -9,8 +9,8 @@ import expression.api.Expression;
 import java.util.List;
 
 public class KillAction extends AbstractAction {
-    public KillAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList) {
-        super(actionType.KILL, entityDefinition, null);
+    public KillAction(EntityDefinition entityDefinition) {
+        super(ActionTypeDTO.KILL, entityDefinition, null);
     }
 
     @Override
