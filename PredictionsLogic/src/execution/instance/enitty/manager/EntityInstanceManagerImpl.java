@@ -1,9 +1,5 @@
 package execution.instance.enitty.manager;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import definition.entity.EntityDefinition;
 import definition.property.api.PropertyDefinition;
 import execution.instance.enitty.EntityInstance;
@@ -11,11 +7,15 @@ import execution.instance.enitty.EntityInstanceImpl;
 import execution.instance.property.PropertyInstance;
 import execution.instance.property.PropertyInstanceImpl;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 public class EntityInstanceManagerImpl implements EntityInstanceManager {
 
     private int entitiesCount;
     private List<EntityInstance> instances;
-    private  int currPopulation;
+    private int currPopulation;
     private List<Integer> killList;
 
     public EntityInstanceManagerImpl() {
@@ -55,6 +55,7 @@ public class EntityInstanceManagerImpl implements EntityInstanceManager {
     public int getCurrPopulation() {
         return currPopulation;
     }
+
     @Override
     public void setCurrPopulation(int currPopulation) {
         this.currPopulation = currPopulation;
