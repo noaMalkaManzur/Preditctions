@@ -1,9 +1,9 @@
 package execution.instance.enitty.manager;
 
-import java.util.List;
-
 import definition.entity.EntityDefinition;
 import execution.instance.enitty.EntityInstance;
+
+import java.util.List;
 
 public interface EntityInstanceManager {
 

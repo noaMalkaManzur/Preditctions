@@ -3,6 +3,8 @@ package engine.impl;
 import Defenitions.*;
 import Enums.ActionTypeDTO;
 import Generated.*;
+import Histogram.api.Histogram;
+import Histogram.impl.HistogramImpl;
 import Instance.ActiveEnvDTO;
 import Instance.EnvPropertyInstanceDTO;
 import action.api.Action;
@@ -51,6 +53,8 @@ import expression.impl.EnvironmentFunction;
 import expression.impl.GeneralExpression;
 import expression.impl.PropertyExpression;
 import expression.impl.RandomFunction;
+import histogramDTO.HistogramByAmountEntitiesDTO;
+import histogramDTO.HistogramByPropertyEntitiesDTO;
 import rule.ActivationImpl;
 import rule.Rule;
 import rule.RuleImpl;
@@ -69,6 +73,7 @@ import java.util.*;
 public class EngineImpl implements Engine {
     private WorldDefinition world = new WorldImpl();
     private Context context;
+    Map<String, Histogram> histogramMap = new HashMap<>();
     private ActiveEnvironment activeEnvironment = new ActiveEnvironmentImpl();
     private int primaryEntStartPop;
 
@@ -504,6 +509,7 @@ public class EngineImpl implements Engine {
         for (Map.Entry<String, EntityDefinition> entDef : world.getEntities().entrySet()) {
             String name = entDef.getKey();
             int pop = entDef.getValue().getPopulation();
+
             EntityPropDefinitionDTO propertyDefinitionDTO;
             for (Map.Entry<String, PropertyDefinition> propDef : entDef.getValue().getProps().entrySet()) {
                 propertyDefinitionDTO = new EntityPropDefinitionDTO(propDef.getKey(), propDef.getValue().getType(), propDef.getValue().getRandomInit(), propDef.getValue().getRange());
@@ -642,6 +648,7 @@ public class EngineImpl implements Engine {
             if(simulationEnded(ticks,simulationStart))
                 isTerminated = true;
         }
+        createHistogram(Guid, HistogramDate);
         return Guid;
     }
 
@@ -667,15 +674,52 @@ public class EngineImpl implements Engine {
                     {
                         entityInstanceManager.create(value);
                     }
-
                 });
         primaryEntityInstance = entityInstanceManager.getInstances().get(0);
         primaryEntStartPop = primaryEntityInstance.getEntityDef().getPopulation();
         context = new ContextImpl(primaryEntityInstance,entityInstanceManager,activeEnvironment);
+
     }
     //endregion
     //endregion
+    public HistogramByAmountEntitiesDTO createHistogramByAmountEntitiesDTO(String guid){
+        Histogram histogram = histogramMap.get(guid);
+        HistogramByAmountEntitiesDTO histogramByAmountEntitiesDTO = new HistogramByAmountEntitiesDTO(histogram.getPopAfterSimulation(),histogram.getPopBeforeSimulation());
+        return histogramByAmountEntitiesDTO;
+    }
+    public HistogramByPropertyEntitiesDTO createHistogramByProperty(String guid, String propName){
+        Map<Object, Integer> histogramByproperty = histogramMap.get(guid).getHistogramByProperty();
+        HistogramByPropertyEntitiesDTO histogramByPropertyEntitiesDTO = new HistogramByPropertyEntitiesDTO(histogramByproperty);
+        return  histogramByPropertyEntitiesDTO;
+    }
 
+    void createHistogram(String guid, String date){
+        Map<Integer, EntityInstance> instanceMap = new HashMap<>();
+        context.getEntityManager().getInstances().forEach(instance->{
+            instanceMap.put(instance.getId(), instance);
+        });
+        Histogram histogram = new HistogramImpl(guid,date,instanceMap,primaryEntStartPop,context.getEntityManager().getCurrPopulation());
+        histogramMap.put(guid,histogram);
+    }
+    
+    void setHistogramPerProperty(String guid, String propName) {
 
+        Map<Object, Integer> histogramByProperty = new HashMap<>();
+        Histogram histogram = histogramMap.get(guid);
+
+        histogram.getEntitiesInstances().forEach((sNameEntityIns, entityInstance) -> {
+            Object propValue = entityInstance.getPropertyByName(propName).getValue();
+            if (histogramByProperty.containsKey(propValue)) {
+                histogramByProperty.put(propValue, histogramByProperty.get(propValue) + 1);
+            } else {
+                histogramByProperty.put(propValue, 1);
+            }
+        });
+        histogram.setHistogramByProperty(histogramByProperty);
+    }
 }
+
+
+
+
 

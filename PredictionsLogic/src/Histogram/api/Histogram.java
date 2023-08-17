@@ -1,11 +1,18 @@
 package Histogram.api;
 
-import definition.entity.EntityDefinition;
+import execution.instance.enitty.EntityInstance;
 
-import java.time.Instant;
+import java.util.Map;
 
 public interface Histogram {
     String getGuid();
-    Instant getSimulationTime();
+    String getSimulationTime();
+    void setSimulationTime(String simulationTime);
+    void setGuid(String guid);
+    int getPopAfterSimulation();
+    int getPopBeforeSimulation();
+    Map<Integer, EntityInstance> getEntitiesInstances();
+    Map<Object, Integer> getHistogramByProperty();
+    void setHistogramByProperty(Map<Object, Integer> histogramByProperty);
 
 }
