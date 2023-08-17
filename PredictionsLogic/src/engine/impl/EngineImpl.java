@@ -501,11 +501,7 @@ public class EngineImpl implements Engine {
             }
 
             if (!Character.isDigit(c)) {
-                if (c == '.' && !hasDecimalPoint) {
-                    hasDecimalPoint = true;
-                } else {
-                    return false;
-                }
+                return false;
             }
         }
         return true;
@@ -759,27 +755,6 @@ public class EngineImpl implements Engine {
         HistoryRunningSimulationDTO historyRunningSimulationDTO = new HistoryRunningSimulationDTO(history);
         return historyRunningSimulationDTO;
     }
-
-    public EntityDefinitionDTO getEntityDTO()
-    {
-//        EntityDefinitionDTO entityDTO;
-//        Map<String, EntityPropDefinitionDTO> propsDTO = new HashMap<>();
-//        for (Map.Entry<String, EntityDefinition> entDef : world.getEntities().entrySet()) {
-//            String name = entDef.getKey();
-//            int pop = entDef.getValue().getPopulation();
-//
-//            EntityPropDefinitionDTO propertyDefinitionDTO;
-//            for (Map.Entry<String, PropertyDefinition> propDef : entDef.getValue().getProps().entrySet()) {
-//                propertyDefinitionDTO = new EntityPropDefinitionDTO(propDef.getKey(), propDef.getValue().getType(), propDef.getValue().getRandomInit(), propDef.getValue().getRange());
-//                propsDTO.put(propertyDefinitionDTO.getName(), propertyDefinitionDTO);
-//            }
-//            entityDTO.put(name, new EntityDefinitionDTO(name, pop, propsDTO));
-//        }
-//        return entityDTO;
-        return null;
-    }
-    //endregion
-
 }
 
 
