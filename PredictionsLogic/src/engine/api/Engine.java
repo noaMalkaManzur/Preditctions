@@ -7,6 +7,9 @@ import Defenitions.TerminitionDTO;
 import Instance.ActiveEnvDTO;
 import definition.property.api.Range;
 import exceptions.BadFileSuffixException;
+import histogramDTO.HistogramByAmountEntitiesDTO;
+import histogramDTO.HistogramByPropertyEntitiesDTO;
+import histogramDTO.HistoryRunningSimulationDTO;
 import simulationInfo.SimulationInfoDTO;
 
 import java.io.FileNotFoundException;
@@ -37,4 +40,7 @@ public interface Engine
     ActiveEnvDTO ShowUserEnvVariables();
 
     String runSimulation();
+    HistoryRunningSimulationDTO createHistoryRunningSimulationDTO();
+    HistogramByAmountEntitiesDTO createHistogramByAmountEntitiesDTO(String guid);
+    HistogramByPropertyEntitiesDTO setHistogramPerProperty(String guid, String propName);
 }

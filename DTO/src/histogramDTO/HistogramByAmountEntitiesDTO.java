@@ -7,11 +7,11 @@ public class HistogramByAmountEntitiesDTO {
         this.populationAfterSimulation=populationAfterSimulation;
         this.populationBeforeSimulation= populationBeforeSimulation;
     }
-    int getPopulationAfterSimulation(){
+    public int getPopulationAfterSimulation(){
         return populationAfterSimulation;
     }
 
-    int getPopulationBeforeSimulation(){
+    public int getPopulationBeforeSimulation(){
         return populationBeforeSimulation;
     }
 }
