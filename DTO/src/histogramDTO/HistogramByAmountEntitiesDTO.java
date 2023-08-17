@@ -1,17 +1,29 @@
 package histogramDTO;
 
+import execution.instance.enitty.EntityInstance;
+
+import java.util.Map;
+
 public class HistogramByAmountEntitiesDTO {
+    String name;
     int populationBeforeSimulation;
     int populationAfterSimulation;
-    public HistogramByAmountEntitiesDTO(int populationAfterSimulation, int populationBeforeSimulation){
-        this.populationAfterSimulation=populationAfterSimulation;
-        this.populationBeforeSimulation= populationBeforeSimulation;
+
+    public HistogramByAmountEntitiesDTO(String name, int populationBeforeSimulation, int populationAfterSimulation) {
+        this.name = name;
+        this.populationBeforeSimulation = populationBeforeSimulation;
+        this.populationAfterSimulation = populationAfterSimulation;
     }
+
     public int getPopulationAfterSimulation(){
         return populationAfterSimulation;
     }
 
     public int getPopulationBeforeSimulation(){
         return populationBeforeSimulation;
+    }
+
+    public String getName() {
+        return name;
     }
 }

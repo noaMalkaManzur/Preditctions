@@ -10,13 +10,15 @@ import expression.api.Expression;
 import java.util.List;
 
 public abstract class ConditionAction extends AbstractAction {
-    //protected String singularity;
-    protected List<Action> actionList;
+    protected List<Action> thenActionList;
+    protected List<Action> elseActionList;
+
     protected String propertyName;
 
-    protected ConditionAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList, List<Action> actionList, String propertyName ) {
+    protected ConditionAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList, List<Action> thenActionList,List<Action> elseActionList, String propertyName ) {
         super(actionType, entityDefinition, expressionList);
-        this.actionList = actionList;
+        this.thenActionList = thenActionList;
+        this.elseActionList = elseActionList;
         this.propertyName = propertyName;
     }
 
@@ -28,12 +30,15 @@ public abstract class ConditionAction extends AbstractAction {
 
         if (this.checkCondition(context))
         {
-            actionList.get(0).invoke(context);
+            thenActionList.forEach(action -> {
+                action.invoke(context);
+            });
         } else
         {
-            if (actionList.size() > 1) {
-                actionList.get(1).invoke(context);
-            }
+            if(elseActionList != null)
+                elseActionList.forEach(action -> {
+                    action.invoke(context);
+                });
         }
 
     }

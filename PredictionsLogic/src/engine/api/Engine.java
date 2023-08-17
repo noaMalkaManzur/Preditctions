@@ -34,13 +34,15 @@ public interface Engine
     void addEnvVarToActiveEnv(Object userValue, String name);
     Map<String, RulesDTO> getRulesDTO();
     TerminitionDTO getTerminationDTO();
-    Map<String, EntityDefinitionDTO> getEntityDTO();
+    Map<String, EntityDefinitionDTO> getEntitiesDTO();
     public SimulationInfoDTO getSimulationInfo();
 
     ActiveEnvDTO ShowUserEnvVariables();
 
     String runSimulation();
     HistoryRunningSimulationDTO createHistoryRunningSimulationDTO();
-    HistogramByAmountEntitiesDTO createHistogramByAmountEntitiesDTO(String guid);
+  
+    HistogramByAmountEntitiesDTO createHistogramByAmountEntitiesDTO(String guid,String name);
+
     HistogramByPropertyEntitiesDTO setHistogramPerProperty(String guid, String propName);
 }

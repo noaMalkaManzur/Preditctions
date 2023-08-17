@@ -13,11 +13,11 @@ public class SingleAction extends ConditionAction {
 
     String operator;
 
-    public SingleAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList, List<Action> actionList, String propertyName, String operator) {
-        super(actionType, entityDefinition, expressionList, actionList, propertyName);
-        this.operator =operator;
+    public SingleAction(EntityDefinition entityDefinition, List<Expression> expressionList,
+                        List<Action> thenActionList, List<Action> elseActionList, String propertyName, String operator) {
+        super(ActionTypeDTO.CONDITION, entityDefinition, expressionList, thenActionList, elseActionList, propertyName);
+        this.operator = operator;
     }
-
 
     @Override
     public boolean checkCondition(Context context) {

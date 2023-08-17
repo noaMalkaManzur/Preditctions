@@ -2,6 +2,7 @@ package Predictions.PredictionsUI;
 
 import Defenitions.*;
 import Instance.ActiveEnvDTO;
+import definition.property.api.PropertyDefinition;
 import definition.property.api.PropertyType;
 import engine.api.Engine;
 import engine.impl.EngineImpl;
@@ -9,6 +10,9 @@ import histogramDTO.HistogramByAmountEntitiesDTO;
 import histogramDTO.HistogramByPropertyEntitiesDTO;
 import histogramDTO.HistoryRunningSimulationDTO;
 import simulationInfo.SimulationInfoDTO;
+
+
+import java.util.HashMap;
 
 import java.util.Map;
 import java.util.Scanner;
@@ -21,7 +25,7 @@ public class PredictionsManagment {
 
     public void run() {
         //ToDo: Implement user input method.
-        String fileName ;
+        String fileName;
         System.out.println("Hello There! Welcome to our Predictions simulation System!\n");
         while (!Exit) {
             printMenu();
@@ -37,8 +41,8 @@ public class PredictionsManagment {
                         } else {
                             loadSimulationDetails(fileName);
                             System.out.println("Successfully loaded file: " + fileName);
+                            break;
                         }
-                        break;
                     case 2:
                         //loadSimulationDetails(fileName);
                         SimulationInfoDTO simulationInfoDTO = engine.getSimulationInfo();
@@ -46,10 +50,9 @@ public class PredictionsManagment {
                         break;
                     case 3:
                         System.out.println(ExecuteSimulation() + "\n");
+                        break;
                     case 4:
-                        simulationInfoDTO = engine.getSimulationInfo();
-                        EntityDefinitionDTO entityDefDTO  = simulationInfoDTO.getEntities().Values;
-                        showHistogram(entityDefinitionDTO);
+                        showHistogram();
                         break;
                     case 5:
                         System.out.println("Thank you for being with us!");
@@ -76,7 +79,6 @@ public class PredictionsManagment {
                 .append("5. Exit.").append(System.lineSeparator());
         System.out.println(menu);
     }
-
     //endregion
     //region Command 1
     private String getFileNameFromUser()
@@ -85,6 +87,9 @@ public class PredictionsManagment {
         scanner.nextLine(); // Empty the buffer.
         return scanner.nextLine();
     }
+
+    //endregion
+    //region Command 1
     private void loadSimulationDetails(String fileName) {
         engine.loadXmlFiles(fileName);
     }
@@ -231,8 +236,8 @@ public class PredictionsManagment {
     }
 
     //endregion
-    private void showHistogram(EntityDefinitionDTO entityDefinitionDTO) {
-        chooseOptionForInfoSimulation(entityDefinitionDTO);
+    private void showHistogram() {
+        chooseOptionForInfoSimulation();
     }
 
 
@@ -242,15 +247,14 @@ public class PredictionsManagment {
         HistoryRunningSimulationDTO historyRunningSimulationDTO = engine.createHistoryRunningSimulationDTO();
 
         for (Map.Entry<String, String> entry : historyRunningSimulationDTO.getHistoryRunningSimulation().entrySet()) {
-            historySimulation.append(counter + 1).append("Simulation guid: ").append(entry.getKey()).append(" Simulation date:").append(entry.getValue()).append("\n");
+            historySimulation.append(counter + 1 +") ").append("Simulation guid: ").append(entry.getKey()).append(" | ").append("Simulation date:").append(entry.getValue()).append("\n");
             counter++;
         }
         System.out.println(historySimulation);
-
+        scanner.nextLine(); //Clear Buffer.
         while (true) {
             System.out.println("Please choose a simulation");
             String userInputForProperty = scanner.nextLine();
-
             try {
                 int userChoice = Integer.parseInt(userInputForProperty);
                 if (userChoice >= 1 && userChoice <= (counter)) {
@@ -272,12 +276,14 @@ public class PredictionsManagment {
     }
 
 
-    void chooseOptionForInfoSimulation(EntityDefinitionDTO entityDefinitionDTO){
+
+    void chooseOptionForInfoSimulation(){
+        boolean runLoop = true;
         String guid = getSelectedSimulationGuid();
         System.out.println("Please choose which way to see past running simulation:\n" +
                 "1.Amount entites before and after simulation\n" +
                 "2.Histogram per propery");
-        while (true) {
+        while (runLoop) {
             String userInputForProperty = scanner.nextLine();
             try {
                 int userChoice = Integer.parseInt(userInputForProperty);
@@ -285,9 +291,11 @@ public class PredictionsManagment {
 
                     if(userChoice == 1){
                         handlePrintingByAmount(guid);
+                        runLoop = false;
                     }
                     else{
-                        handlePrintingByProperty(entityDefinitionDTO, guid);
+                        handlePrintingByProperty(guid);
+                        runLoop = false;
                     }
                 } else {
                     System.out.println("Invalid user choice for simulation. Please enter a valid choice.");
@@ -300,31 +308,48 @@ public class PredictionsManagment {
     }
 
     private void handlePrintingByAmount(String guid) {
-        HistogramByAmountEntitiesDTO histogram =engine.createHistogramByAmountEntitiesDTO(guid);
 
-        System.out.println("Amount of population before starting simulation: " +histogram.getPopulationBeforeSimulation()
-                +"\n Amount of population after simulation: " +histogram.getPopulationAfterSimulation());
+        Map<String,EntityDefinitionDTO> entityDefinitionDTOS = engine.getEntitiesDTO();
+        String chosenEntity = printEntitiesList(entityDefinitionDTOS);
+        HistogramByAmountEntitiesDTO histogram = engine.createHistogramByAmountEntitiesDTO(guid,chosenEntity);
+        StringBuilder printByAmount = new StringBuilder();
+        printByAmount.append("Entity:").append(histogram.getName()).append(System.lineSeparator())
+                .append("Amount of population before starting simulation: ").append(histogram.getPopulationBeforeSimulation())
+                .append(System.lineSeparator()).append("Amount of population after simulation: ")
+                .append(histogram.getPopulationAfterSimulation()).append(System.lineSeparator());
+        System.out.println(printByAmount);
     }
 
-    private void handlePrintingByProperty(EntityDefinitionDTO entityDefinitionDTO, String guid) {
+    private void handlePrintingByProperty(String guid) {
+        Map<String,EntityDefinitionDTO> entityDefinitionDTOS = engine.getEntitiesDTO();
+        String chosenEntity = printEntitiesList(entityDefinitionDTOS);
+        EntityDefinitionDTO entityDefinitionDTO = entityDefinitionDTOS.get(chosenEntity);
         int size = entityDefinitionDTO.getPropertyDefinition().size();
         StringBuilder propertyToUser = new StringBuilder();
+        Map<Integer,String> PropNameMap = new HashMap<>();
+        boolean runLoop = true;
+
 
         System.out.println("Please select a property Name:");
-
-        for (int i = 0; i < size; i++) {
-            propertyToUser.append(i + 1).append(". ").append(entityDefinitionDTO.getPropertyDefinition().get(i).getName()).append("\n");
+        int index = 1;
+        for(Map.Entry<String, EntityPropDefinitionDTO> propDef: entityDefinitionDTO.getPropertyDefinition().entrySet())
+        {
+            propertyToUser.append(index).append(")").append(propDef.getValue().getName()).append(System.lineSeparator());
+            PropNameMap.put(index,propDef.getValue().getName());
+            index++;
         }
 
         System.out.println(propertyToUser);
 
-        while (true) {
+        while (runLoop) {
+
             String userInputForProperty = scanner.nextLine();
             try {
                 int userChoice = Integer.parseInt(userInputForProperty);
                 if (userChoice >= 1 && userChoice <= size) {
-                    String nameProp = entityDefinitionDTO.getPropertyDefinition().get(userChoice - 1).getName();
-                    printPropert(guid, nameProp);
+                    String nameProp = PropNameMap.get(userChoice);
+                    printProperty(guid, nameProp);
+                    runLoop = false;
                 } else {
                     System.out.println("Invalid user choice for property name. Please enter a valid choice.");
                 }
@@ -333,8 +358,33 @@ public class PredictionsManagment {
             }
         }
     }
+    private String printEntitiesList(Map<String, EntityDefinitionDTO> entityDefinitionDTO) {
+        StringBuilder entities = new StringBuilder();
+        Map<Integer,String> EntityNameMap = new HashMap<>();
+        int i = 1;
+        for(String name : entityDefinitionDTO.keySet())
+        {
+            entities.append(i).append(")").append(name).append(System.lineSeparator());
+            EntityNameMap.put(i,name);
+        }
+        System.out.println(entities);
+        while(true)
+        {
+            String userInputForProperty = scanner.nextLine();
+            try {
+                int userChoice = Integer.parseInt(userInputForProperty);
+                if (userChoice >= 1 && userChoice <= entityDefinitionDTO.keySet().size()) {
+                    return EntityNameMap.get(userChoice);
+                } else {
+                    System.out.println("Invalid user choice for Entity name. Please enter a valid choice.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a valid numeric choice.");
+            }
+        }
+    }
+    private void printProperty(String guid, String nameProp) {
 
-    private void printPropert(String guid, String nameProp) {
         HistogramByPropertyEntitiesDTO histogramByPropertyEntitiesDTO = engine.setHistogramPerProperty(guid, nameProp);
         Map<Object,Integer> properties =  histogramByPropertyEntitiesDTO.getHistogramByProperty();
         properties.forEach((propValue, counetrValue)->{

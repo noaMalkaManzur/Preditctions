@@ -310,17 +310,17 @@ public class EngineImpl implements Engine {
     private Action convertActionFromXML(PRDAction action) {
         switch (action.getType().toUpperCase()) {
             case "INCREASE":
-                return new IncreaseAction(ActionTypeDTO.INCREASE, world.getEntities().get(action.getEntity()), getExpression(action.getEntity(), action.getProperty(), action.getBy()), action.getProperty());
+                return new IncreaseAction(world.getEntities().get(action.getEntity()), getExpression(action.getEntity(), action.getProperty(), action.getBy()), action.getProperty());
             case "DECREASE":
-                return new DecreaseAction(ActionTypeDTO.DECREASE, world.getEntities().get(action.getEntity()), getExpression(action.getEntity(), action.getProperty(), action.getBy()), action.getProperty());
+                return new DecreaseAction(world.getEntities().get(action.getEntity()), getExpression(action.getEntity(), action.getProperty(), action.getBy()), action.getProperty());
             case "CALCULATION":
                 return calculateAccordingToMultiOrDivide(action);
             case "CONDITION":
                 return ConditionActionBySingleOrByMulti(action);
             case "SET":
-                return new SetAction(ActionTypeDTO.SET, world.getEntities().get(action.getEntity()), getExpression(action.getEntity(), action.getProperty(), action.getValue()), action.getProperty());
+                return new SetAction(world.getEntities().get(action.getEntity()), getExpression(action.getEntity(), action.getProperty(), action.getValue()), action.getProperty());
             case "KILL":
-                return new KillAction(ActionTypeDTO.KILL, world.getEntities().get(action.getEntity()), null);
+                return new KillAction(world.getEntities().get(action.getEntity()));
 
         }
         return null;
@@ -343,47 +343,44 @@ public class EngineImpl implements Engine {
 
     private Action MultipleCondition(PRDAction action) {
 
-        List<ConditionAction> conditionActionList = createConditionList(action);
+        List<ConditionAction> conditionActionList = createConditionList(action.getPRDCondition());
         String logic = action.getPRDCondition().getLogical();
         String propName = action.getPRDCondition().getProperty();
-        List<Action> actionList = createActionListSingleCondition(action);
-        return new MultipleAction(ActionTypeDTO.CONDITION, world.getEntities().get(action.getEntity()),null, actionList, null, logic, conditionActionList);
+        List<Action> thenActionList = createThenActionList(action);
+        List<Action> elseActionList = createElseActionList(action);
+        return new MultipleAction(world.getEntities().get(action.getEntity()),null, thenActionList, elseActionList,null,conditionActionList, logic);
     }
 
-    private List<ConditionAction> createConditionList(PRDAction action) {
-        int i = 0;
+    private List<ConditionAction> createConditionList(PRDCondition condition) {
         List<ConditionAction> conditionActionList = new ArrayList<>();
-        //List<Action> actionList = createActionListSingleCondition(action);
-        if (action.getPRDCondition().getPRDCondition().size() != 0) {
-            for (PRDCondition prdCondition : action.getPRDCondition().getPRDCondition()) {
+        if (condition.getPRDCondition() != null) {
+            for (PRDCondition prdCondition : condition.getPRDCondition()) {
+                String valExpression = prdCondition.getValue();
+                String propertyName = prdCondition.getProperty();
                 if (prdCondition.getSingularity().equals("single")) {
-                    String valExpression = action.getPRDCondition().getPRDCondition().get(i).getValue();
-                    String propertyName = action.getPRDCondition().getPRDCondition().get(i).getProperty();
-                    conditionActionList.add(new SingleAction(ActionTypeDTO.CONDITION, world.getEntities().get(action.getEntity()), getExpression(action.getEntity(), propertyName, valExpression), null, prdCondition.getProperty(), prdCondition.getOperator()));
-                    i++;
-                } else if (prdCondition.getSingularity().equals("multi")) {
-                    //todo:check with noam if the index is ok for the multi or to keep other index?
-                    String valExpression = action.getPRDCondition().getPRDCondition().get(i).getValue();
-                    String propertyName = action.getPRDCondition().getPRDCondition().get(i).getProperty();
-                    conditionActionList.add(new MultipleAction(ActionTypeDTO.CONDITION, world.getEntities().get(action.getEntity()), getExpression(action.getEntity(), propertyName, valExpression), null, action.getProperty(), prdCondition.getLogical(), conditionActionList));
-                    i++;
+                    conditionActionList.add(new SingleAction(world.getEntities().get(prdCondition.getEntity()),
+                            getExpression(prdCondition.getEntity(), propertyName, valExpression), null, null,
+                            prdCondition.getProperty(), prdCondition.getOperator()));
+                } else if (prdCondition.getSingularity().equals("multiple")) {
+                    List<ConditionAction> multiCondList = createConditionList(prdCondition);
+                    conditionActionList.add(new MultipleAction(world.getEntities().get(prdCondition.getEntity()),
+                            null, null, null, condition.getProperty(), multiCondList, prdCondition.getLogical()));
                 }
             }
-        } else {
-            throw new IllegalArgumentException("Condition list is empty!");
         }
         return conditionActionList;
     }
 
     private Action SingleConditionCal(PRDAction action) {
-        List<Action> actionListSingle = createActionListSingleCondition(action);
+        List<Action> thenActionList = createThenActionList(action);
+        List<Action> elseActionList = createElseActionList(action);
         String propName = action.getPRDCondition().getProperty();
         String operator = action.getPRDCondition().getOperator();
         String value = action.getPRDCondition().getValue();
-        return new SingleAction(ActionTypeDTO.CONDITION, world.getEntities().get(action.getEntity()), getExpression(action.getEntity(), propName,value), actionListSingle, propName, operator);
+        return new SingleAction(world.getEntities().get(action.getEntity()), getExpression(action.getEntity(), propName,value), thenActionList,elseActionList, propName, operator);
     }
-
-    private List<Action> createActionListSingleCondition(PRDAction action) {
+    private List<Action> createThenActionList(PRDAction action)
+    {
         List<Action> actionListSingle = new ArrayList<>();
         if (action.getPRDThen().getPRDAction() != null) {
             for (PRDAction indexAction : action.getPRDThen().getPRDAction()) {
@@ -392,13 +389,35 @@ public class EngineImpl implements Engine {
         } else {
             throw new IllegalArgumentException("Argument THEN was null");
         }
+        return  actionListSingle;
+    }
+    private List<Action> createElseActionList(PRDAction action)
+    {
+        List<Action> actionListSingle = new ArrayList<>();
         if (action.getPRDElse() != null) {
             for (PRDAction indexAction : action.getPRDElse().getPRDAction()) {
                 actionListSingle.add(convertActionFromXML(indexAction));
             }
         }
-        return actionListSingle;
+        return  actionListSingle;
     }
+
+//    private List<Action> createActionListSingleCondition(PRDAction action) {
+//        List<Action> actionListSingle = new ArrayList<>();
+//        if (action.getPRDThen().getPRDAction() != null) {
+//            for (PRDAction indexAction : action.getPRDThen().getPRDAction()) {
+//                actionListSingle.add(convertActionFromXML(indexAction));
+//            }
+//        } else {
+//            throw new IllegalArgumentException("Argument THEN was null");
+//        }
+//        if (action.getPRDElse() != null) {
+//            for (PRDAction indexAction : action.getPRDElse().getPRDAction()) {
+//                actionListSingle.add(convertActionFromXML(indexAction));
+//            }
+//        }
+//        return actionListSingle;
+//    }
 
     private Action calculateAccordingToMultiOrDivide(PRDAction action) {
         List<Expression> myExpression = new ArrayList<>();
@@ -421,13 +440,11 @@ public class EngineImpl implements Engine {
                 handleEnvironmentFunctionExpression(expressionVal, myExpression);
             } else if (expressionVal.contains("random")) {
                 handleRandomFunctionExpression(expressionVal, myExpression);
-                //todo:check about getting a string
-            } else if (isNumeric(expressionVal) || isBoolean(expressionVal)) {
-                myExpression.add(new GeneralExpression(expressionVal, world.getEntities().get(entityName).getProps().get(propName).getType()));
-            } else if (world.getEntities().get(entityName).getProps().containsKey(expressionVal)) {
+            }
+            else if (world.getEntities().get(entityName).getProps().containsKey(expressionVal)) {
                 myExpression.add(new PropertyExpression(expressionVal));
             } else {
-                throw new InvalidByArgument("we do not support this kind of argument expression!");
+                myExpression.add(new GeneralExpression(expressionVal, world.getEntities().get(entityName).getProps().get(propName).getType()));
             }
         }
         return myExpression;
@@ -472,18 +489,24 @@ public class EngineImpl implements Engine {
         if (numberStr == null || numberStr.isEmpty()) {
             return false;
         }
-        boolean hasDecimalPoint = false; // For tracking decimal points in the input
-        for (char c : numberStr.toCharArray()) {
+        boolean hasDecimalPoint = false;
+        boolean hasNegativeSign = false;
+
+        for (int i = 0; i < numberStr.length(); i++) {
+            char c = numberStr.charAt(i);
+
+            if (i == 0 && c == '-') {
+                hasNegativeSign = true;
+                continue;
+            }
+
             if (!Character.isDigit(c)) {
-                if (c == '.' && !hasDecimalPoint) {
-                    hasDecimalPoint = true;
-                } else {
-                    return false;
-                }
+                return false;
             }
         }
         return true;
     }
+
 
     //endregion
     //region Termination
@@ -508,7 +531,7 @@ public class EngineImpl implements Engine {
     //endregion
     //endregion
     //region Command number 2
-    public Map<String, EntityDefinitionDTO> getEntityDTO() {
+    public Map<String, EntityDefinitionDTO> getEntitiesDTO() {
         Map<String, EntityDefinitionDTO> entityDTO = new HashMap<>();
         Map<String, EntityPropDefinitionDTO> propsDTO = new HashMap<>();
         for (Map.Entry<String, EntityDefinition> entDef : world.getEntities().entrySet()) {
@@ -548,7 +571,7 @@ public class EngineImpl implements Engine {
         return terminitionDTO;
     }
     public SimulationInfoDTO getSimulationInfo(){
-        SimulationInfoDTO simulationInfoDTO = new SimulationInfoDTO(getEntityDTO(),getRulesDTO(),getTerminationDTO());
+        SimulationInfoDTO simulationInfoDTO = new SimulationInfoDTO(getEntitiesDTO(),getRulesDTO(),getTerminationDTO());
         return simulationInfoDTO;
     }
 
@@ -646,7 +669,7 @@ public class EngineImpl implements Engine {
             }
             ticks++;
             activateKillAction();
-            System.out.println("#tick:"+ticks+ "    Curr Pop:" + context.getEntityManager().getCurrPopulation());
+            //1System.out.println("#tick:"+ticks+ "    Curr Pop:" + context.getEntityManager().getCurrPopulation());
             if(simulationEnded(ticks,simulationStart))
                 isTerminated = true;
         }
@@ -685,6 +708,8 @@ public class EngineImpl implements Engine {
     //endregion
     //endregion
 
+    //region Command number 4
+
     void createHistogram(String guid){
         String histogramDate = createHistogramDate();
         Map<Integer, EntityInstance> instanceMap = new HashMap<>();
@@ -697,8 +722,8 @@ public class EngineImpl implements Engine {
     String createHistogramDate(){
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy | HH.mm.ss");
         Date currDate = new Date();
-        String HistogramDate = sdf.format(currDate);
-        return HistogramDate;
+        return sdf.format(currDate);
+
     }
     public HistogramByPropertyEntitiesDTO setHistogramPerProperty(String guid, String propName) {
 
@@ -717,10 +742,10 @@ public class EngineImpl implements Engine {
         return histogramByPropertyEntitiesDTO;
     }
 
-    public HistogramByAmountEntitiesDTO createHistogramByAmountEntitiesDTO(String guid){
+
+    public HistogramByAmountEntitiesDTO createHistogramByAmountEntitiesDTO(String guid,String name){
         Histogram histogram = histogramMap.get(guid);
-        HistogramByAmountEntitiesDTO histogramByAmountEntitiesDTO = new HistogramByAmountEntitiesDTO(histogram.getPopAfterSimulation(),histogram.getPopBeforeSimulation());
-        return histogramByAmountEntitiesDTO;
+        return new HistogramByAmountEntitiesDTO(name,histogram.getPopBeforeSimulation(),histogram.getPopAfterSimulation());
     }
     public HistoryRunningSimulationDTO createHistoryRunningSimulationDTO() {
         Map<String, String> history = new HashMap<>();

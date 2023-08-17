@@ -13,12 +13,12 @@ public class MultipleAction extends ConditionAction {
     List<ConditionAction> conditionList;
     String logic;
 
-    public MultipleAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList, List<Action> actionList, String propertyName, String logic, List<ConditionAction> conditionList) {
-        super(actionType, entityDefinition, expressionList, actionList, propertyName);
-        this.logic= logic;
+    public MultipleAction(EntityDefinition entityDefinition, List<Expression> expressionList,
+                          List<Action> thenActionList, List<Action> elseActionList, String propertyName, List<ConditionAction> conditionList, String logic) {
+        super(ActionTypeDTO.CONDITION, entityDefinition, expressionList, thenActionList, elseActionList, propertyName);
         this.conditionList = conditionList;
+        this.logic = logic;
     }
-
 
     @Override
     public boolean checkCondition(Context context) {
