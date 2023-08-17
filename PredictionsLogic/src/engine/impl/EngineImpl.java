@@ -402,12 +402,12 @@ public class EngineImpl implements Engine {
     private Action calculateAccordingToMultiOrDivide(PRDAction action) {
         List<Expression> myExpression = new ArrayList<>();
         if (action.getPRDDivide() != null) {
-            myExpression.add(getExpression(action.getEntity(), action.getProperty(), action.getPRDDivide().getArg1()).get(0));
-            myExpression.add(getExpression(action.getEntity(), action.getProperty(), action.getPRDDivide().getArg2()).get(0));
+            myExpression.add(getExpression(action.getEntity(), action.getResultProp(), action.getPRDDivide().getArg1()).get(0));
+            myExpression.add(getExpression(action.getEntity(), action.getResultProp(), action.getPRDDivide().getArg2()).get(0));
             return new DivideAction(ActionTypeDTO.CALCULATION, world.getEntities().get(action.getEntity()), myExpression, action.getResultProp());
         } else if (action.getPRDMultiply() != null) {
-            myExpression.add(getExpression(action.getEntity(), action.getProperty(), action.getPRDMultiply().getArg1()).get(0));
-            myExpression.add(getExpression(action.getEntity(), action.getProperty(), action.getPRDMultiply().getArg2()).get(0));
+            myExpression.add(getExpression(action.getEntity(), action.getResultProp(), action.getPRDMultiply().getArg1()).get(0));
+            myExpression.add(getExpression(action.getEntity(), action.getResultProp(), action.getPRDMultiply().getArg2()).get(0));
             return new MultiplyAction(ActionTypeDTO.CALCULATION, world.getEntities().get(action.getEntity()), myExpression, action.getResultProp());
         }
         throw new IllegalArgumentException("Input doesn't match the expected format");
@@ -423,7 +423,7 @@ public class EngineImpl implements Engine {
                 //todo:check about getting a string
             } else if (isNumeric(expressionVal) || isBoolean(expressionVal)) {
                 myExpression.add(new GeneralExpression(expressionVal, world.getEntities().get(entityName).getProps().get(propName).getType()));
-            } else if (world.getEntities().values().contains(expressionVal)) {
+            } else if (world.getEntities().get(entityName).getProps().containsKey(expressionVal)) {
                 myExpression.add(new PropertyExpression(expressionVal));
             } else {
                 throw new InvalidByArgument("we do not support this kind of argument expression!");
@@ -471,13 +471,17 @@ public class EngineImpl implements Engine {
         if (numberStr == null || numberStr.isEmpty()) {
             return false;
         }
+        boolean hasDecimalPoint = false; // For tracking decimal points in the input
         for (char c : numberStr.toCharArray()) {
             if (!Character.isDigit(c)) {
-                return false;
+                if (c == '.' && !hasDecimalPoint) {
+                    hasDecimalPoint = true;
+                } else {
+                    return false;
+                }
             }
         }
         return true;
-
     }
 
     //endregion
