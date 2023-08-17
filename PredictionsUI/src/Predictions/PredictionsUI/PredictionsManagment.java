@@ -18,7 +18,7 @@ public class PredictionsManagment
     public void run()
     {
         //ToDo: Implement user input method.
-        String fileName = "ex1-cigarets.xml";
+        String fileName ;
         System.out.println("Hello There! Welcome to our Predictions simulation System!\n");
         while(!Exit) {
             printMenu();
@@ -26,11 +26,16 @@ public class PredictionsManagment
                 userChoice = scanner.nextInt();
                 switch (userChoice) {
                     case 1:
-                        loadSimulationDetails(fileName);
-                        System.out.println("Successfully loaded file:"+fileName);
+                        fileName = getFileNameFromUser();
+                        if (fileName.trim().isEmpty()) {
+                            System.out.println("File path is empty please give valid file name.");
+                        } else {
+                            loadSimulationDetails(fileName);
+                            System.out.println("Successfully loaded file: " + fileName);
+                        }
                         break;
                     case 2:
-                        loadSimulationDetails(fileName);
+                        //loadSimulationDetails(fileName);
                         SimulationInfoDTO simulationInfoDTO = engine.getSimulationInfo();
                         printSimulation(simulationInfoDTO);
                         break;
@@ -52,6 +57,9 @@ public class PredictionsManagment
         }
         System.exit(0);
     }
+
+
+
     //region Common functions
     private void printMenu()
     {
@@ -66,6 +74,12 @@ public class PredictionsManagment
     }
     //endregion
     //region Command 1
+    private String getFileNameFromUser()
+    {
+        System.out.println("Hello please insert full file path:");
+        scanner.nextLine(); // Empty the buffer.
+        return scanner.nextLine();
+    }
     private void loadSimulationDetails(String fileName) {
         engine.loadXmlFiles(fileName);
     }
@@ -133,9 +147,11 @@ public class PredictionsManagment
         envString.append("Please insert value for the next environment variable, " +
                         "if you don't want to insert a value just press enter and we will make a random value for you").append(System.lineSeparator())
                 .append("Name:").append(envDefDTO.getName()).append(System.lineSeparator())
-                .append("Type:").append(envDefDTO.getType()).append(System.lineSeparator())
-                .append("Range:").append(envDefDTO.getRange().getRangeFrom()).append("-")
-                .append(envDefDTO.getRange().getRangeTo()).append(System.lineSeparator());
+                .append("Type:").append(envDefDTO.getType()).append(System.lineSeparator());
+        if (envDefDTO.getRange() != null) {
+            envString.append("Range:").append(envDefDTO.getRange().getRangeFrom()).append("-")
+                    .append(envDefDTO.getRange().getRangeTo()).append(System.lineSeparator());
+        }
         System.out.println(envString);
     }
     private String ExecuteSimulation() {
