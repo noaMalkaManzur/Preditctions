@@ -7,7 +7,7 @@ public class HistogramByPropertyEntitiesDTO {
     public HistogramByPropertyEntitiesDTO(Map<Object, Integer> histogramByProperty){
         this.histogramByProperty=histogramByProperty;
     }
-    Map<Object, Integer> getHistogramByProperty(){
+    public Map<Object, Integer> getHistogramByProperty(){
         return histogramByProperty;
     }
 

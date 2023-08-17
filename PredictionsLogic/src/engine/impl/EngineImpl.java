@@ -55,6 +55,7 @@ import expression.impl.PropertyExpression;
 import expression.impl.RandomFunction;
 import histogramDTO.HistogramByAmountEntitiesDTO;
 import histogramDTO.HistogramByPropertyEntitiesDTO;
+import histogramDTO.HistoryRunningSimulationDTO;
 import rule.ActivationImpl;
 import rule.Rule;
 import rule.RuleImpl;
@@ -620,9 +621,6 @@ public class EngineImpl implements Engine {
     {
         //region HistogramCreation
         String Guid = UUID.randomUUID().toString();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy | HH.mm.ss");
-        Date currDate = new Date();
-        String HistogramDate = sdf.format(currDate);
         Instant simulationStart = Instant.now();
         //endregion
         createContext();
@@ -648,7 +646,7 @@ public class EngineImpl implements Engine {
             if(simulationEnded(ticks,simulationStart))
                 isTerminated = true;
         }
-        createHistogram(Guid, HistogramDate);
+        createHistogram(Guid);
         return Guid;
     }
 
@@ -682,31 +680,26 @@ public class EngineImpl implements Engine {
     }
     //endregion
     //endregion
-    public HistogramByAmountEntitiesDTO createHistogramByAmountEntitiesDTO(String guid){
-        Histogram histogram = histogramMap.get(guid);
-        HistogramByAmountEntitiesDTO histogramByAmountEntitiesDTO = new HistogramByAmountEntitiesDTO(histogram.getPopAfterSimulation(),histogram.getPopBeforeSimulation());
-        return histogramByAmountEntitiesDTO;
-    }
-    public HistogramByPropertyEntitiesDTO createHistogramByProperty(String guid, String propName){
-        Map<Object, Integer> histogramByproperty = histogramMap.get(guid).getHistogramByProperty();
-        HistogramByPropertyEntitiesDTO histogramByPropertyEntitiesDTO = new HistogramByPropertyEntitiesDTO(histogramByproperty);
-        return  histogramByPropertyEntitiesDTO;
-    }
 
-    void createHistogram(String guid, String date){
+    void createHistogram(String guid){
+        String histogramDate = createHistogramDate();
         Map<Integer, EntityInstance> instanceMap = new HashMap<>();
         context.getEntityManager().getInstances().forEach(instance->{
             instanceMap.put(instance.getId(), instance);
         });
-        Histogram histogram = new HistogramImpl(guid,date,instanceMap,primaryEntStartPop,context.getEntityManager().getCurrPopulation());
+        Histogram histogram = new HistogramImpl(guid,histogramDate,instanceMap,primaryEntStartPop,context.getEntityManager().getCurrPopulation());
         histogramMap.put(guid,histogram);
     }
-    
-    void setHistogramPerProperty(String guid, String propName) {
+    String createHistogramDate(){
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy | HH.mm.ss");
+        Date currDate = new Date();
+        String HistogramDate = sdf.format(currDate);
+        return HistogramDate;
+    }
+    public HistogramByPropertyEntitiesDTO setHistogramPerProperty(String guid, String propName) {
 
         Map<Object, Integer> histogramByProperty = new HashMap<>();
         Histogram histogram = histogramMap.get(guid);
-
         histogram.getEntitiesInstances().forEach((sNameEntityIns, entityInstance) -> {
             Object propValue = entityInstance.getPropertyByName(propName).getValue();
             if (histogramByProperty.containsKey(propValue)) {
@@ -715,8 +708,26 @@ public class EngineImpl implements Engine {
                 histogramByProperty.put(propValue, 1);
             }
         });
-        histogram.setHistogramByProperty(histogramByProperty);
+        HistogramByPropertyEntitiesDTO histogramByPropertyEntitiesDTO  = new HistogramByPropertyEntitiesDTO(histogramByProperty);
+
+        return histogramByPropertyEntitiesDTO;
     }
+
+    public HistogramByAmountEntitiesDTO createHistogramByAmountEntitiesDTO(String guid){
+        Histogram histogram = histogramMap.get(guid);
+        HistogramByAmountEntitiesDTO histogramByAmountEntitiesDTO = new HistogramByAmountEntitiesDTO(histogram.getPopAfterSimulation(),histogram.getPopBeforeSimulation());
+        return histogramByAmountEntitiesDTO;
+    }
+    public HistoryRunningSimulationDTO createHistoryRunningSimulationDTO() {
+        Map<String, String> history = new HashMap<>();
+        for (Map.Entry<String, Histogram> entry : histogramMap.entrySet()) {
+            history.put(entry.getKey(), entry.getValue().getSimulationTime());
+
+        }
+        HistoryRunningSimulationDTO historyRunningSimulationDTO = new HistoryRunningSimulationDTO(history);
+        return historyRunningSimulationDTO;
+    }
+
 }
 
 
