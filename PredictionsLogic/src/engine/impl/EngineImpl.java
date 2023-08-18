@@ -656,8 +656,9 @@ public class EngineImpl implements Engine {
         while (!isTerminated)
         {
             int finalTicks = ticks;
-            for(int id = 0; id < primaryEntStartPop;id++) {
-                context.setPrimaryInstacne(id);
+            context.getEntityManager().getInstances().forEach(entityInstance ->
+            {
+                context.setPrimaryInstacne(entityInstance.getId());
                 world.getRules().forEach((name, rule) ->
                 {
                     if (rule.getActivation().isActive(finalTicks)) {
@@ -666,10 +667,10 @@ public class EngineImpl implements Engine {
                         });
                     }
                 });
-            }
+            });
             ticks++;
             activateKillAction();
-            //1System.out.println("#tick:"+ticks+ "    Curr Pop:" + context.getEntityManager().getCurrPopulation());
+            System.out.println("#tick:"+ticks+ "    Curr Pop:" + context.getEntityManager().getCurrPopulation());
             if(simulationEnded(ticks,simulationStart))
                 isTerminated = true;
         }
