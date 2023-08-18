@@ -11,7 +11,9 @@ import histogramDTO.HistogramByPropertyEntitiesDTO;
 import histogramDTO.HistoryRunningSimulationDTO;
 import simulationInfo.SimulationInfoDTO;
 
+
 import java.util.HashMap;
+
 import java.util.Map;
 import java.util.Scanner;
 
@@ -31,6 +33,8 @@ public class PredictionsManagment {
                 userChoice = scanner.nextInt();
                 switch (userChoice) {
                     case 1:
+                        loadSimulationDetails(fileName);
+                        System.out.println("Successfully loaded file:" + fileName);
                         fileName = getFileNameFromUser();
                         if (fileName.trim().isEmpty()) {
                             System.out.println("File path is empty please give valid file name.");
@@ -64,8 +68,6 @@ public class PredictionsManagment {
         System.exit(0);
     }
 
-
-
     //region Common functions
     private void printMenu() {
         StringBuilder menu = new StringBuilder();
@@ -77,6 +79,8 @@ public class PredictionsManagment {
                 .append("5. Exit.").append(System.lineSeparator());
         System.out.println(menu);
     }
+    //endregion
+    //region Command 1
     private String getFileNameFromUser()
     {
         System.out.println("Hello please insert full file path:");
@@ -150,8 +154,7 @@ public class PredictionsManagment {
 
     //endregion
     //region Command 3
-    private void printEnvVarInfo(EnvPropertyDefinitionDTO envDefDTO)
-    {
+    private void printEnvVarInfo(EnvPropertyDefinitionDTO envDefDTO) {
         StringBuilder envString = new StringBuilder();
         envString.append("Please insert value for the next environment variable, " +
                         "if you don't want to insert a value just press enter and we will make a random value for you").append(System.lineSeparator())
@@ -252,7 +255,6 @@ public class PredictionsManagment {
         while (true) {
             System.out.println("Please choose a simulation");
             String userInputForProperty = scanner.nextLine();
-
             try {
                 int userChoice = Integer.parseInt(userInputForProperty);
                 if (userChoice >= 1 && userChoice <= (counter)) {
@@ -274,6 +276,7 @@ public class PredictionsManagment {
     }
 
 
+
     void chooseOptionForInfoSimulation(){
         boolean runLoop = true;
         String guid = getSelectedSimulationGuid();
@@ -293,7 +296,6 @@ public class PredictionsManagment {
                     else{
                         handlePrintingByProperty(guid);
                         runLoop = false;
-
                     }
                 } else {
                     System.out.println("Invalid user choice for simulation. Please enter a valid choice.");
@@ -306,6 +308,7 @@ public class PredictionsManagment {
     }
 
     private void handlePrintingByAmount(String guid) {
+
         Map<String,EntityDefinitionDTO> entityDefinitionDTOS = engine.getEntitiesDTO();
         String chosenEntity = printEntitiesList(entityDefinitionDTOS);
         HistogramByAmountEntitiesDTO histogram = engine.createHistogramByAmountEntitiesDTO(guid,chosenEntity);
@@ -339,6 +342,7 @@ public class PredictionsManagment {
         System.out.println(propertyToUser);
 
         while (runLoop) {
+
             String userInputForProperty = scanner.nextLine();
             try {
                 int userChoice = Integer.parseInt(userInputForProperty);
@@ -354,7 +358,6 @@ public class PredictionsManagment {
             }
         }
     }
-
     private String printEntitiesList(Map<String, EntityDefinitionDTO> entityDefinitionDTO) {
         StringBuilder entities = new StringBuilder();
         Map<Integer,String> EntityNameMap = new HashMap<>();
@@ -381,6 +384,7 @@ public class PredictionsManagment {
         }
     }
     private void printProperty(String guid, String nameProp) {
+
         HistogramByPropertyEntitiesDTO histogramByPropertyEntitiesDTO = engine.setHistogramPerProperty(guid, nameProp);
         Map<Object,Integer> properties =  histogramByPropertyEntitiesDTO.getHistogramByProperty();
         properties.forEach((propValue, counetrValue)->{

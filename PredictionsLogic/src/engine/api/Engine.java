@@ -41,6 +41,8 @@ public interface Engine
 
     String runSimulation();
     HistoryRunningSimulationDTO createHistoryRunningSimulationDTO();
+  
     HistogramByAmountEntitiesDTO createHistogramByAmountEntitiesDTO(String guid,String name);
+
     HistogramByPropertyEntitiesDTO setHistogramPerProperty(String guid, String propName);
 }

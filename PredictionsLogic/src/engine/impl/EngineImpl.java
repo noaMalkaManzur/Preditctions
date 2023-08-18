@@ -648,9 +648,6 @@ public class EngineImpl implements Engine {
     {
         //region HistogramCreation
         String Guid = UUID.randomUUID().toString();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy | HH.mm.ss");
-        Date currDate = new Date();
-        String HistogramDate = sdf.format(currDate);
         Instant simulationStart = Instant.now();
         //endregion
         createContext();
@@ -711,7 +708,9 @@ public class EngineImpl implements Engine {
     }
     //endregion
     //endregion
+
     //region Command number 4
+
     void createHistogram(String guid){
         String histogramDate = createHistogramDate();
         Map<Integer, EntityInstance> instanceMap = new HashMap<>();
@@ -725,6 +724,7 @@ public class EngineImpl implements Engine {
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy | HH.mm.ss");
         Date currDate = new Date();
         return sdf.format(currDate);
+
     }
     public HistogramByPropertyEntitiesDTO setHistogramPerProperty(String guid, String propName) {
 
@@ -743,6 +743,7 @@ public class EngineImpl implements Engine {
         return histogramByPropertyEntitiesDTO;
     }
 
+
     public HistogramByAmountEntitiesDTO createHistogramByAmountEntitiesDTO(String guid,String name){
         Histogram histogram = histogramMap.get(guid);
         return new HistogramByAmountEntitiesDTO(name,histogram.getPopBeforeSimulation(),histogram.getPopAfterSimulation());
@@ -756,6 +757,7 @@ public class EngineImpl implements Engine {
         HistoryRunningSimulationDTO historyRunningSimulationDTO = new HistoryRunningSimulationDTO(history);
         return historyRunningSimulationDTO;
     }
+
 }
 
 
