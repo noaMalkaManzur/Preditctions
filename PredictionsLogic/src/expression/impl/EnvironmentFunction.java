@@ -9,8 +9,6 @@ public class EnvironmentFunction extends FunctionExpression {
         super(arg, eExpression.FUNCTION);
 
     }
-
-
     @Override
     public Object calculateExpression(Context context) {
         return context.getEnvironmentVariable(arg).getValue();

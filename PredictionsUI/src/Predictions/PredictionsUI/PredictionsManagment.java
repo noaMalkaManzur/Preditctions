@@ -6,6 +6,8 @@ import definition.property.api.PropertyDefinition;
 import definition.property.api.PropertyType;
 import engine.api.Engine;
 import engine.impl.EngineImpl;
+import exceptions.NoFileWasLoadedException;
+import exceptions.NoSimulationWasRanException;
 import histogramDTO.HistogramByAmountEntitiesDTO;
 import histogramDTO.HistogramByPropertyEntitiesDTO;
 import histogramDTO.HistoryRunningSimulationDTO;
@@ -22,9 +24,10 @@ public class PredictionsManagment {
     boolean Exit = false;
     Engine engine = new EngineImpl();
     Scanner scanner = new Scanner(System.in);
+    boolean LoadedXMLFile = false;
+    boolean ranSimulation = false;
 
     public void run() {
-        //ToDo: Implement user input method.
         String fileName;
         System.out.println("Hello There! Welcome to our Predictions simulation System!\n");
         while (!Exit) {
@@ -33,33 +36,43 @@ public class PredictionsManagment {
                 userChoice = scanner.nextInt();
                 switch (userChoice) {
                     case 1:
-                        loadSimulationDetails(fileName);
-                        System.out.println("Successfully loaded file:" + fileName);
                         fileName = getFileNameFromUser();
                         if (fileName.trim().isEmpty()) {
                             System.out.println("File path is empty please give valid file name.");
                         } else {
                             loadSimulationDetails(fileName);
+                            LoadedXMLFile = true;
                             System.out.println("Successfully loaded file: " + fileName);
                             break;
                         }
                     case 2:
-                        //loadSimulationDetails(fileName);
-                        SimulationInfoDTO simulationInfoDTO = engine.getSimulationInfo();
-                        printSimulation(simulationInfoDTO);
+                        if (LoadedXMLFile) {
+                            SimulationInfoDTO simulationInfoDTO = engine.getSimulationInfo();
+                            printSimulation(simulationInfoDTO);
+                        } else {
+                            throw new NoFileWasLoadedException("The system doesn't have any XML file to run on!");
+                        }
                         break;
                     case 3:
-                        System.out.println(ExecuteSimulation() + "\n");
+                        if (LoadedXMLFile) {
+                            System.out.println("The Simulation has ended.\nSimulation Guid: "+ ExecuteSimulation() + "\n");
+                            ranSimulation = true;
+                        } else {
+                            throw new NoFileWasLoadedException("The system doesn't have any XML file to run on!");
+                        }
                         break;
                     case 4:
-                        showHistogram();
+                        if (ranSimulation) {
+                            showHistogram();
+                        } else {
+                            throw new NoSimulationWasRanException("No simulation was ran by the user cant show Histogram!");
+                        }
                         break;
+
                     case 5:
                         System.out.println("Thank you for being with us!");
                         Exit = true;
                         break;
-
-
                 }
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
@@ -80,20 +93,18 @@ public class PredictionsManagment {
         System.out.println(menu);
     }
     //endregion
-    //region Command 1
+    //region Utility
     private String getFileNameFromUser()
     {
         System.out.println("Hello please insert full file path:");
         scanner.nextLine(); // Empty the buffer.
         return scanner.nextLine();
     }
-
     //endregion
     //region Command 1
     private void loadSimulationDetails(String fileName) {
         engine.loadXmlFiles(fileName);
     }
-
     //endregion
     //region Command 2
     private void printSimulation(SimulationInfoDTO simulationInfoDTO) {
@@ -103,55 +114,53 @@ public class PredictionsManagment {
         gettingTerminationInfo(simulationInfoDTO, simulationInfo);
         System.out.println(simulationInfo);
     }
-
     private void gettingTerminationInfo(SimulationInfoDTO simulationInfoDTO, StringBuilder simulationInfo) {
-
-        simulationInfo.append("The first term of use is by seconds: ").append(simulationInfoDTO.getTerms().getBySeconds()).append("\n");
-        simulationInfo.append("The second term of use is by ticks: ").append(simulationInfoDTO.getTerms().getByTicks()).append("\n");
+        simulationInfo.append("Termination Terms:").append(System.lineSeparator());
+        simulationInfo.append("     Termination by seconds: ").append(simulationInfoDTO.getTerms().getBySeconds()).append(System.lineSeparator());
+        simulationInfo.append("     Termination by ticks: ").append(simulationInfoDTO.getTerms().getByTicks()).append(System.lineSeparator());
     }
-
     private void gettingRulesInfo(SimulationInfoDTO simulationInfoDTO, StringBuilder simulationInfo) {
+        simulationInfo.append("Rules:").append(System.lineSeparator());
         for (RulesDTO ruleDTO : simulationInfoDTO.getRules().values()) {
-            simulationInfo.append("Rules:").append("\n");
-            simulationInfo.append("Rule name: ").append(ruleDTO.getName()).append("\n");
-            simulationInfo.append("Is applied by ticks: ").
-                    append(ruleDTO.getActivation().getTicks()).append(" and by: ").
-                    append(ruleDTO.getActivation().getProbabilty()).append("\n");
-            simulationInfo.append("Amount of action for this role: ").append(ruleDTO.getActions().size()).append("\n");
+            simulationInfo.append("     Rule name: ").append(ruleDTO.getName()).append(System.lineSeparator());
+            simulationInfo.append("         Is applied by ticks: ").
+                    append(ruleDTO.getActivation().getTicks()).append(" and by probability of: ").
+                    append(ruleDTO.getActivation().getProbabilty()).append(System.lineSeparator());
+            simulationInfo.append("         Amount of action for this role: ").append(ruleDTO.getActions().size()).append(System.lineSeparator());
             for (ActionDTO actionDTO : ruleDTO.getActions()) {
-                simulationInfo.append("Action type names: ").append(actionDTO.getType()).append("\n");
+                simulationInfo.append("         Action type names: ").append(actionDTO.getType()).append(System.lineSeparator());
             }
         }
+        simulationInfo.append(System.lineSeparator());
     }
-
     private void gettingEntitiesInfo(SimulationInfoDTO simulationInfoDTO, StringBuilder simulationInfo) {
         for (EntityDefinitionDTO entityDefDTO : simulationInfoDTO.getEntities().values()) {
-            simulationInfo.append("Entity name: ").append(entityDefDTO.getName()).append("\n");
-            simulationInfo.append("Population: ").append(entityDefDTO.getPopulation()).append("\n");
+            simulationInfo.append("Entity name: ").append(entityDefDTO.getName()).append(System.lineSeparator());
+            simulationInfo.append("Population: ").append(entityDefDTO.getPopulation()).append(System.lineSeparator());
             simulationInfo.append("Properties: ").append("\n");
 
             for (EntityPropDefinitionDTO propertyDefDTO : entityDefDTO.getPropertyDefinition().values()) {
-                simulationInfo.append("Property name: ").append(propertyDefDTO.getName()).append("\n");
-                simulationInfo.append("Property type: ").append(propertyDefDTO.getType()).append("\n");
+                simulationInfo.append("     Property name: ").append(propertyDefDTO.getName()).append(System.lineSeparator());
+                simulationInfo.append("     Property type: ").append(propertyDefDTO.getType()).append(System.lineSeparator());
 
 
                 if (propertyDefDTO.getRange() != null) {
-                    simulationInfo.append("Property range from: ")
+                    simulationInfo.append("     Property range from: ")
                             .append(propertyDefDTO.getRange().getRangeFrom())
                             .append(" to: ")
                             .append(propertyDefDTO.getRange().getRangeTo())
-                            .append("\n");
+                            .append(System.lineSeparator());
                 }
                 if (propertyDefDTO.isRandomInit()) {
-                    simulationInfo.append("Property is initialized randomly\n");
+                    simulationInfo.append("     Property is initialized randomly").append(System.lineSeparator());
                 } else {
-                    simulationInfo.append("Property is not initialized randomly\n");
+                    simulationInfo.append("     Property is not initialized randomly").append(System.lineSeparator());
                 }
+                simulationInfo.append(System.lineSeparator());
 
             }
         }
     }
-
     //endregion
     //region Command 3
     private void printEnvVarInfo(EnvPropertyDefinitionDTO envDefDTO) {
@@ -169,29 +178,104 @@ public class PredictionsManagment {
 
     private String ExecuteSimulation() {
         EnvironmentDefinitionDTO myEnvDef = engine.getEnvDTO();
-        getUserEnvValues(myEnvDef);
+        letUserProvideValues(myEnvDef);
         return engine.runSimulation();
     }
 
-    private void getUserEnvValues(EnvironmentDefinitionDTO myEnvDef) {
-        scanner.nextLine();
-        myEnvDef.getEnvProps().values().forEach(envDef -> {
-            printEnvVarInfo(envDef);
+//    private void getUserEnvValues(EnvironmentDefinitionDTO myEnvDef) {
+//        scanner.nextLine();
+//        myEnvDef.getEnvProps().values().forEach(envDef -> {
+//            printEnvVarInfo(envDef);
+//            Object userValue = null;
+//            boolean isValidInput = false;
+//            while (!isValidInput) {
+//                String userInput = scanner.nextLine();
+//                if (!userInput.isEmpty()) {
+//                    switch (envDef.getType()) {
+//                        case DECIMAL: {
+//                            isValidInput = engine.isValidIntegerVar(userInput, envDef.getRange());
+//                            if (isValidInput) {
+//                                userValue = PropertyType.DECIMAL.parse(userInput);
+//                            }
+//                            break;
+//                        }
+//                        case FLOAT:
+//                            isValidInput = engine.isValidDoubleVar(userInput, envDef.getRange());
+//                            if (isValidInput) {
+//                                userValue = PropertyType.FLOAT.parse(userInput);
+//                            }
+//                            break;
+//                        case BOOLEAN:
+//                            isValidInput = engine.isValidBooleanVar(userInput);
+//                            if (isValidInput) {
+//                                userValue = PropertyType.BOOLEAN.parse(userInput);
+//                            }
+//                            break;
+//                        case STRING:
+//                            isValidInput = engine.isValidStringVar(userInput);
+//                            if (isValidInput) {
+//                                userValue = PropertyType.STRING.convert(userInput);
+//                            }
+//                            break;
+//                        default:
+//                            break;
+//                    }
+//
+//                } else {
+//                    isValidInput = true;
+//                }
+//                if (isValidInput)
+//                    engine.addEnvVarToActiveEnv(userValue, envDef.getName());
+//                else {
+//                    System.out.println("Please insert a valid input\n");
+//                }
+//            }
+//        });
+//        printActiveEnv(engine.ShowUserEnvVariables());
+//    }
+    private Map<Integer,String>  printEnvVars(EnvironmentDefinitionDTO myEnvDef)
+    {
+        int index =1;
+        StringBuilder myEnvVars = new StringBuilder();
+        Map<Integer,String> envVarByID = new HashMap<>();
+        for(String name :myEnvDef.getEnvProps().keySet())
+        {
+            myEnvVars.append(index).append(")").append(name).append(System.lineSeparator());
+            envVarByID.put(index,name);
+            index++;
+        }
+        myEnvVars.append(index).append(")").append("Start Simulation").append(System.lineSeparator());
+        System.out.println(myEnvVars);
+        return envVarByID;
+    }
+    private void letUserProvideValues(EnvironmentDefinitionDTO myEnvDef)
+    {
+        boolean runLoop = true;
+        boolean isValidInput = false;
+        engine.clearActiveEnv();
+        while(runLoop) {
+            Map<Integer, String> envVarByID = printEnvVars(myEnvDef);
             Object userValue = null;
-            boolean isValidInput = false;
-            while (!isValidInput) {
-                String userInput = scanner.nextLine();
-                if (!userInput.isEmpty()) {
-                    switch (envDef.getType()) {
+            int userChoice = scanner.nextInt();
+            if (userChoice >= 1 && userChoice <= envVarByID.size() + 1) {
+                if (userChoice == envVarByID.size() + 1) {
+                    runLoop = false;
+                    break;
+                } else {
+                    EnvPropertyDefinitionDTO myEnvVar = myEnvDef.getEnvProps().get(envVarByID.get(userChoice));
+                    printEnvVarInfo(myEnvDef.getEnvProps().get(envVarByID.get(userChoice)));
+                    scanner.nextLine();
+                    String userInput = scanner.nextLine();
+                    switch (myEnvVar.getType()) {
                         case DECIMAL: {
-                            isValidInput = engine.isValidIntegerVar(userInput, envDef.getRange());
+                            isValidInput = engine.isValidIntegerVar(userInput, myEnvVar.getRange());
                             if (isValidInput) {
                                 userValue = PropertyType.DECIMAL.parse(userInput);
                             }
                             break;
                         }
                         case FLOAT:
-                            isValidInput = engine.isValidDoubleVar(userInput, envDef.getRange());
+                            isValidInput = engine.isValidDoubleVar(userInput, myEnvVar.getRange());
                             if (isValidInput) {
                                 userValue = PropertyType.FLOAT.parse(userInput);
                             }
@@ -211,20 +295,18 @@ public class PredictionsManagment {
                         default:
                             break;
                     }
-
-                } else {
-                    isValidInput = true;
+                    if(isValidInput)
+                        engine.addEnvVarToActiveEnv(userValue,myEnvVar.getName());
                 }
-                if (isValidInput)
-                    engine.addEnvVarToActiveEnv(userValue, envDef.getName());
-                else {
-                    System.out.println("Please insert a valid input\n");
-                }
+            } else
+            {
+                System.out.println("Invalid input.please enter valid input\n");
             }
-        });
+        }
+        for(String envName: myEnvDef.getEnvProps().keySet())
+            engine.initRandomEnvVars(envName);
         printActiveEnv(engine.ShowUserEnvVariables());
     }
-
     private void printActiveEnv(ActiveEnvDTO activeEnvDTO) {
         StringBuilder ActiveEnv = new StringBuilder();
         activeEnvDTO.getEnvPropInstances().forEach((key, value) ->
@@ -234,13 +316,10 @@ public class PredictionsManagment {
         });
         System.out.println(ActiveEnv);
     }
-
     //endregion
     private void showHistogram() {
         chooseOptionForInfoSimulation();
     }
-
-
     String getSelectedSimulationGuid() {
         int counter = 0;
         StringBuilder historySimulation = new StringBuilder();
@@ -274,9 +353,6 @@ public class PredictionsManagment {
             }
         }
     }
-
-
-
     void chooseOptionForInfoSimulation(){
         boolean runLoop = true;
         String guid = getSelectedSimulationGuid();
@@ -329,7 +405,6 @@ public class PredictionsManagment {
         Map<Integer,String> PropNameMap = new HashMap<>();
         boolean runLoop = true;
 
-
         System.out.println("Please select a property Name:");
         int index = 1;
         for(Map.Entry<String, EntityPropDefinitionDTO> propDef: entityDefinitionDTO.getPropertyDefinition().entrySet())
@@ -366,6 +441,7 @@ public class PredictionsManagment {
         {
             entities.append(i).append(")").append(name).append(System.lineSeparator());
             EntityNameMap.put(i,name);
+            i++;
         }
         System.out.println(entities);
         while(true)
@@ -387,6 +463,11 @@ public class PredictionsManagment {
 
         HistogramByPropertyEntitiesDTO histogramByPropertyEntitiesDTO = engine.setHistogramPerProperty(guid, nameProp);
         Map<Object,Integer> properties =  histogramByPropertyEntitiesDTO.getHistogramByProperty();
+        if(properties.size() == 0)
+        {
+            System.out.println("No instances to show all instances killed in the simulation");
+            return;
+        }
         properties.forEach((propValue, counetrValue)->{
             System.out.println("Property Value: " + propValue +" counter: " + counetrValue);
         });
