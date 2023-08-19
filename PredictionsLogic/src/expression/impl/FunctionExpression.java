@@ -13,6 +13,12 @@ public abstract class FunctionExpression extends AbstractExpression {
     }
 
     public abstract Object calculateExpression(Context context);
+    @Override
+    public final Object getArg() {
+        return arg;
+    }
+
+
 
 
 }

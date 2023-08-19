@@ -23,6 +23,8 @@ public class RandomFunction extends FunctionExpression {
             throw new IllegalArgumentException("Argument is not a valid number.");
         }
     }
+
+
     private Integer random(int range) {
         Random random = new Random();
         return random.nextInt(range+1);
