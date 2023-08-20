@@ -38,6 +38,8 @@ import definition.world.api.Termination;
 import definition.world.api.WorldDefinition;
 import definition.world.impl.TerminationImpl;
 import definition.world.impl.WorldImpl;
+import engine.Validaton.api.ValidationEngine;
+import engine.Validaton.impl.ValidationEngineImpl;
 import engine.api.Engine;
 import exceptions.*;
 import execution.context.Context;
@@ -49,7 +51,6 @@ import execution.instance.environment.api.ActiveEnvironment;
 import execution.instance.environment.impl.ActiveEnvironmentImpl;
 import execution.instance.property.PropertyInstanceImpl;
 import expression.api.Expression;
-import expression.api.eExpression;
 import expression.impl.EnvironmentFunction;
 import expression.impl.GeneralExpression;
 import expression.impl.PropertyExpression;
@@ -68,7 +69,6 @@ import javax.xml.bind.Unmarshaller;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
-import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 
@@ -78,30 +78,16 @@ public class EngineImpl implements Engine {
     Map<String, Histogram> histogramMap = new HashMap<>();
     private ActiveEnvironment activeEnvironment;
     private int primaryEntStartPop;
+    ValidationEngine validationEngine = new ValidationEngineImpl();
 
     //region Command number 1
-    @Override
-    public boolean isFileExist(String fileName) throws FileNotFoundException {
-        File file = new File(fileName);
-        if (file.exists())
-            return true;
-        else {
-            throw new MyFileNotFoundException("File was not found in our system");
-        }
-    }
 
-    @Override
-    public boolean isXMLFile(String fileName) throws BadFileSuffixException {
-        if (fileName.endsWith(".xml"))
-            return true;
-        throw new BadFileSuffixException("The file was not an XML file!");
-    }
 
     @Override
     public void loadXmlFiles(String fileName) {
         try {
-            if (isFileExist(fileName)) {
-                if (isXMLFile(fileName)) {
+            if (validationEngine.isFileExist(fileName)) {
+                if (validationEngine.isXMLFile(fileName)) {
                     File file = new File(fileName);
                     JAXBContext jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
                     Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
@@ -125,16 +111,12 @@ public class EngineImpl implements Engine {
     private void setEnvVariablesFromXML(EnvVariablesManager envManager, List<PRDEnvProperty> prdEnvProperty) {
         prdEnvProperty.stream()
                 .filter(envProp -> {
-                        return isValidEnvProp(envProp, envManager);
+                        return validationEngine.isValidEnvProp(envProp, envManager);
                 })
                 .map(this::convertEnvProp)
                 .forEach(envManager::addEnvironmentVariable);
     }
-    private boolean isValidEnvProp(PRDEnvProperty prdEnvProperty,EnvVariablesManager envManager) throws EnvironemtVariableAlreadyExist {
-        if(envManager.getEnvVariables().containsKey(prdEnvProperty.getPRDName()))
-            throw new EnvironemtVariableAlreadyExist("This environment variable name already exist name:" + prdEnvProperty.getPRDName());
-        return true;
-    }
+
     private PropertyDefinition convertEnvProp(PRDEnvProperty prop) {
         ValueGenerator MyValGen;
         Range myPropRange = null;
@@ -256,7 +238,7 @@ public class EngineImpl implements Engine {
         if (prop.getPRDValue().isRandomInitialize())
             MyValGen = new RandomBooleanGenerator();
         else {
-            if (isBoolean(prop.getPRDValue().getInit())) {
+            if (validationEngine.isBoolean(prop.getPRDValue().getInit())) {
                 MyValGen = new FixedValueGenerator(Boolean.parseBoolean(prop.getPRDValue().getInit()));
                 isRandomInit = false;
             } else {
@@ -276,9 +258,7 @@ public class EngineImpl implements Engine {
         }
         return new StringPropertyDefinition(prop.getPRDName(), PropertyType.STRING, MyValGen, isRandomInit);
     }
-    public boolean isBoolean(String value) {
-        return value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false");
-    }
+
     //endregion
     //region Rules
     private Map<String, Rule> getRulesFromXML(PRDRules prdRules) {
@@ -310,31 +290,31 @@ public class EngineImpl implements Engine {
         return activation;
     }
     private Action convertActionFromXML(PRDAction action) {
-        if(checkEntityExist(action)) {
+        if(validationEngine.checkEntityExist(action, world)) {
             switch (action.getType().toUpperCase()) {
                 case "INCREASE":
-                    if(checkIfEntityHasProp(action.getProperty(),action.getEntity()))
+                    if(validationEngine.checkIfEntityHasProp(action.getProperty(),action.getEntity(), world))
                     {
                         List<Expression> expressionList = getExpression(action.getEntity(),action.getProperty(), action.getBy());
-                        if(checkArgsAreNumeric(expressionList,action.getEntity(),action.getType()))
+                        if(validationEngine.checkArgsAreNumeric(expressionList,action.getEntity(),action.getType(), world))
                             return new IncreaseAction(world.getEntities().get(action.getEntity()),expressionList, action.getProperty());
                     }
                     break;
                 case "DECREASE":
-                    if(checkIfEntityHasProp(action.getProperty(),action.getEntity())) {
+                    if(validationEngine.checkIfEntityHasProp(action.getProperty(),action.getEntity(), world)) {
                         List<Expression> expressionList = getExpression(action.getEntity(),action.getProperty(), action.getBy());
-                        if(checkArgsAreNumeric(expressionList,action.getEntity(),action.getType()))
+                        if(validationEngine.checkArgsAreNumeric(expressionList,action.getEntity(),action.getType(), world))
                             return new DecreaseAction(world.getEntities().get(action.getEntity()), expressionList, action.getProperty());
                     }
                     break;
                 case "CALCULATION":
-                    if(checkIfEntityHasProp(action.getResultProp(),action.getEntity()))
+                    if(validationEngine.checkIfEntityHasProp(action.getResultProp(),action.getEntity(), world))
                         return calculateAccordingToMultiOrDivide(action);
                     break;
                 case "CONDITION":
                     return ConditionActionBySingleOrByMulti(action);
                 case "SET":
-                    if(checkIfEntityHasProp(action.getProperty(),action.getEntity()))
+                    if(validationEngine.checkIfEntityHasProp(action.getProperty(),action.getEntity(), world))
                         return new SetAction(world.getEntities().get(action.getEntity()), getExpression(action.getEntity(), action.getProperty(), action.getValue()), action.getProperty());
                     break;
                 case "KILL":
@@ -343,19 +323,7 @@ public class EngineImpl implements Engine {
         }
         return null;
     }
-    private boolean checkEntityExist(PRDAction action) {
-        if(!world.getEntities().containsKey(action.getEntity()))
-        {
-            throw new EntityNotExistException("Entity: " + action.getEntity() + " does not exist in this world.");
-        }
-        return true;
-    }
-    private boolean checkIfEntityHasProp(String Property,String Entity)
-    {
-        if(world.getEntities().get(Entity).getProps().containsKey(Property))
-            return true;
-        throw new PropertyNotExistException("Entity: " + Entity + " does not have property named:" + Property);
-    }
+
     private Action ConditionActionBySingleOrByMulti(PRDAction action) {
 
         if (action.getPRDCondition() != null) {
@@ -386,7 +354,7 @@ public class EngineImpl implements Engine {
                 String valExpression = prdCondition.getValue();
                 String propertyName = prdCondition.getProperty();
                 if (prdCondition.getSingularity().equals("single")) {
-                    if(checkIfEntityHasProp(propertyName,prdCondition.getEntity())){
+                    if(validationEngine.checkIfEntityHasProp(propertyName,prdCondition.getEntity(), world)){
                         conditionActionList.add(new SingleAction(world.getEntities().get(prdCondition.getEntity()),
                             getExpression(prdCondition.getEntity(), propertyName, valExpression), null, null,
                             prdCondition.getProperty(), prdCondition.getOperator()));
@@ -406,7 +374,7 @@ public class EngineImpl implements Engine {
         String propName = action.getPRDCondition().getProperty();
         String operator = action.getPRDCondition().getOperator();
         String value = action.getPRDCondition().getValue();
-        if(checkIfEntityHasProp(propName,action.getEntity()))
+        if(validationEngine.checkIfEntityHasProp(propName,action.getEntity(), world))
             return new SingleAction(world.getEntities().get(action.getEntity()), getExpression(action.getEntity(), propName,value), thenActionList,elseActionList, propName, operator);
         return null;
     }
@@ -433,74 +401,23 @@ public class EngineImpl implements Engine {
         return  actionListSingle;
     }
 
-//    private List<Action> createActionListSingleCondition(PRDAction action) {
-//        List<Action> actionListSingle = new ArrayList<>();
-//        if (action.getPRDThen().getPRDAction() != null) {
-//            for (PRDAction indexAction : action.getPRDThen().getPRDAction()) {
-//                actionListSingle.add(convertActionFromXML(indexAction));
-//            }
-//        } else {
-//            throw new IllegalArgumentException("Argument THEN was null");
-//        }
-//        if (action.getPRDElse() != null) {
-//            for (PRDAction indexAction : action.getPRDElse().getPRDAction()) {
-//                actionListSingle.add(convertActionFromXML(indexAction));
-//            }
-//        }
-//        return actionListSingle;
-//    }
-
     private Action calculateAccordingToMultiOrDivide(PRDAction action) {
         List<Expression> myExpression = new ArrayList<>();
         if (action.getPRDDivide() != null) {
             myExpression.add(getExpression(action.getEntity(), action.getResultProp(), action.getPRDDivide().getArg1()).get(0));
             myExpression.add(getExpression(action.getEntity(), action.getResultProp(), action.getPRDDivide().getArg2()).get(0));
-            if(checkArgsAreNumeric(myExpression,action.getEntity(),action.getType()))
+            if(validationEngine.checkArgsAreNumeric(myExpression,action.getEntity(),action.getType(), world))
                 return new DivideAction(ActionTypeDTO.CALCULATION, world.getEntities().get(action.getEntity()), myExpression, action.getResultProp());
         } else if (action.getPRDMultiply() != null) {
             myExpression.add(getExpression(action.getEntity(), action.getResultProp(), action.getPRDMultiply().getArg1()).get(0));
             myExpression.add(getExpression(action.getEntity(), action.getResultProp(), action.getPRDMultiply().getArg2()).get(0));
-            if(checkArgsAreNumeric(myExpression,action.getEntity(),action.getType()))
+            if(validationEngine.checkArgsAreNumeric(myExpression,action.getEntity(),action.getType(), world))
                 return new MultiplyAction(ActionTypeDTO.CALCULATION, world.getEntities().get(action.getEntity()), myExpression, action.getResultProp());
         }
 
         throw new IllegalArgumentException("Input doesn't match the expected format");
     }
-    private boolean checkArgsAreNumeric(List<Expression> myExpression, String entity,String type)
-    {
-        myExpression.forEach(expression -> {
-            if(expression.getType() != eExpression.FUNCTION)
-            {
-                Object propVal = expression.getArg();
-                if(expression.getType() == eExpression.PROPERTY) {
-                    if(checkIfEntityHasProp((String) propVal,entity))
-                    {
-                        if(!(world.getEntities().get(entity).getProps().get((String)propVal).getType() == PropertyType.DECIMAL ||
-                                world.getEntities().get(entity).getProps().get((String)propVal).getType() == PropertyType.FLOAT))
-                            throw new PropertyTypeNotFittingException("Property:" + (String)propVal + "is not a numeric property");
-                    }
-                }
-                else
-                {
-                    try{
-                        PropertyType.DECIMAL.parse((String) propVal);
-                    }
-                    catch(Exception ignore)
-                    {
-                        try{
-                        PropertyType.FLOAT.parse((String) propVal);
-                        }
-                        catch (Exception e)
-                        {
-                            throw new ArgumentNotNumericTypeException("The given argument " + (String)propVal +" is not of Numeric type in action:" + type);
-                        }
 
-                    }
-                }
-            }
-        });
-        return true;
-    }
     List<Expression> getExpression(String entityName, String propName, String expressionVal) {
         List<Expression> myExpression = new ArrayList<>();
         if (expressionVal != null) {
@@ -524,7 +441,7 @@ public class EngineImpl implements Engine {
 
         if (startIndex != 0 && endIndex != -1) {
             String arg = ExpressionVal.substring(startIndex, endIndex);
-            if (isNumeric(arg) || world.getEnvVariables().getEnvVariables().containsKey(arg)) {
+            if (validationEngine.isNumeric(arg) || world.getEnvVariables().getEnvVariables().containsKey(arg)) {
                 myExpression.add(new RandomFunction(arg));
             } else {
                 throw new IllegalArgumentException("Invalid arg for function expression");
@@ -540,7 +457,7 @@ public class EngineImpl implements Engine {
 
         if (startIndex != 0 && endIndex != -1) {
             String arg = ExpressionVal.substring(startIndex, endIndex);
-            if (isNumeric(arg) || world.getEnvVariables().getEnvVariables().containsKey(arg)) {
+            if (validationEngine.isNumeric(arg) || world.getEnvVariables().getEnvVariables().containsKey(arg)) {
                 myExpression.add(new EnvironmentFunction(arg));
             } else {
                 throw new IllegalArgumentException("Invalid arg for function expression");
@@ -549,27 +466,7 @@ public class EngineImpl implements Engine {
             throw new IllegalArgumentException("Input doesn't match the expected format");
         }
     }
-    private boolean isNumeric(String numberStr) {
-        if (numberStr == null || numberStr.isEmpty()) {
-            return false;
-        }
-        boolean hasDecimalPoint = false;
-        boolean hasNegativeSign = false;
 
-        for (int i = 0; i < numberStr.length(); i++) {
-            char c = numberStr.charAt(i);
-
-            if (i == 0 && c == '-') {
-                hasNegativeSign = true;
-                continue;
-            }
-
-            if (!Character.isDigit(c)) {
-                return false;
-            }
-        }
-        return true;
-    }
     //endregion
     //region Termination
     private Termination getTerminationTermFromXML(PRDTermination prdTermination) {
@@ -626,8 +523,6 @@ public class EngineImpl implements Engine {
         return rulesDTO;
     }
 
-
-
     public TerminitionDTO getTerminationDTO(){
         TerminitionDTO terminitionDTO = new TerminitionDTO(world.getTerminationTerm().getBySeconds(), world.getTerminationTerm().getByTicks());
         return terminitionDTO;
@@ -651,39 +546,6 @@ public class EngineImpl implements Engine {
         return new EnvironmentDefinitionDTO(envVariables);
     }
     //region validation
-    @Override
-    public boolean isValidIntegerVar(String userInput, Range range) {
-        try {
-            int value = Integer.parseInt(userInput);
-            if(range != null)
-                return value >= range.getRangeFrom() && value <= range.getRangeTo();
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
-
-    @Override
-    public boolean isValidDoubleVar(String userInput, Range range) {
-        try {
-            double value = Double.parseDouble(userInput);
-            if(range != null)
-                return value >= range.getRangeFrom() && value <= range.getRangeTo();
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
-
-    @Override
-    public boolean isValidBooleanVar(String userInput) {
-        return userInput.equalsIgnoreCase("true") || userInput.equalsIgnoreCase("false");
-    }
-
-    @Override
-    public boolean isValidStringVar(String userInput) {
-        return true;
-    }
 
     @Override
     public void addEnvVarToActiveEnv(Object userValue, String name) {
@@ -751,15 +613,14 @@ public class EngineImpl implements Engine {
             });
             ticks++;
             activateKillAction();
-            //System.out.println("#tick:"+ticks+ "    Curr Pop:" + context.getEntityManager().getCurrPopulation());
-            if(simulationEnded(ticks,simulationStart))
+            if(validationEngine.simulationEnded(ticks,simulationStart, world))
                 isTerminated = true;
         }
         String endReason = getTerminationReason(ticks,simulationStart);
         createHistogram(Guid);
         return Guid+ "\n" + endReason;
     }
-
+    //todo: ask noam if i can delete this arg: simulationStart
     private String getTerminationReason(int ticks, Instant simulationStart) {
         String ticksMsg = "The simulation has ended because " + ticks +" ticks has passed";
         String secondsMsg = "The simulation has ended because more then " + world.getTerminationTerm().getBySeconds() +" seconds has passed";
@@ -776,11 +637,6 @@ public class EngineImpl implements Engine {
             context.getEntityManager().executeKill(idToKill);
         });
         context.getEntityManager().clearKillList();
-    }
-
-    private boolean simulationEnded(int ticks,Instant simulationStart) {
-        long diff = Duration.between(simulationStart, Instant.now()).toMillis()/ 1000;
-        return (world.getTerminationTerm().getByTicks() == ticks || diff >= world.getTerminationTerm().getBySeconds());
     }
 
     private void createContext() {
