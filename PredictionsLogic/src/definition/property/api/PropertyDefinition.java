@@ -6,4 +6,5 @@ public interface PropertyDefinition {
     Object generateValue();
     Range getRange();
     Boolean getRandomInit();
+    int getTickPropertyGotValue();
 }

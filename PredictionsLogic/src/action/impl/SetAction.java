@@ -11,11 +11,13 @@ import java.util.List;
 
 public class SetAction extends AbstractAction
 {
-    String property;
+    private String property;
+    private int currTickForValueChanged;
 
-    public SetAction(EntityDefinition entityDefinition, List<Expression> expressionList, String property) {
-        super(ActionTypeDTO.SET, entityDefinition, expressionList);
+    public SetAction(EntityDefinition entityDefinition, List<Expression> expressionList, String property, int currTickForValueChanged) {
+        super(ActionTypeDTO.SET, entityDefinition, expressionList, currTickForValueChanged);
         this.property = property;
+        this.currTickForValueChanged = currTickForValueChanged;
     }
 
 
@@ -34,11 +36,17 @@ public class SetAction extends AbstractAction
                 ||propertyInstance.getPropertyDefinition().getRange().getRangeFrom()<= numVal.doubleValue())
                 {
                     propertyInstance.updateValue(expVal);
+                    propertyInstance.setCurrTickForValueChanged(currTickForValueChanged);
+                    System.out.println(currTickForValueChanged);
+
                 }
         }
         else
         {
             propertyInstance.updateValue(expVal);
+            propertyInstance.setCurrTickForValueChanged(currTickForValueChanged);
+            System.out.println(currTickForValueChanged);
+
         }
     }
 }

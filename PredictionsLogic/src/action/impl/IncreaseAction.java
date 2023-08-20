@@ -11,14 +11,14 @@ import expression.api.Expression;
 import java.util.List;
 
 public class IncreaseAction extends AbstractAction {
-
+    private int currTickForValueChanged;
     private final String property;
 
-    public IncreaseAction(EntityDefinition entityDefinition, List<Expression> expressionList, String property) {
-        super(ActionTypeDTO.INCREASE, entityDefinition, expressionList);
+    public IncreaseAction(EntityDefinition entityDefinition, List<Expression> expressionList, String property,  int currTickForValueChanged) {
+        super(ActionTypeDTO.INCREASE, entityDefinition, expressionList, currTickForValueChanged);
         this.property = property;
+        this.currTickForValueChanged = currTickForValueChanged;
     }
-
 
     @Override
     public void invoke(Context context) {
@@ -44,12 +44,19 @@ public class IncreaseAction extends AbstractAction {
         }
         if(propertyInstance.getPropertyDefinition().getRange() != null)
         {
-            if (updatedVal.doubleValue() <= propertyInstance.getPropertyDefinition().getRange().getRangeTo())
+            if (updatedVal.doubleValue() <= propertyInstance.getPropertyDefinition().getRange().getRangeTo()) {
                 propertyInstance.updateValue(updatedVal);
+                propertyInstance.setCurrTickForValueChanged(currTickForValueChanged);
+                System.out.println(currTickForValueChanged);
+
+            }
         }
         else
         {
             propertyInstance.updateValue(updatedVal);
+            propertyInstance.setCurrTickForValueChanged(currTickForValueChanged);
+            System.out.println(currTickForValueChanged);
+
         }
     }
 }

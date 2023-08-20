@@ -2,8 +2,9 @@ package Predictions.PredictionsUI;
 
 import Defenitions.*;
 import Instance.ActiveEnvDTO;
-import definition.property.api.PropertyDefinition;
 import definition.property.api.PropertyType;
+import engine.Validaton.api.ValidationEngine;
+import engine.Validaton.impl.ValidationEngineImpl;
 import engine.api.Engine;
 import engine.impl.EngineImpl;
 import exceptions.NoFileWasLoadedException;
@@ -13,9 +14,7 @@ import histogramDTO.HistogramByPropertyEntitiesDTO;
 import histogramDTO.HistoryRunningSimulationDTO;
 import simulationInfo.SimulationInfoDTO;
 
-
 import java.util.HashMap;
-
 import java.util.Map;
 import java.util.Scanner;
 
@@ -23,6 +22,7 @@ public class PredictionsManagment {
     int userChoice;
     boolean Exit = false;
     Engine engine = new EngineImpl();
+    ValidationEngine validation = new ValidationEngineImpl();
     Scanner scanner = new Scanner(System.in);
     boolean LoadedXMLFile = false;
     boolean ranSimulation = false;
@@ -106,7 +106,7 @@ public class PredictionsManagment {
     private String getFileNameFromUser()
     {
         System.out.println("Hello please insert full file path:");
-        scanner.nextLine(); // Empty the buffer.
+        scanner.nextLine();
         return scanner.nextLine();
     }
     //endregion
@@ -190,57 +190,6 @@ public class PredictionsManagment {
         return engine.runSimulation();
     }
 
-//    private void getUserEnvValues(EnvironmentDefinitionDTO myEnvDef) {
-//        scanner.nextLine();
-//        myEnvDef.getEnvProps().values().forEach(envDef -> {
-//            printEnvVarInfo(envDef);
-//            Object userValue = null;
-//            boolean isValidInput = false;
-//            while (!isValidInput) {
-//                String userInput = scanner.nextLine();
-//                if (!userInput.isEmpty()) {
-//                    switch (envDef.getType()) {
-//                        case DECIMAL: {
-//                            isValidInput = engine.isValidIntegerVar(userInput, envDef.getRange());
-//                            if (isValidInput) {
-//                                userValue = PropertyType.DECIMAL.parse(userInput);
-//                            }
-//                            break;
-//                        }
-//                        case FLOAT:
-//                            isValidInput = engine.isValidDoubleVar(userInput, envDef.getRange());
-//                            if (isValidInput) {
-//                                userValue = PropertyType.FLOAT.parse(userInput);
-//                            }
-//                            break;
-//                        case BOOLEAN:
-//                            isValidInput = engine.isValidBooleanVar(userInput);
-//                            if (isValidInput) {
-//                                userValue = PropertyType.BOOLEAN.parse(userInput);
-//                            }
-//                            break;
-//                        case STRING:
-//                            isValidInput = engine.isValidStringVar(userInput);
-//                            if (isValidInput) {
-//                                userValue = PropertyType.STRING.convert(userInput);
-//                            }
-//                            break;
-//                        default:
-//                            break;
-//                    }
-//
-//                } else {
-//                    isValidInput = true;
-//                }
-//                if (isValidInput)
-//                    engine.addEnvVarToActiveEnv(userValue, envDef.getName());
-//                else {
-//                    System.out.println("Please insert a valid input\n");
-//                }
-//            }
-//        });
-//        printActiveEnv(engine.ShowUserEnvVariables());
-//    }
     private Map<Integer,String>  printEnvVars(EnvironmentDefinitionDTO myEnvDef)
     {
         int index =1;
@@ -279,7 +228,7 @@ public class PredictionsManagment {
                         String userInput = scanner.nextLine();
                         switch (myEnvVar.getType()) {
                             case DECIMAL: {
-                                isValidInput = engine.isValidIntegerVar(userInput, myEnvVar.getRange());
+                                isValidInput = validation.isValidIntegerVar(userInput, myEnvVar.getRange());
                                 if (isValidInput) {
                                     userValue = PropertyType.DECIMAL.parse(userInput);
                                 } else {
@@ -288,7 +237,7 @@ public class PredictionsManagment {
                                 break;
                             }
                             case FLOAT:
-                                isValidInput = engine.isValidDoubleVar(userInput, myEnvVar.getRange());
+                                isValidInput =validation.isValidDoubleVar(userInput, myEnvVar.getRange());
                                 if (isValidInput) {
                                     userValue = PropertyType.FLOAT.parse(userInput);
                                 } else {
@@ -296,7 +245,7 @@ public class PredictionsManagment {
                                 }
                                 break;
                             case BOOLEAN:
-                                isValidInput = engine.isValidBooleanVar(userInput);
+                                isValidInput = validation.isBoolean(userInput);
                                 if (isValidInput) {
                                     userValue = PropertyType.BOOLEAN.parse(userInput);
                                 } else {
@@ -304,7 +253,7 @@ public class PredictionsManagment {
                                 }
                                 break;
                             case STRING:
-                                isValidInput = engine.isValidStringVar(userInput);
+                                isValidInput = validation.isValidStringVar(userInput);
                                 if (isValidInput) {
                                     userValue = PropertyType.STRING.convert(userInput);
                                 } else {

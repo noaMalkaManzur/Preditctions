@@ -13,4 +13,5 @@ public interface Action {
     boolean verifyNumericPropertyType(PropertyInstance propertyValue);
     ActionTypeDTO getActionType();
 
+
 }

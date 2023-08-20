@@ -11,10 +11,11 @@ import expression.api.Expression;
 import java.util.List;
 
 public class DivideAction extends CalculationAction {
+    int currTickForValueChanged;
 
-
-    public DivideAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList, String resultProp) {
-        super(actionType, entityDefinition, expressionList, resultProp);
+    public DivideAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList, String resultProp, int currTickForValueChanged ) {
+        super(actionType, entityDefinition, expressionList, resultProp, currTickForValueChanged);
+        this.currTickForValueChanged= currTickForValueChanged;
     }
 
     @Override
@@ -44,9 +45,15 @@ public class DivideAction extends CalculationAction {
             if (divRes.doubleValue() >= propertyInstance.getPropertyDefinition().getRange().getRangeFrom()) {
                 if (propertyInstance.getPropertyDefinition().getType() == PropertyType.DECIMAL) {
                     propertyInstance.updateValue(divRes);
+                    propertyInstance.setCurrTickForValueChanged(currTickForValueChanged);
+                    System.out.println(currTickForValueChanged);
                 }
             }
-        } else
+        } else {
             propertyInstance.updateValue(divRes);
+            propertyInstance.setCurrTickForValueChanged(currTickForValueChanged);
+            System.out.println(currTickForValueChanged);
+
+        }
     }
 }

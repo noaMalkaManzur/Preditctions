@@ -12,12 +12,14 @@ import java.util.List;
 public class MultipleAction extends ConditionAction {
     List<ConditionAction> conditionList;
     String logic;
+    int currTickForValueChanged;
 
     public MultipleAction(EntityDefinition entityDefinition, List<Expression> expressionList,
-                          List<Action> thenActionList, List<Action> elseActionList, String propertyName, List<ConditionAction> conditionList, String logic) {
-        super(ActionTypeDTO.CONDITION, entityDefinition, expressionList, thenActionList, elseActionList, propertyName);
+                          List<Action> thenActionList, List<Action> elseActionList, String propertyName, List<ConditionAction> conditionList, String logic,  int currTickForValueChanged) {
+        super(ActionTypeDTO.CONDITION, entityDefinition, expressionList, thenActionList, elseActionList, propertyName, currTickForValueChanged);
         this.conditionList = conditionList;
         this.logic = logic;
+        this.currTickForValueChanged= currTickForValueChanged;
     }
 
     @Override
@@ -29,7 +31,6 @@ public class MultipleAction extends ConditionAction {
         } else {
             result = conditionList.stream().anyMatch(condition -> condition.checkCondition(context));
         }
-
         return result;
     }
 

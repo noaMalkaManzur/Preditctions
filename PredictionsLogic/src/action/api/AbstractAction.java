@@ -13,13 +13,14 @@ public abstract class AbstractAction implements Action {
     private ActionTypeDTO actionType;
     private final EntityDefinition entityDefinition;
     private List<Expression> expressionList;
+    private int tickValPropGot;
 
-    protected AbstractAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList) {
-        this.actionType= actionType;
+    protected AbstractAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList,int tickValPropGot) {
+        this.actionType = actionType;
         this.entityDefinition = entityDefinition;
         this.expressionList = expressionList;
+        this.tickValPropGot = tickValPropGot;
     }
-
 
     @Override
     public EntityDefinition getContextEntity() {

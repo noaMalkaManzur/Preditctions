@@ -9,13 +9,15 @@ public abstract class AbstractPropertyDefinition<T> implements PropertyDefinitio
     private final ValueGenerator<T> valueGenerator;
     private final Range range;
     private final Boolean isRandomInit;
+    private int tickPropertyGotValue;
 
-    public AbstractPropertyDefinition(String name, PropertyType propertyType, ValueGenerator<T> valueGenerator, Range range,Boolean isRandomInit) {
+    public AbstractPropertyDefinition(String name, PropertyType propertyType, ValueGenerator<T> valueGenerator, Range range,Boolean isRandomInit, int tickPropertyGotValue ) {
         this.name = name;
         this.propertyType = propertyType;
         this.valueGenerator = valueGenerator;
         this.range = range;
         this.isRandomInit = isRandomInit;
+        this.tickPropertyGotValue = tickPropertyGotValue;
     }
 
     @Override
@@ -36,5 +38,9 @@ public abstract class AbstractPropertyDefinition<T> implements PropertyDefinitio
     @Override
     public Boolean getRandomInit() {
         return isRandomInit;
+    }
+    @Override
+    public int getTickPropertyGotValue(){
+        return tickPropertyGotValue;
     }
 }
