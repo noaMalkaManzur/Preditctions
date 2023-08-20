@@ -316,14 +316,14 @@ public class EngineImpl implements Engine {
                     if(checkIfEntityHasProp(action.getProperty(),action.getEntity()))
                     {
                         List<Expression> expressionList = getExpression(action.getEntity(),action.getProperty(), action.getBy());
-                        if(checkArgsAreNumeric(expressionList,action.getEntity()))
+                        if(checkArgsAreNumeric(expressionList,action.getEntity(),action.getType()))
                             return new IncreaseAction(world.getEntities().get(action.getEntity()),expressionList, action.getProperty());
                     }
                     break;
                 case "DECREASE":
                     if(checkIfEntityHasProp(action.getProperty(),action.getEntity())) {
                         List<Expression> expressionList = getExpression(action.getEntity(),action.getProperty(), action.getBy());
-                        if(checkArgsAreNumeric(expressionList,action.getEntity()))
+                        if(checkArgsAreNumeric(expressionList,action.getEntity(),action.getType()))
                             return new DecreaseAction(world.getEntities().get(action.getEntity()), expressionList, action.getProperty());
                     }
                     break;
@@ -455,18 +455,18 @@ public class EngineImpl implements Engine {
         if (action.getPRDDivide() != null) {
             myExpression.add(getExpression(action.getEntity(), action.getResultProp(), action.getPRDDivide().getArg1()).get(0));
             myExpression.add(getExpression(action.getEntity(), action.getResultProp(), action.getPRDDivide().getArg2()).get(0));
-            if(checkArgsAreNumeric(myExpression,action.getEntity()))
+            if(checkArgsAreNumeric(myExpression,action.getEntity(),action.getType()))
                 return new DivideAction(ActionTypeDTO.CALCULATION, world.getEntities().get(action.getEntity()), myExpression, action.getResultProp());
         } else if (action.getPRDMultiply() != null) {
             myExpression.add(getExpression(action.getEntity(), action.getResultProp(), action.getPRDMultiply().getArg1()).get(0));
             myExpression.add(getExpression(action.getEntity(), action.getResultProp(), action.getPRDMultiply().getArg2()).get(0));
-            if(checkArgsAreNumeric(myExpression,action.getEntity()))
+            if(checkArgsAreNumeric(myExpression,action.getEntity(),action.getType()))
                 return new MultiplyAction(ActionTypeDTO.CALCULATION, world.getEntities().get(action.getEntity()), myExpression, action.getResultProp());
         }
 
         throw new IllegalArgumentException("Input doesn't match the expected format");
     }
-    private boolean checkArgsAreNumeric(List<Expression> myExpression, String entity)
+    private boolean checkArgsAreNumeric(List<Expression> myExpression, String entity,String type)
     {
         myExpression.forEach(expression -> {
             if(expression.getType() != eExpression.FUNCTION)
@@ -492,7 +492,7 @@ public class EngineImpl implements Engine {
                         }
                         catch (Exception e)
                         {
-                            throw new ArgumentNotNumericTypeException("The given argument " + (String)propVal +" is not of Numeric type!");
+                            throw new ArgumentNotNumericTypeException("The given argument " + (String)propVal +" is not of Numeric type in action:" + type);
                         }
 
                     }

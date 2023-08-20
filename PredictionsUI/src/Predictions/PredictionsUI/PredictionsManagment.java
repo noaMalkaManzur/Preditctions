@@ -73,9 +73,18 @@ public class PredictionsManagment {
                         System.out.println("Thank you for being with us!");
                         Exit = true;
                         break;
+                    default:
+                        System.out.println("Invalid Input please insert a number between 1-5\n");
                 }
             } catch (Exception ex) {
-                System.out.println(ex.getMessage());
+                if(ex.getMessage() == null)
+                {
+                    System.out.println("Invalid input");
+                    scanner.nextLine();
+                }
+                else {
+                    System.out.println(ex.getMessage());
+                }
             }
         }
         System.exit(0);
@@ -165,8 +174,7 @@ public class PredictionsManagment {
     //region Command 3
     private void printEnvVarInfo(EnvPropertyDefinitionDTO envDefDTO) {
         StringBuilder envString = new StringBuilder();
-        envString.append("Please insert value for the next environment variable, " +
-                        "if you don't want to insert a value just press enter and we will make a random value for you").append(System.lineSeparator())
+        envString.append("Please insert value for the next environment variable").append(System.lineSeparator())
                 .append("Name:").append(envDefDTO.getName()).append(System.lineSeparator())
                 .append("Type:").append(envDefDTO.getType()).append(System.lineSeparator());
         if (envDefDTO.getRange() != null) {
@@ -238,6 +246,8 @@ public class PredictionsManagment {
         int index =1;
         StringBuilder myEnvVars = new StringBuilder();
         Map<Integer,String> envVarByID = new HashMap<>();
+        myEnvVars.append("Please choose environment variable to insert value").append(System.lineSeparator())
+                .append("You can also choose to start the simulation and we will provide values for you.").append(System.lineSeparator());
         for(String name :myEnvDef.getEnvProps().keySet())
         {
             myEnvVars.append(index).append(")").append(name).append(System.lineSeparator());
@@ -256,51 +266,65 @@ public class PredictionsManagment {
         while(runLoop) {
             Map<Integer, String> envVarByID = printEnvVars(myEnvDef);
             Object userValue = null;
-            int userChoice = scanner.nextInt();
-            if (userChoice >= 1 && userChoice <= envVarByID.size() + 1) {
-                if (userChoice == envVarByID.size() + 1) {
-                    runLoop = false;
-                    break;
-                } else {
-                    EnvPropertyDefinitionDTO myEnvVar = myEnvDef.getEnvProps().get(envVarByID.get(userChoice));
-                    printEnvVarInfo(myEnvDef.getEnvProps().get(envVarByID.get(userChoice)));
-                    scanner.nextLine();
-                    String userInput = scanner.nextLine();
-                    switch (myEnvVar.getType()) {
-                        case DECIMAL: {
-                            isValidInput = engine.isValidIntegerVar(userInput, myEnvVar.getRange());
-                            if (isValidInput) {
-                                userValue = PropertyType.DECIMAL.parse(userInput);
+            try {
+                int userChoice = scanner.nextInt();
+                if (userChoice >= 1 && userChoice <= envVarByID.size() + 1) {
+                    if (userChoice == envVarByID.size() + 1) {
+                        runLoop = false;
+                        break;
+                    } else {
+                        EnvPropertyDefinitionDTO myEnvVar = myEnvDef.getEnvProps().get(envVarByID.get(userChoice));
+                        printEnvVarInfo(myEnvDef.getEnvProps().get(envVarByID.get(userChoice)));
+                        scanner.nextLine();
+                        String userInput = scanner.nextLine();
+                        switch (myEnvVar.getType()) {
+                            case DECIMAL: {
+                                isValidInput = engine.isValidIntegerVar(userInput, myEnvVar.getRange());
+                                if (isValidInput) {
+                                    userValue = PropertyType.DECIMAL.parse(userInput);
+                                } else {
+                                    System.out.println("Invalid input for value");
+                                }
+                                break;
                             }
-                            break;
+                            case FLOAT:
+                                isValidInput = engine.isValidDoubleVar(userInput, myEnvVar.getRange());
+                                if (isValidInput) {
+                                    userValue = PropertyType.FLOAT.parse(userInput);
+                                } else {
+                                    System.out.println("Invalid input for value");
+                                }
+                                break;
+                            case BOOLEAN:
+                                isValidInput = engine.isValidBooleanVar(userInput);
+                                if (isValidInput) {
+                                    userValue = PropertyType.BOOLEAN.parse(userInput);
+                                } else {
+                                    System.out.println("Invalid input for value");
+                                }
+                                break;
+                            case STRING:
+                                isValidInput = engine.isValidStringVar(userInput);
+                                if (isValidInput) {
+                                    userValue = PropertyType.STRING.convert(userInput);
+                                } else {
+                                    System.out.println("Invalid input for value");
+                                }
+                                break;
+                            default:
+                                break;
                         }
-                        case FLOAT:
-                            isValidInput = engine.isValidDoubleVar(userInput, myEnvVar.getRange());
-                            if (isValidInput) {
-                                userValue = PropertyType.FLOAT.parse(userInput);
-                            }
-                            break;
-                        case BOOLEAN:
-                            isValidInput = engine.isValidBooleanVar(userInput);
-                            if (isValidInput) {
-                                userValue = PropertyType.BOOLEAN.parse(userInput);
-                            }
-                            break;
-                        case STRING:
-                            isValidInput = engine.isValidStringVar(userInput);
-                            if (isValidInput) {
-                                userValue = PropertyType.STRING.convert(userInput);
-                            }
-                            break;
-                        default:
-                            break;
+                        if (isValidInput)
+                            engine.addEnvVarToActiveEnv(userValue, myEnvVar.getName());
                     }
-                    if(isValidInput)
-                        engine.addEnvVarToActiveEnv(userValue,myEnvVar.getName());
+                } else {
+                    System.out.println("Invalid input.please enter valid input\n");
                 }
-            } else
+            }
+            catch (Exception e)
             {
-                System.out.println("Invalid input.please enter valid input\n");
+                System.out.println("Invalid Input\n");
+                scanner.nextLine();
             }
         }
         for(String envName: myEnvDef.getEnvProps().keySet())
@@ -437,6 +461,7 @@ public class PredictionsManagment {
         StringBuilder entities = new StringBuilder();
         Map<Integer,String> EntityNameMap = new HashMap<>();
         int i = 1;
+        entities.append("Please choose entity to display").append(System.lineSeparator());
         for(String name : entityDefinitionDTO.keySet())
         {
             entities.append(i).append(")").append(name).append(System.lineSeparator());
