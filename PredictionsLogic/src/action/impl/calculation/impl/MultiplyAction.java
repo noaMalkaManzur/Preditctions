@@ -12,9 +12,11 @@ import java.util.List;
 
 public class MultiplyAction extends CalculationAction {
 
+    int currTickForValueChanged;
 
-    public MultiplyAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList, String resultProp) {
-        super(actionType, entityDefinition, expressionList, resultProp);
+    public MultiplyAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList, String resultProp, int currTickForValueChanged) {
+        super(actionType, entityDefinition, expressionList, resultProp, currTickForValueChanged);
+        this.currTickForValueChanged =currTickForValueChanged;
     }
 
     @Override
@@ -39,9 +41,16 @@ public class MultiplyAction extends CalculationAction {
             if (mulRes.doubleValue() <= propertyInstance.getPropertyDefinition().getRange().getRangeTo()) {
                 if (propertyInstance.getPropertyDefinition().getType() == PropertyType.DECIMAL) {
                     propertyInstance.updateValue(mulRes);
+                    propertyInstance.setCurrTickForValueChanged(currTickForValueChanged);
+                    System.out.println(currTickForValueChanged);
+
                 }
             }
-        } else
+        } else {
             propertyInstance.updateValue(mulRes);
+            propertyInstance.setCurrTickForValueChanged(currTickForValueChanged);
+            System.out.println(currTickForValueChanged);
+
+        }
     }
 }

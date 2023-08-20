@@ -10,4 +10,5 @@ public interface Context {
     PropertyInstance getEnvironmentVariable(String name);
     void setPrimaryInstacne(int idEntityInstance);
     EntityInstanceManager getEntityManager();
+
 }

@@ -5,14 +5,13 @@ import expression.api.eExpression;
 
 public class PropertyExpression extends FunctionExpression {
 
-    public PropertyExpression(String arg) {
-        super(arg,eExpression.PROPERTY);
+    public PropertyExpression(String... args) {
+        super(eExpression.PROPERTY, args);
 
     }
         @Override
         public Object calculateExpression(Context context) {
-            return context.getPrimaryEntityInstance().getPropertyByName(arg).getValue();
+            return context.getPrimaryEntityInstance().getPropertyByName(args[0]).getValue();
         }
-
 }
 

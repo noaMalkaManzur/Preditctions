@@ -7,8 +7,8 @@ import expression.api.eExpression;
 public class GeneralExpression extends FunctionExpression {
     private PropertyType propertyType;
 
-    public GeneralExpression(String arg,PropertyType propertyType) {
-        super(arg, eExpression.GENERAL);
+    public GeneralExpression(PropertyType propertyType, String... args) {
+        super(eExpression.GENERAL, args);
         this.propertyType = propertyType;
 
     }
@@ -17,17 +17,15 @@ public class GeneralExpression extends FunctionExpression {
     public Object calculateExpression(Context context) {
         switch (propertyType) {
             case DECIMAL:
-                return Integer.parseInt(arg);
+                return Integer.parseInt(args[0]);
             case FLOAT:
-                return Double.parseDouble(arg);
+                return Double.parseDouble(args[0]);
             case BOOLEAN:
-                return Boolean.parseBoolean(arg);
+                return Boolean.parseBoolean(args[0]);
             case STRING:
-                return arg;
+                return args[0];
             default:
                 return null;
         }
     }
-
-
 }

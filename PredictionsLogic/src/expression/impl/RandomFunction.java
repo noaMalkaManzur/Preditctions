@@ -8,13 +8,13 @@ import java.util.Random;
 
 public class RandomFunction extends FunctionExpression {
 
-    public RandomFunction(String arg) {
-        super(arg, eExpression.FUNCTION);
+    public RandomFunction(String... args) {
+        super(eExpression.FUNCTION, args);
     }
     @Override
     public Object calculateExpression(Context context) {
         try {
-            int max = Integer.parseInt(arg);
+            int max = Integer.parseInt(args[0]);
             if (max < 0) {
                 throw new IllegalArgumentException("Argument must be a non-negative number.");
             }
@@ -24,11 +24,8 @@ public class RandomFunction extends FunctionExpression {
         }
     }
 
-
     private Integer random(int range) {
         Random random = new Random();
         return random.nextInt(range+1);
     }
-
-
 }

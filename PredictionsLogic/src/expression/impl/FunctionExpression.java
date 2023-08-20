@@ -6,19 +6,17 @@ import expression.api.AbstractExpression;
 import expression.api.eExpression;
 
 public abstract class FunctionExpression extends AbstractExpression {
-    protected String arg;
-    public FunctionExpression(String arg, eExpression typeExpression) {
+    protected String[] args;
+    public FunctionExpression(eExpression typeExpression, String... args) {
         super(typeExpression);
-        this.arg = arg;
+        this.args= args;
     }
 
     public abstract Object calculateExpression(Context context);
     @Override
     public final Object getArg() {
-        return arg;
+        return args[0];
     }
-
-
 
 
 }
