@@ -12,12 +12,12 @@ public abstract class CalculationAction extends AbstractAction {
 
     protected String resultProp;
 
-    protected CalculationAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList, String resultProp, int tickValPropGot) {
-        super(actionType, entityDefinition, expressionList, tickValPropGot);
+    protected CalculationAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList, String resultProp) {
+        super(actionType, entityDefinition, expressionList);
         this.resultProp = resultProp;
     }
 
-    public abstract void invoke(Context context);
+    public abstract void invoke(Context context,  int currTickToChangeValue);
 
 
 }

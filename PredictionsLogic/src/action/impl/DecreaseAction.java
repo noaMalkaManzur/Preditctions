@@ -12,16 +12,14 @@ import java.util.List;
 
 public class DecreaseAction extends AbstractAction {
     private final String property;
-    int currTickForValueChanged;
 
-    public DecreaseAction(EntityDefinition entityDefinition, List<Expression> expressionList, String property, int currTickForValueChanged) {
-        super(ActionTypeDTO.DECREASE, entityDefinition, expressionList, currTickForValueChanged);
+    public DecreaseAction(EntityDefinition entityDefinition, List<Expression> expressionList, String property) {
+        super(ActionTypeDTO.DECREASE, entityDefinition, expressionList);
         this.property = property;
-        this.currTickForValueChanged= currTickForValueChanged;
     }
 
     @Override
-    public void invoke(Context context) {
+    public void invoke(Context context, int currTickToChangeValue) {
         PropertyInstance propertyInstance = context.getPrimaryEntityInstance().getPropertyByName(property);
         if (!verifyNumericPropertyType(propertyInstance)) {
             throw new IllegalArgumentException("increase action can't operate on a none number property [" + property + "]");
@@ -47,18 +45,13 @@ public class DecreaseAction extends AbstractAction {
             if (updatedVal.doubleValue() >= propertyInstance.getPropertyDefinition().getRange().getRangeFrom()) {
 
                 propertyInstance.updateValue(updatedVal);
-                propertyInstance.setCurrTickForValueChanged(currTickForValueChanged);
-                System.out.println(currTickForValueChanged);
-
+                propertyInstance.setCurrTickForValueChanged(currTickToChangeValue);
             }
         }
         else
         {
             propertyInstance.updateValue(updatedVal);
-            propertyInstance.setCurrTickForValueChanged(currTickForValueChanged);
-            System.out.println(currTickForValueChanged);
-
-
+            propertyInstance.setCurrTickForValueChanged(currTickToChangeValue);
         }
     }
 

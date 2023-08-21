@@ -11,4 +11,7 @@ public interface Context {
     void setPrimaryInstacne(int idEntityInstance);
     EntityInstanceManager getEntityManager();
 
+    void setCurrTick(int currTick);
+    int getCurrTick();
+
 }
