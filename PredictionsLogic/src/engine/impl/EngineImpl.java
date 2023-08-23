@@ -96,7 +96,7 @@ public class EngineImpl implements Engine {
                     EnvVariablesManager envManager = new EnvVariableManagerImpl();
                     world = new WorldImpl();
                     activeEnvironment = new ActiveEnvironmentImpl();
-                    setEnvVariablesFromXML(envManager, prdWorld.getPRDEvironment().getPRDEnvProperty());
+                    setEnvVariablesFromXML(envManager, prdWorld.getPRDEnvironment().getPRDEnvProperty());
                     world.setEnvVariables(envManager);
                     world.setEntities(getEntitiesFromXML(prdWorld.getPRDEntities()));
                     world.setRules(getRulesFromXML(prdWorld.getPRDRules()));
@@ -159,7 +159,8 @@ public class EngineImpl implements Engine {
         Map<String, EntityDefinition> convertedEntities = new HashMap<>();
 
         for (PRDEntity entity : entities.getPRDEntity()) {
-            EntityDefinition entityDefinition = new EntityDefinitionImpl(entity.getName(), entity.getPRDPopulation());
+            //todo: we get the population from the user
+            EntityDefinition entityDefinition = new EntityDefinitionImpl(entity.getName(), 100);
             for (PRDProperty prdProperty : entity.getPRDProperties().getPRDProperty())
                 if(entityDefinition.getProps().containsKey(prdProperty.getPRDName()))
                     throw new PropertyAlreadyExsitException("Entity:" + entity.getName() + " already have a property name:" + prdProperty.getPRDName());
@@ -321,6 +322,11 @@ public class EngineImpl implements Engine {
                     break;
                 case "KILL":
                     return new KillAction(world.getEntities().get(action.getEntity()));
+                case "PROXIMITY":
+                    return null;
+                case"REPLACE":
+                    return null;
+
             }
         }
         return null;
@@ -353,9 +359,12 @@ public class EngineImpl implements Engine {
         List<ConditionAction> conditionActionList = new ArrayList<>();
         if (condition.getPRDCondition() != null) {
             for (PRDCondition prdCondition : condition.getPRDCondition()) {
-                String valExpression = prdCondition.getValue();
-                String propertyName = prdCondition.getProperty();
                 if (prdCondition.getSingularity().equals("single")) {
+                    String valExpression = prdCondition.getValue();
+                    String propertyName = prdCondition.getProperty();
+                    if(propertyName.contains("ticks")){
+                        propertyName = getPropertyNameTicks(propertyName);
+                    }
                     if(validationEngine.checkIfEntityHasProp(propertyName,prdCondition.getEntity(), world)){
                         conditionActionList.add(new SingleAction(world.getEntities().get(prdCondition.getEntity()),
                             getExpression(prdCondition.getEntity(), propertyName, valExpression), null, null,
@@ -370,6 +379,16 @@ public class EngineImpl implements Engine {
         }
         return conditionActionList;
     }
+
+    private String getPropertyNameTicks(String propertyName) {
+
+        String[] propName = propertyName.substring(1, propertyName.length() - 1).split("\\.");
+        if (propName.length == 2) {
+            return propName[1];
+        }
+        throw new IllegalArgumentException("invalid property name");
+    }
+
     private Action SingleConditionCal(PRDAction action) {
         List<Action> thenActionList = createThenActionList(action);
         List<Action> elseActionList = createElseActionList(action);
@@ -474,7 +493,7 @@ public class EngineImpl implements Engine {
     private Termination getTerminationTermFromXML(PRDTermination prdTermination) {
         int ticksCount = -1;
         int secondCount = -1;
-        for (Object obj : prdTermination.getPRDByTicksOrPRDBySecond()) {
+        for (Object obj : prdTermination.getPRDBySecondOrPRDByTicks()) {
             if (obj instanceof PRDByTicks) {
                 PRDByTicks prdByTicks = (PRDByTicks) obj;
                 ticksCount = prdByTicks.getCount();
