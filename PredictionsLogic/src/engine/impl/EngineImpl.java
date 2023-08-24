@@ -7,6 +7,7 @@ import Histogram.api.Histogram;
 import Histogram.impl.HistogramImpl;
 import Instance.ActiveEnvDTO;
 import Instance.EnvPropertyInstanceDTO;
+import action.impl.proximity.impl.ProximityAction;
 import action.api.Action;
 import action.impl.DecreaseAction;
 import action.impl.IncreaseAction;
@@ -323,7 +324,7 @@ public class EngineImpl implements Engine {
                 case "KILL":
                     return new KillAction(world.getEntities().get(action.getEntity()));
                 case "PROXIMITY":
-                    return null;
+                    return new ProximityAction(world.getEntities().get(action.getPRDBetween().getSourceEntity()), getExpression(action.getPRDBetween().getSourceEntity(),action.getPRDBetween().getTargetEntity(),action.getPRDEnvDepth().getOf()));
                 case"REPLACE":
                     return null;
 
@@ -450,6 +451,7 @@ public class EngineImpl implements Engine {
             else if (world.getEntities().get(entityName).getProps().containsKey(expressionVal)) {
                 myExpression.add(new PropertyExpression(expressionVal));
             } else {
+                //todo: handle myExpressionList on
                 myExpression.add(new GeneralExpression(world.getEntities().get(entityName).getProps().get(propName).getType(), expressionVal));
             }
         }

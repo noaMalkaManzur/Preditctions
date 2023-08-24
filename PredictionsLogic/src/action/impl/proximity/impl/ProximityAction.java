@@ -1,4 +1,4 @@
-package action;
+package action.impl.proximity.impl;
 
 import Enums.ActionTypeDTO;
 import action.api.AbstractAction;
@@ -9,8 +9,8 @@ import expression.api.Expression;
 import java.util.List;
 
 public class ProximityAction  extends AbstractAction {
-    protected ProximityAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList) {
-        super(actionType, entityDefinition, expressionList);
+    public ProximityAction(EntityDefinition entityDefinition, List<Expression> expressionList) {
+        super(ActionTypeDTO.PROXIMITY, entityDefinition, expressionList);
     }
 
     @Override

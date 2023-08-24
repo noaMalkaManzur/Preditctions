@@ -1,6 +1,10 @@
 package Predictions.PredictionsUI;
 
 
+import JavaFx.test;
+
+import static javafx.application.Application.launch;
+
 public class Main {
 
     /*public static void main(String[] args) {
@@ -123,8 +127,10 @@ public class Main {
 
     public static void main(String[] args)
     {
-        PredictionsManagment predictionsManagment = new PredictionsManagment();
-        predictionsManagment.run();
+        //PredictionsManagment predictionsManagment = new PredictionsManagment();
+        //predictionsManagment.run();
+        launch(test.class);
+
     }
 
 }

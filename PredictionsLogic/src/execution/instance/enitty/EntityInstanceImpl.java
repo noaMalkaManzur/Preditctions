@@ -1,16 +1,18 @@
 package execution.instance.enitty;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import definition.entity.EntityDefinition;
 import execution.instance.property.PropertyInstance;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class EntityInstanceImpl implements EntityInstance {
 
     private final EntityDefinition entityDefinition;
     private final int id;
     private Map<String, PropertyInstance> properties;
+    private int x;
+    private int y;
 
     public EntityInstanceImpl(EntityDefinition entityDefinition, int id) {
         this.entityDefinition = entityDefinition;
