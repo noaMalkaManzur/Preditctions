@@ -12,6 +12,7 @@ public class ContextImpl implements Context {
     private EntityInstance primaryEntityInstance;
     private EntityInstanceManager entityInstanceManager;
     private ActiveEnvironment activeEnvironment;
+    private int currTick;
 
     public ContextImpl(EntityInstance primaryEntityInstance, EntityInstanceManager entityInstanceManager, ActiveEnvironment activeEnvironment) {
         this.primaryEntityInstance = primaryEntityInstance;
@@ -46,6 +47,16 @@ public class ContextImpl implements Context {
     @Override
     public EntityInstanceManager getEntityManager() {
         return entityInstanceManager;
+    }
+
+    @Override
+    public void setCurrTick(int currTick) {
+        this.currTick = currTick;
+    }
+
+    @Override
+    public int getCurrTick() {
+        return currTick;
     }
 
 }

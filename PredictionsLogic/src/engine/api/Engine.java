@@ -15,7 +15,6 @@ import java.util.Map;
 public interface Engine
 {
     //region Command 1
-
     void loadXmlFiles(String fileName);
     //endregion
     //region Command 2

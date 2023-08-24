@@ -12,13 +12,11 @@ import java.util.List;
 public class SingleAction extends ConditionAction {
 
     String operator;
-    int currTickForValueChanged;
 
     public SingleAction(EntityDefinition entityDefinition, List<Expression> expressionList,
-                        List<Action> thenActionList, List<Action> elseActionList, String propertyName, String operator, int currTickForValueChanged) {
-        super(ActionTypeDTO.CONDITION, entityDefinition, expressionList, thenActionList, elseActionList, propertyName, currTickForValueChanged);
+                        List<Action> thenActionList, List<Action> elseActionList, String propertyName, String operator) {
+        super(ActionTypeDTO.CONDITION, entityDefinition, expressionList, thenActionList, elseActionList, propertyName);
         this.operator = operator;
-        this.currTickForValueChanged= currTickForValueChanged;
     }
 
     @Override

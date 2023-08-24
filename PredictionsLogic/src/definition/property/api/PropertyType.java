@@ -1,5 +1,4 @@
 package definition.property.api;
-
 import exceptions.InvalidInputException;
 
 public enum PropertyType {

@@ -7,7 +7,7 @@ import definition.value.generator.api.ValueGenerator;
 public class StringPropertyDefinition extends AbstractPropertyDefinition<String> {
 
 
-    public StringPropertyDefinition(String name, PropertyType propertyType, ValueGenerator<String> valueGenerator, Boolean isRandomInit, int tickPropertyGotValue) {
-        super(name, propertyType, valueGenerator, null, isRandomInit, tickPropertyGotValue);
+    public StringPropertyDefinition(String name, PropertyType propertyType, ValueGenerator<String> valueGenerator, Boolean isRandomInit) {
+        super(name, propertyType, valueGenerator, null, isRandomInit);
     }
 }

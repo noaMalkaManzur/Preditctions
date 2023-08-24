@@ -7,7 +7,7 @@ import definition.value.generator.api.ValueGenerator;
 
 public class IntegerPropertyDefinition extends AbstractPropertyDefinition<Integer> {
 
-    public IntegerPropertyDefinition(String name, PropertyType propertyType, ValueGenerator<Integer> valueGenerator, Range range, Boolean isRandomInit, int tickPropertyGotValue) {
-        super(name, propertyType, valueGenerator, range, isRandomInit, tickPropertyGotValue);
+    public IntegerPropertyDefinition(String name, PropertyType propertyType, ValueGenerator<Integer> valueGenerator, Range range, Boolean isRandomInit) {
+        super(name, propertyType, valueGenerator, range, isRandomInit);
     }
 }

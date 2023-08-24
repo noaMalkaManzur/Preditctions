@@ -9,7 +9,7 @@ import definition.value.generator.api.ValueGenerator;
 public class FloatPropertyDefinition extends AbstractPropertyDefinition<Float> {
 
 
-    public FloatPropertyDefinition(String name, PropertyType propertyType, ValueGenerator<Float> valueGenerator, Range range, Boolean isRandomInit, int tickPropertyGotValue) {
-        super(name, propertyType, valueGenerator, range, isRandomInit, tickPropertyGotValue);
+    public FloatPropertyDefinition(String name, PropertyType propertyType, ValueGenerator<Float> valueGenerator, Range range, Boolean isRandomInit) {
+        super(name, propertyType, valueGenerator, range, isRandomInit);
     }
 }

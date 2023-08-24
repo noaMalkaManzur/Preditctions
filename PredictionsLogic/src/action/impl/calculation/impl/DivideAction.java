@@ -11,15 +11,13 @@ import expression.api.Expression;
 import java.util.List;
 
 public class DivideAction extends CalculationAction {
-    int currTickForValueChanged;
 
-    public DivideAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList, String resultProp, int currTickForValueChanged ) {
-        super(actionType, entityDefinition, expressionList, resultProp, currTickForValueChanged);
-        this.currTickForValueChanged= currTickForValueChanged;
+    public DivideAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList, String resultProp) {
+        super(actionType, entityDefinition, expressionList, resultProp);
     }
 
     @Override
-    public void invoke(Context context) {
+    public void invoke(Context context,  int currTickToChangeValue) {
         PropertyInstance propertyInstance = context.getPrimaryEntityInstance().getPropertyByName(resultProp);
         if (!verifyNumericPropertyType(propertyInstance)) {
             throw new IllegalArgumentException("increase action can't operate on a none number property [" + resultProp + "]");
@@ -45,15 +43,12 @@ public class DivideAction extends CalculationAction {
             if (divRes.doubleValue() >= propertyInstance.getPropertyDefinition().getRange().getRangeFrom()) {
                 if (propertyInstance.getPropertyDefinition().getType() == PropertyType.DECIMAL) {
                     propertyInstance.updateValue(divRes);
-                    propertyInstance.setCurrTickForValueChanged(currTickForValueChanged);
-                    System.out.println(currTickForValueChanged);
+                    propertyInstance.setCurrTickForValueChanged(currTickToChangeValue);
                 }
             }
         } else {
             propertyInstance.updateValue(divRes);
-            propertyInstance.setCurrTickForValueChanged(currTickForValueChanged);
-            System.out.println(currTickForValueChanged);
-
+            propertyInstance.setCurrTickForValueChanged(currTickToChangeValue);
         }
     }
 }
