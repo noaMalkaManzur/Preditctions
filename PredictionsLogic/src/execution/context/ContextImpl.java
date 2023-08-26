@@ -10,19 +10,26 @@ import java.util.Optional;
 public class ContextImpl implements Context {
 
     private EntityInstance primaryEntityInstance;
+    private  EntityInstance secondaryEntityInstance;
     private EntityInstanceManager entityInstanceManager;
     private ActiveEnvironment activeEnvironment;
     private int currTick;
 
-    public ContextImpl(EntityInstance primaryEntityInstance, EntityInstanceManager entityInstanceManager, ActiveEnvironment activeEnvironment) {
+    public ContextImpl(EntityInstance primaryEntityInstance, EntityInstanceManager entityInstanceManager, ActiveEnvironment activeEnvironment, EntityInstance secondaryEntityInstance) {
         this.primaryEntityInstance = primaryEntityInstance;
         this.entityInstanceManager = entityInstanceManager;
         this.activeEnvironment = activeEnvironment;
+        this.secondaryEntityInstance = secondaryEntityInstance;
     }
 
     @Override
     public EntityInstance getPrimaryEntityInstance() {
         return primaryEntityInstance;
+    }
+
+    @Override
+    public EntityInstance getSecondaryEntityInstance() {
+        return secondaryEntityInstance;
     }
 
     @Override

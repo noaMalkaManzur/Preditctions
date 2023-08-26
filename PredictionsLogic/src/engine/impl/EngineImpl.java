@@ -665,6 +665,7 @@ public class EngineImpl implements Engine {
     private void createContext() {
         EntityInstanceManager entityInstanceManager = new EntityInstanceManagerImpl();
         EntityInstance primaryEntityInstance = null;
+        EntityInstance secoundaryEntityInstance = null;
         world.getEntities().forEach((key,value)->
                 {
                     for(int i = 0;i < value.getPopulation();i++)
@@ -673,8 +674,9 @@ public class EngineImpl implements Engine {
                     }
                 });
         primaryEntityInstance = entityInstanceManager.getInstances().get(0);
+        secoundaryEntityInstance = entityInstanceManager.getInstances().get(1);
         primaryEntStartPop = primaryEntityInstance.getEntityDef().getPopulation();
-        context = new ContextImpl(primaryEntityInstance,entityInstanceManager,activeEnvironment);
+        context = new ContextImpl(primaryEntityInstance,entityInstanceManager,activeEnvironment, secoundaryEntityInstance);
 
     }
     //endregion

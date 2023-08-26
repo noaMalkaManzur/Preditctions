@@ -1,16 +1,9 @@
 package Predictions.PredictionsUI;
 
 
-import JavaFx.run.PredictionsApp;
-import definition.world.impl.Coordinate;
-
-import static javafx.application.Application.launch;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 public class Main {
 
-    public static class InfiniteGrid
+   /* public static class InfiniteGrid
     {
         private final int n;
         private final int m;
@@ -56,14 +49,11 @@ public class Main {
             System.out.println(coordinate.getX() + ", " + coordinate.getY());
         }
     }
-}
-    /*public static void main(String[] args)
+}*/
+    public static void main(String[] args)
     {
-        //PredictionsManagment predictionsManagment = new PredictionsManagment();
-        //predictionsManagment.run();
+        PredictionsManagment predictionsManagment = new PredictionsManagment();
+        predictionsManagment.run();
         //launch(PredictionsApp.class);
-
-
-
-    }}*/
+    }}
 

@@ -1,6 +1,7 @@
 package execution.instance.enitty;
 
 import definition.entity.EntityDefinition;
+import definition.world.impl.Coordinate;
 import execution.instance.property.PropertyInstance;
 
 import java.util.HashMap;
@@ -11,8 +12,7 @@ public class EntityInstanceImpl implements EntityInstance {
     private final EntityDefinition entityDefinition;
     private final int id;
     private Map<String, PropertyInstance> properties;
-    private int x;
-    private int y;
+    private Coordinate coordinate = new Coordinate(0,0);
 
     public EntityInstanceImpl(EntityDefinition entityDefinition, int id) {
         this.entityDefinition = entityDefinition;
@@ -42,5 +42,15 @@ public class EntityInstanceImpl implements EntityInstance {
     @Override
     public EntityDefinition getEntityDef() {
         return entityDefinition;
+    }
+
+    @Override
+    public Coordinate getCoordinate() {
+        return coordinate;
+    }
+    @Override
+    public void setCoordinate(Coordinate coordinate) {
+        this.coordinate = coordinate;
+
     }
 }
