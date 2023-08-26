@@ -1,136 +1,69 @@
 package Predictions.PredictionsUI;
 
 
-import JavaFx.test;
+import JavaFx.run.PredictionsApp;
+import definition.world.impl.Coordinate;
 
 import static javafx.application.Application.launch;
-
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 public class Main {
 
-    /*public static void main(String[] args) {
+    public static class InfiniteGrid
+    {
+        private final int n;
+        private final int m;
 
-        // definition phase - happens as part of file read and validity checks
-        PropertyDefinition lungCancerProgress = new IntegerPropertyDefinition("lung-cancer-progress", ValueGeneratorFactory.createFixed(0),new Range(0,100));
-        IntegerPropertyDefinition agePropertyDefinition = new IntegerPropertyDefinition("age", ValueGeneratorFactory.createRandomInteger(15, 50),new Range(15,50));
-        PropertyDefinition cigaretsPerMonthPropertyDefinition = new IntegerPropertyDefinition("cigarets-per-month", ValueGeneratorFactory.createRandomInteger(0,500),new Range(0,500));
-
-
-        EntityDefinition smokerEntityDefinition = new EntityDefinitionImpl("smoker", 5);
-        smokerEntityDefinition.getProps().add(agePropertyDefinition);
-        smokerEntityDefinition.getProps().add(cigaretsPerMonthPropertyDefinition);
-        smokerEntityDefinition.getProps().add(lungCancerProgress);
-
-
-//        List<Expression> list = new ArrayList<>();
-//        list.add(new RandomFunction("8"));
-//        list.add(new RandomFunction("9"));
-//
-        Rule rule1 = new RuleImpl("rule 1");
-//        rule1.addAction(new MultiplyAction(ActionType.DECREASE,smokerEntityDefinition, list, lungCancerProgress.getName()));
-
-
-
-        EnvVariablesManager envVariablesManager = new EnvVariableManagerImpl();
-        IntegerPropertyDefinition cigaretsIncreaseNonSmokerEnvironmentVariablePropertyDefinition = new IntegerPropertyDefinition("cigarets-increase-non-smoker", ValueGeneratorFactory.createRandomInteger(0, 10),new Range(0,10));
-        IntegerPropertyDefinition cigaretsIncreaseAlreadySmokerEnvironmentVariablePropertyDefinition = new IntegerPropertyDefinition("cigarets-increase-already-smoker", ValueGeneratorFactory.createRandomInteger(10, 100),new Range(10,100));
-
-        envVariablesManager.addEnvironmentVariable(cigaretsIncreaseNonSmokerEnvironmentVariablePropertyDefinition);
-        envVariablesManager.addEnvironmentVariable(cigaretsIncreaseAlreadySmokerEnvironmentVariablePropertyDefinition);
-
-
-
-        // execution phase - happens upon command 3
-
-        // initialization phase
-
-        // creating entity instance manager
-        EntityInstanceManager entityInstanceManager = new EntityInstanceManagerImpl();
-
-        // create 3 instance of the smokerEntityDefinition smoker
-        for (int i = 0; i < smokerEntityDefinition.getPopulation(); i++) {
-            entityInstanceManager.create(smokerEntityDefinition);
+        public InfiniteGrid(int n, int m) {
+            this.n = n;
+            this.m = m;
         }
 
-        // create env variable instance
-        ActiveEnvironment activeEnvironment = envVariablesManager.createActiveEnvironment();
-        // all available environment variable with their definition
-        // for (PropertyDefinition propertyDefinition : envVariablesManager.getEnvVariables()) {
+        public Collection<Coordinate> findEnvironmentCells(Coordinate source, int rank) {
+            List<Coordinate> environmentCells = new ArrayList<>();
 
-        // collect value from user...
-        int valueFromUser = 54;
-        int anotherValue = 10;
-        activeEnvironment.addPropertyInstance(new PropertyInstanceImpl(cigaretsIncreaseAlreadySmokerEnvironmentVariablePropertyDefinition, valueFromUser));
-        activeEnvironment.addPropertyInstance(new PropertyInstanceImpl(cigaretsIncreaseNonSmokerEnvironmentVariablePropertyDefinition, anotherValue));
+            for (int i = source.getX() - rank; i <= source.getX() + rank; i++) {
+                for (int j = source.getY() - rank; j <= source.getY() + rank; j++) {
+                    if (isInGrid(i, j) && distance(source, i, j) <= rank) {
+                        environmentCells.add(new Coordinate(i, j));
+                    }
+                }
+            }
 
-        // }
+            return environmentCells;
+        }
 
+        private boolean isInGrid(int x, int y) {
+            return x >= 0 && x <= n && y >= 0 && y <= m;
+        }
 
-        //list.add(new EnvironmentFunction("10",activeEnvironment));
-        List<Expression> list3 = new ArrayList<>();
-        list3.add(new EnvironmentFunction(cigaretsIncreaseAlreadySmokerEnvironmentVariablePropertyDefinition.getName(),activeEnvironment));
-        list3.add(new RandomFunction("5"));
-//        rule1.addAction(new MultiplyAction(ActionType.DECREASE, smokerEntityDefinition, list3, cigaretsPerMonthPropertyDefinition.getName()));
-//        // all env variable not inserted by user, needs to be generated randomly. lucky we have all data needed for it...
-//        //Integer randomEnvVariableValue = taxAmountEnvironmentVariablePropertyDefinition.generateValue();
-//        //activeEnvironment.addPropertyInstance(new PropertyInstanceImpl(taxAmountEnvironmentVariablePropertyDefinition, randomEnvVariableValue));
-//
-//        //checking condition:
-//        System.out.println();
-        List<Expression> list4 = new ArrayList<>();
-        list4.add(new EnvironmentFunction(cigaretsIncreaseNonSmokerEnvironmentVariablePropertyDefinition.getName(),activeEnvironment));
-        //list4.add(new GeneralExpression("40",PropertyType.DECIMAL));
-        List<Action> actionList = new ArrayList<>();
-        actionList.add(new IncreaseAction(ActionType.DECREASE, smokerEntityDefinition, list3, lungCancerProgress.getName()));
-        actionList.add(new DecreaseAction(ActionType.DECREASE, smokerEntityDefinition, list3, lungCancerProgress.getName()));
-        List<ConditionAction> conditionList = new ArrayList<>();
-
-        conditionList.add(new SingleAction(ActionType.CONDITION, smokerEntityDefinition, list4, "age", actionList, "bt"));
-        conditionList.add(new SingleAction(ActionType.CONDITION, smokerEntityDefinition, list4, cigaretsPerMonthPropertyDefinition.getName(), actionList, "bt"));
-        rule1.addAction(new MultipleAction(ActionType.CONDITION,smokerEntityDefinition,list4,"and", lungCancerProgress.getName(),actionList,conditionList));
-//        actionList.add(new IncreaseAction(ActionType.DECREASE, smokerEntityDefinition, list3, lungCancerProgress.getName()));
-//        rule1.addAction(new SingleAction(ActionType.CONDITION, smokerEntityDefinition, list4, "age", actionList, "bt"));
+        private int distance(Coordinate source, int x, int y) {
+            int dx = Math.abs(source.getX() - x);
+            int dy = Math.abs(source.getY() - y);
+            return Math.max(dx, dy);
+        }
 
 
+    }
+    public static void main(String[] args) {
+        InfiniteGrid grid = new InfiniteGrid(4, 4);
+        Coordinate source = new Coordinate(2, 1);
+        int rank = 1;
+        Collection<Coordinate> environmentCells = grid.findEnvironmentCells(source, rank);
 
-
-        //List<ConditionAction> conditionActionList = new ArrayList<>();
-        //ConditionAction conditionAction1 = new SingleAction(ActionType.CONDITION, smokerEntityDefinition, list4, "single", actionList, "Bt");
-
-
-
-        // during a tick...
-
-// given an instance...
-        // create a context (per instance)
-        Context context = new ContextImpl(entityInstance, entityInstanceManager, activeEnvironment);
-        List<Expression> list2 = new ArrayList<>();
-        list2.add(new GeneralExpression("2",PropertyType.DECIMAL));
-        list2.add(new RandomFunction("9"));
-        rule1.addAction(new MultiplyAction(ActionType.DECREASE, smokerEntityDefinition, list2, agePropertyDefinition.getName()));
-        System.out.println(context.getPrimaryEntityInstance().getPropertyByName(lungCancerProgress.getName()).getValue().toString());
-        System.out.println(context.getPrimaryEntityInstance().getPropertyByName(agePropertyDefinition.getName()).getValue().toString());
-        System.out.println(context.getPrimaryEntityInstance().getPropertyByName(cigaretsPerMonthPropertyDefinition.getName()).getValue().toString());
-
-         if (rule1.getActivation().isActive(1)) {
-             rule1
-                     .getActionsToPerform()
-                     .forEach(action ->
-                             action.invoke(context));
-         }
-        System.out.println("\n\n");
-
-        System.out.println(context.getPrimaryEntityInstance().getPropertyByName(lungCancerProgress.getName()).getValue().toString());
-        System.out.println(context.getPrimaryEntityInstance().getPropertyByName(agePropertyDefinition.getName()).getValue().toString());
-        System.out.println(context.getPrimaryEntityInstance().getPropertyByName(cigaretsPerMonthPropertyDefinition.getName()).getValue().toString());
-
-    }*/
-
-    public static void main(String[] args)
+        for (Coordinate coordinate : environmentCells) {
+            System.out.println(coordinate.getX() + ", " + coordinate.getY());
+        }
+    }
+}
+    /*public static void main(String[] args)
     {
         //PredictionsManagment predictionsManagment = new PredictionsManagment();
         //predictionsManagment.run();
-        launch(test.class);
+        //launch(PredictionsApp.class);
 
-    }
 
-}
+
+    }}*/
+
