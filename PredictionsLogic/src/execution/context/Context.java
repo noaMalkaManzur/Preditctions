@@ -14,6 +14,8 @@ public interface Context {
 
     void setCurrTick(int currTick);
     int getCurrTick();
+    int getColumns();
+    int getRows();
 
 
 }

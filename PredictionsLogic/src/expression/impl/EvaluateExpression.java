@@ -4,8 +4,8 @@ import execution.context.Context;
 import expression.api.eExpression;
 
 public class EvaluateExpression extends FunctionExpression{
-    public EvaluateExpression(eExpression typeExpression, String... args) {
-        super(typeExpression, args);
+    public EvaluateExpression(String... args) {
+        super(eExpression.FUNCTION, args);
     }
     //todo:check about getting the arg for entity name
     @Override

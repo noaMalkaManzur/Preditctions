@@ -4,8 +4,8 @@ import execution.context.Context;
 import expression.api.eExpression;
 
 public class PercentExpression extends FunctionExpression{
-    public PercentExpression(eExpression typeExpression, String... args) {
-        super(typeExpression, args);
+    public PercentExpression(String... args) {
+        super(eExpression.FUNCTION, args);
     }
     @Override
     public Object calculateExpression(Context context) {

@@ -5,8 +5,8 @@ import expression.api.eExpression;
 
 public class TickFunction extends  FunctionExpression{
 
-    public TickFunction(eExpression typeExpression, String... args) {
-        super(typeExpression, args);
+    public TickFunction(String... args) {
+        super(eExpression.FUNCTION, args);
     }
     //todo: check if arg[0] has the property name
     @Override

@@ -12,7 +12,6 @@ public interface EntityInstanceManager {
     List<EntityInstance> getInstances();
 
     void killEntity(int id);
-
     public int getCurrPopulation();
 
     public void setCurrPopulation(int currPopulation);

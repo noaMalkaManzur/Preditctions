@@ -14,12 +14,18 @@ public class ContextImpl implements Context {
     private EntityInstanceManager entityInstanceManager;
     private ActiveEnvironment activeEnvironment;
     private int currTick;
+    private int rows;
+    private int columns;
 
-    public ContextImpl(EntityInstance primaryEntityInstance, EntityInstanceManager entityInstanceManager, ActiveEnvironment activeEnvironment, EntityInstance secondaryEntityInstance) {
+    public ContextImpl(EntityInstance primaryEntityInstance, EntityInstanceManager entityInstanceManager,
+                       ActiveEnvironment activeEnvironment, EntityInstance secondaryEntityInstance, int rows, int columns) {
+
         this.primaryEntityInstance = primaryEntityInstance;
         this.entityInstanceManager = entityInstanceManager;
         this.activeEnvironment = activeEnvironment;
         this.secondaryEntityInstance = secondaryEntityInstance;
+        this.rows= rows;
+        this.columns = columns;
     }
 
     @Override
@@ -64,6 +70,16 @@ public class ContextImpl implements Context {
     @Override
     public int getCurrTick() {
         return currTick;
+    }
+
+    @Override
+    public int getColumns() {
+        return columns;
+    }
+
+    @Override
+    public int getRows() {
+        return rows;
     }
 
 }
