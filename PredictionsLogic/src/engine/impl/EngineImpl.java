@@ -355,7 +355,7 @@ public class EngineImpl implements Engine {
                 proximityActionList.add(convertActionFromXML(indexAction));
             }
         } else {
-            throw new IllegalArgumentException("Argument THEN was null");
+            throw new IllegalArgumentException("Argument Action was null");
         }
         return proximityActionList;
 
@@ -497,19 +497,23 @@ public class EngineImpl implements Engine {
     }
 
     private void handleEvaluateExpression(String expressionVal, List<Expression> myExpression) {
-        String entity;
-        String propertyName;
-        String[] args = expressionVal.split("\\.");
-        if (args.length == 2) {
-            entity = args[0];
-            propertyName = args[1];
-        }
-        if (validationEngine.checkIfEntityHasProp(args[0], args[1], world)){
-            myExpression.add(new EvaluateExpression(args[1]));
-        }
-        throw new IllegalArgumentException("Entity and property dont match!");
+        int startIndex = expressionVal.indexOf('(') + 1;
+        int endIndex = expressionVal.indexOf(')');
 
+        if (startIndex != -1 && endIndex != -1) {
+            String components = expressionVal.substring(startIndex, endIndex);
+            String[] args = components.split("\\.");
+
+            if (args.length == 2) {
+                if (validationEngine.checkIfEntityHasProp(args[1], args[0], world)) {
+                    myExpression.add(new EvaluateExpression(args[1]));
+                }
+            } else {
+                throw new IllegalArgumentException("There are not enough args for evaluate expression");
+            }
+        }
     }
+
 
     private void handlePercentFunctionExpression(String expressionVal, List<Expression> myExpression) {
         int openingIndex = expressionVal.indexOf('(');
@@ -521,12 +525,10 @@ public class EngineImpl implements Engine {
             String[] arguments = argsString.split(",", 2);
             args.addAll(Arrays.asList(arguments));
         }
-        Expression expression1 = getExpression(null, null,args.get(0)).get(0);
-        Expression expression2 = getExpression(null, null,args.get(1)).get(1);
-        myExpression.add(new PercentExpression(expression1.toString(), expression2.toString()));
-
-
-}
+        Expression expression1 = getExpression(null, null, args.get(0)).get(0);
+        Expression expression2 = getExpression(null, null, args.get(1)).get(1);
+        myExpression.add(new PercentExpression((String)expression1.getArg(), (String)expression2.getArg()));
+    }
 
     void handleRandomFunctionExpression(String ExpressionVal, List<Expression> myExpression) {
 
