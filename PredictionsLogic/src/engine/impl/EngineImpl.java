@@ -266,7 +266,6 @@ public class EngineImpl implements Engine {
         return new StringPropertyDefinition(prop.getPRDName(), PropertyType.STRING, MyValGen, isRandomInit);
     }
 
-
     //endregion
     //region Rules
     private Map<String, Rule> getRulesFromXML(PRDRules prdRules) {
@@ -339,10 +338,10 @@ public class EngineImpl implements Engine {
         }
         return null;
     }
-
     private Action proximitiyAction(PRDAction action) {
         List<Action> proximityActionList = proximitiyActionList(action);
         EntityDefinition entityDefinition = world.getEntities().get(action.getPRDBetween().getSourceEntity());
+        //todo: check if the value of in a numeric
         List<Expression > expressionList  = getExpression(action.getPRDBetween().getSourceEntity(),action.getPRDBetween().getTargetEntity(), action.getPRDEnvDepth().getOf());
         return new ProximityAction(entityDefinition, expressionList,proximityActionList);
     }
@@ -380,6 +379,7 @@ public class EngineImpl implements Engine {
 
         List<ConditionAction> conditionActionList = createConditionList(action.getPRDCondition());
         String logic = action.getPRDCondition().getLogical();
+        //todo: check with noam if need this propname
         String propName = action.getPRDCondition().getProperty();
         List<Action> thenActionList = createThenActionList(action);
         List<Action> elseActionList = createElseActionList(action);
@@ -569,7 +569,7 @@ public class EngineImpl implements Engine {
 
             if (args.length == 2) {
                 if (validationEngine.checkIfEntityHasProp(args[1], args[0], world)) {
-                    myExpression.add(new EvaluateExpression(args[1]));
+                    myExpression.add(new EvaluateExpression(args[0],args[1]));
                 }
             } else {
                 throw new IllegalArgumentException("There are not enough args for evaluate expression");

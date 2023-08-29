@@ -9,6 +9,6 @@ public class EvaluateExpression extends FunctionExpression{
     }
     @Override
     public Object calculateExpression(Context context) {
-         return context.getPrimaryEntityInstance().getPropertyByName(args[0]).getValue();
+         return context.getEntityManager().getEntityInstanceByName(args[0]).getPropertyByName(args[1]).getValue();
     }
 }
