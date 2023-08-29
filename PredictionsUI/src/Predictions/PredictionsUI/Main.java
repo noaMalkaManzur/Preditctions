@@ -51,15 +51,15 @@ public class Main {
         Activation activation = new ActivationImpl(1, 0.3);
         Rule rule1 = new RuleImpl("rule 1", activation);
         rule1.addAction(new IncreaseAction(ent1,expressionList,p1.getName()));
-        //todo:njdfkndj
+
         EnvVariablesManager envVariablesManager = new EnvVariableManagerImpl();
         envVariablesManager.addEnvironmentVariable(e1);
         envVariablesManager.addEnvironmentVariable(e2);
 
         EntityInstanceManager entityInstanceManager = new EntityInstanceManagerImpl();
 
-        for (int i = 0; i < smokerEntityDefinition.getPopulation(); i++) {
-            entityInstanceManager.create(smokerEntityDefinition);
+        for (int i = 0; i < ent1.getPopulation(); i++) {
+            entityInstanceManager.create(ent1);
             // create env variable instance
             ActiveEnvironment activeEnvironment = envVariablesManager.createActiveEnvironment();
             // all available environment variable with their definition
