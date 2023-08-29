@@ -341,10 +341,10 @@ public class EngineImpl implements Engine {
     }
 
     private Action proximitiyAction(PRDAction action) {
-        String firstEntityName = action.getPRDBetween().getSourceEntity();
-        String secondEntityName = action.getPRDBetween().getTargetEntity();
         List<Action> proximityActionList = proximitiyActionList(action);
-        return new ProximityAction(world.getEntities().get(action.getPRDBetween().getSourceEntity()), getExpression(action.getPRDBetween().getSourceEntity(), action.getPRDBetween().getTargetEntity(), action.getPRDEnvDepth().getOf()));
+        EntityDefinition entityDefinition = world.getEntities().get(action.getPRDBetween().getSourceEntity());
+        List<Expression > expressionList  = getExpression(action.getPRDBetween().getSourceEntity(),action.getPRDBetween().getTargetEntity(), action.getPRDEnvDepth().getOf());
+        return new ProximityAction(entityDefinition, expressionList,proximityActionList);
     }
 
     private List<Action> proximitiyActionList(PRDAction action) {
@@ -399,7 +399,7 @@ public class EngineImpl implements Engine {
                     if (validationEngine.checkIfEntityHasProp(propertyName, prdCondition.getEntity(), world)) {
                         conditionActionList.add(new SingleAction(world.getEntities().get(prdCondition.getEntity()),
                                 getExpression(prdCondition.getEntity(), propertyName, valExpression), null, null,
-                                prdCondition.getProperty(), prdCondition.getOperator()));
+                                propertyName, prdCondition.getOperator()));
                     }
                 } else if (prdCondition.getSingularity().equals("multiple")) {
                     List<ConditionAction> multiCondList = createConditionList(prdCondition);
@@ -411,14 +411,24 @@ public class EngineImpl implements Engine {
         return conditionActionList;
     }
 
-    //todo:here
-    private String getPropertyNameTicks(String propertyName) {
+    private String getPropertyNameTicks(String propertyNameToChange) {
+        int startIndex = propertyNameToChange.indexOf('(') + 1;
+        int endIndex = propertyNameToChange.indexOf(')');
 
-        String[] propName = propertyName.substring(1, propertyName.length() - 1).split("\\.");
-        if (propName.length == 2) {
-            return propName[1];
+        if (startIndex != -1 && endIndex != -1) {
+            String components = propertyNameToChange.substring(startIndex, endIndex);
+            String[] parts = components.split("\\.");
+
+            if (parts.length == 2) {
+                String propertyName = parts[1]; // Extract the property name
+                return propertyName;
+            } else {
+                throw new IllegalArgumentException("Invalid input format");
+            }
         }
-        throw new IllegalArgumentException("invalid property name");
+        else {
+            throw new IllegalArgumentException("Invalid input format");
+        }
     }
 
     private Action SingleConditionCal(PRDAction action) {
@@ -476,22 +486,24 @@ public class EngineImpl implements Engine {
         if (expressionVal != null) {
             if (expressionVal.contains("percent")) {
                 handlePercentFunctionExpression(expressionVal, myExpression);
-            }
-            //todo:check if aviad change this:
-            else if(expressionVal.contains("evalutate")) {
-
+            } else if (expressionVal.contains("evaluate")) {
                 handleEvaluateExpression(expressionVal, myExpression);
-            }
-            else if (expressionVal.contains("environment")) {
+            } else if (expressionVal.contains("environment")) {
                 handleEnvironmentFunctionExpression(expressionVal, myExpression);
             } else if (expressionVal.contains("random")) {
                 handleRandomFunctionExpression(expressionVal, myExpression);
             } else if (world.getEntities().get(entityName).getProps().containsKey(expressionVal)) {
                 myExpression.add(new PropertyExpression(expressionVal));
-            } else {
-                //todo: handle myExpressionList on
-                myExpression.add(new GeneralExpression(world.getEntities().get(entityName).getProps().get(propName).getType(), expressionVal));
+            } //todo: this is for the proximity action that we have to get a float number only
+            else {
+                if (world.getEntities().containsKey(propName)) {
+                    myExpression.add(new GeneralExpression(PropertyType.FLOAT, expressionVal));
+                }
+                else{
+                    myExpression.add(new GeneralExpression(world.getEntities().get(entityName).getProps().get(propName).getType(), expressionVal));
+                }
             }
+
         }
         return myExpression;
     }
@@ -526,7 +538,7 @@ public class EngineImpl implements Engine {
         }
         Expression expression1 = getExpression(null, null, args.get(0)).get(0);
         Expression expression2 = getExpression(null, null, args.get(1)).get(0);
-        //myExpression.add(new PercentExpression(expression1.getArg(), expression2.getArg()));
+        myExpression.add(new PercentExpression(expression1,expression2));
     }
 
     void handleRandomFunctionExpression(String ExpressionVal, List<Expression> myExpression) {
@@ -565,7 +577,8 @@ public class EngineImpl implements Engine {
     //endregion
     //region Termination
     private Termination getTerminationTermFromXML(PRDTermination prdTermination) {
-        int ticksCount = -1;
+        return new TerminationImpl(120, 300);
+        /*int ticksCount = -1;
         int secondCount = -1;
         for (Object obj : prdTermination.getPRDBySecondOrPRDByTicks()) {
             if (obj instanceof PRDByTicks) {
@@ -579,7 +592,7 @@ public class EngineImpl implements Engine {
         if (ticksCount > 0 && secondCount > 0)
             return new TerminationImpl(ticksCount, secondCount);
         else
-            throw new InvalidTerminationTermsException("Simulation Termination terms are invalid Please check them again!");
+            throw new InvalidTerminationTermsException("Simulation Termination terms are invalid Please check them again!");*/
     }
 
     //endregion

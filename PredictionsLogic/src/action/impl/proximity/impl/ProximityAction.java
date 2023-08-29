@@ -2,6 +2,7 @@ package action.impl.proximity.impl;
 
 import Enums.ActionTypeDTO;
 import action.api.AbstractAction;
+import action.api.Action;
 import definition.entity.EntityDefinition;
 import definition.property.api.PropertyType;
 import definition.world.impl.Coordinate;
@@ -14,9 +15,11 @@ import java.util.Collection;
 import java.util.List;
 
 public class ProximityAction  extends AbstractAction {
+    List<Action> actionList;
 
-    public ProximityAction(EntityDefinition entityDefinition, List<Expression> expressionList) {
+    public ProximityAction(EntityDefinition entityDefinition, List<Expression> expressionList,List<Action> actionList ) {
         super(ActionTypeDTO.PROXIMITY, entityDefinition, expressionList);
+        this.actionList = actionList;
 
     }
 
@@ -24,7 +27,7 @@ public class ProximityAction  extends AbstractAction {
     public void invoke(Context context, int currTickToChangeValue) {
 
         if(checkProximity(context)){
-            //todo: start another action
+            actionList.forEach(action -> action.invoke(context, currTickToChangeValue));
         }
 
     }

@@ -49,16 +49,15 @@ public class ValidationEngineImpl implements ValidationEngine {
         return value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false");
     }
 
-    //todo: change back
     @Override
     public boolean checkEntityExist(PRDAction action, WorldDefinition world) {
-       /* if(action.getEntity() == null && action.getType().equals("proximity")){
+        if(action.getEntity() == null && action.getType().equals("proximity")){
             return true;
         }
         if(!world.getEntities().containsKey(action.getEntity()))
         {
             throw new EntityNotExistException("Entity: " + action.getEntity() + " does not exist in this world.");
-        }*/
+        }
         return true;
     }
 
