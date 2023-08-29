@@ -7,7 +7,7 @@ import Histogram.api.Histogram;
 import Histogram.impl.HistogramImpl;
 import Instance.ActiveEnvDTO;
 import Instance.EnvPropertyInstanceDTO;
-import action.impl.proximity.impl.ProximityAction;
+import action.impl.ProximityAction;
 import action.api.Action;
 import action.impl.DecreaseAction;
 import action.impl.IncreaseAction;

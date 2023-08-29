@@ -1,7 +1,9 @@
 package Predictions.PredictionsUI;
 
 
+import action.api.Action;
 import action.impl.IncreaseAction;
+import action.impl.ProximityAction;
 import definition.entity.EntityDefinition;
 import definition.entity.EntityDefinitionImpl;
 import definition.environment.api.EnvVariablesManager;
@@ -12,8 +14,15 @@ import definition.property.api.Range;
 import definition.property.impl.BooleanPropertyDefinition;
 import definition.property.impl.IntegerPropertyDefinition;
 import definition.value.generator.api.ValueGeneratorFactory;
+import definition.world.impl.Coordinate;
+import execution.context.Context;
+import execution.context.ContextImpl;
+import execution.instance.enitty.EntityInstance;
 import execution.instance.enitty.manager.EntityInstanceManager;
 import execution.instance.enitty.manager.EntityInstanceManagerImpl;
+import execution.instance.environment.api.ActiveEnvironment;
+import execution.instance.environment.impl.ActiveEnvironmentImpl;
+import execution.instance.property.PropertyInstanceImpl;
 import expression.api.Expression;
 import expression.impl.EnvironmentFunction;
 import expression.impl.EvaluateExpression;
@@ -48,30 +57,45 @@ public class Main {
         List<Expression> expressionList = new ArrayList<>();
         expressionList.add(new EvaluateExpression(p1.getName()));
         expressionList.add(new PercentExpression(new EvaluateExpression(p1.getName()),new EnvironmentFunction("e1")));
-        Activation activation = new ActivationImpl(1, 0.3);
+        Activation activation = new ActivationImpl(1, 0.9);
         Rule rule1 = new RuleImpl("rule 1", activation);
-        rule1.addAction(new IncreaseAction(ent1,expressionList,p1.getName()));
+        List<Action> actionList = new ArrayList<>();
+        actionList.add(new IncreaseAction(ent1,expressionList,p1.getName()));
+
+        rule1.addAction(new ProximityAction(ent1,expressionList,actionList));
 
         EnvVariablesManager envVariablesManager = new EnvVariableManagerImpl();
         envVariablesManager.addEnvironmentVariable(e1);
         envVariablesManager.addEnvironmentVariable(e2);
 
         EntityInstanceManager entityInstanceManager = new EntityInstanceManagerImpl();
-
+        ActiveEnvironment activeEnvironment = new ActiveEnvironmentImpl();
         for (int i = 0; i < ent1.getPopulation(); i++) {
             entityInstanceManager.create(ent1);
             // create env variable instance
-            ActiveEnvironment activeEnvironment = envVariablesManager.createActiveEnvironment();
-            // all available environment variable with their definition
-            // for (PropertyDefinition propertyDefinition : envVariablesManager.getEnvVariables()) {
-            // collect value from user...
+
+            activeEnvironment = envVariablesManager.createActiveEnvironment();
             int valueFromUser = 54;
             int anotherValue = 10;
-            activeEnvironment.addPropertyInstance(new PropertyInstanceImpl(cigaretsIncreaseAlreadySmokerEnvironmentVariablePropertyDefinition, valueFromUser));
-            activeEnvironment.addPropertyInstance(new PropertyInstanceImpl(cigaretsIncreaseNonSmokerEnvironmentVariablePropertyDefinition, anotherValue));
+            activeEnvironment.addPropertyInstance(new PropertyInstanceImpl(e1, valueFromUser));
+            activeEnvironment.addPropertyInstance(new PropertyInstanceImpl(e2, anotherValue));
             }
 
+        EntityInstance primaryEntityInstance = entityInstanceManager.getInstances().get(0);
+        primaryEntityInstance.setCoordinate(new Coordinate(1,2));
+        EntityInstance secoundaryEntityInstance = entityInstanceManager.getInstances().get(1);
+        secoundaryEntityInstance.setCoordinate(new Coordinate(2,2));
+        Context context = new ContextImpl(primaryEntityInstance,entityInstanceManager,activeEnvironment, secoundaryEntityInstance, 4, 4);
+
+        if (rule1.getActivation().isActive(30)) {
+            rule1
+                    .getActionsToPerform()
+                    .forEach(action ->
+                            action.invoke(context, 1));
+        }
+
     }
+
 
 /*    public static void main(String[] args)
     {

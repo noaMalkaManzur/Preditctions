@@ -1,4 +1,4 @@
-package action.impl.proximity.impl;
+package action.impl;
 
 import Enums.ActionTypeDTO;
 import action.api.AbstractAction;
@@ -29,7 +29,6 @@ public class ProximityAction  extends AbstractAction {
         if(checkProximity(context)){
             actionList.forEach(action -> action.invoke(context, currTickToChangeValue));
         }
-
     }
     private boolean checkProximity(Context context){
         EntityInstance primaryEntityInstance = context.getPrimaryEntityInstance();
@@ -37,11 +36,18 @@ public class ProximityAction  extends AbstractAction {
 
         Coordinate primaryEntityCoordinate = primaryEntityInstance.getCoordinate();
         Coordinate secondaryEntityCoordinate = secondaryEntityInstance.getCoordinate();
-
-        int rank = PropertyType.FLOAT.convert(getExpressionVal(getExpressionList().get(0), context));
-
+        //todo: check if it is ok to use decimal because the rank need to be int!!
+        int rank = PropertyType.DECIMAL.convert(getExpressionVal(getExpressionList().get(0), context));
         Grid grid = new Grid(context.getRows(), context.getColumns());
         Collection<Coordinate> coordinateCollection =  grid.findEnvironmentCells(primaryEntityCoordinate, rank);
-        return coordinateCollection.contains(secondaryEntityCoordinate);
+        return checkIfCoordinateInCollection(coordinateCollection, secondaryEntityCoordinate);
+    }
+    private boolean checkIfCoordinateInCollection(Collection<Coordinate> coordinateCollection, Coordinate secondaryEntityCoordinate) {
+        for (Coordinate coordinate : coordinateCollection) {
+            if (coordinate.getX() == secondaryEntityCoordinate.getX() && coordinate.getY() == secondaryEntityCoordinate.getY()) {
+                return true;
+            }
+        }
+        return false;
     }
 }
