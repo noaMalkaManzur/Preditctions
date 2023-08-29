@@ -393,9 +393,7 @@ public class EngineImpl implements Engine {
                 if (prdCondition.getSingularity().equals("single")) {
                     String valExpression = prdCondition.getValue();
                     String propertyName = prdCondition.getProperty();
-                    if (propertyName.contains("ticks")) {
-                        propertyName = getPropertyNameTicks(propertyName);
-                    }
+                    propertyName = getPropertyNameByExpression(propertyName);
                     if (validationEngine.checkIfEntityHasProp(propertyName, prdCondition.getEntity(), world)) {
                         conditionActionList.add(new SingleAction(world.getEntities().get(prdCondition.getEntity()),
                                 getExpression(prdCondition.getEntity(), propertyName, valExpression), null, null,
@@ -411,7 +409,37 @@ public class EngineImpl implements Engine {
         return conditionActionList;
     }
 
-    private String getPropertyNameTicks(String propertyNameToChange) {
+    private String getPropertyNameByExpression(String propertyName) {
+        String propNameRes = propertyName;
+        if(propertyName.toLowerCase().contains("ticks")) {
+            propNameRes = getPropertyNameTicksAndEvaluate(propertyName);
+        }
+        else if(propertyName.toLowerCase().contains("environment")){
+            propNameRes = getPropertyNameEnvironment(propertyName);
+        }
+        else if(propertyName.toLowerCase().contains("evaluate")){
+            propNameRes = getPropertyNameTicksAndEvaluate(propertyName);
+        }
+        else if(propertyName.toLowerCase().contains("random") || propertyName.toLowerCase().contains("percent")){
+            throw new IllegalArgumentException("for this expression the args are numeric!");
+        }
+
+        return propNameRes;
+    }
+
+    private String getPropertyNameEnvironment(String propertyName){
+        int startIndex = propertyName.indexOf('(') + 1;
+        int endIndex = propertyName.indexOf(')');
+
+        if (startIndex != 0 && endIndex != -1) {
+            return propertyName.substring(startIndex, endIndex);
+        }
+        else{
+            throw new IllegalArgumentException("incorrect property name");
+        }
+    }
+
+    private String getPropertyNameTicksAndEvaluate(String propertyNameToChange) {
         int startIndex = propertyNameToChange.indexOf('(') + 1;
         int endIndex = propertyNameToChange.indexOf(')');
 
@@ -420,7 +448,7 @@ public class EngineImpl implements Engine {
             String[] parts = components.split("\\.");
 
             if (parts.length == 2) {
-                String propertyName = parts[1]; // Extract the property name
+                String propertyName = parts[1];
                 return propertyName;
             } else {
                 throw new IllegalArgumentException("Invalid input format");
@@ -484,17 +512,20 @@ public class EngineImpl implements Engine {
     List<Expression> getExpression(String entityName, String propName, String expressionVal) {
         List<Expression> myExpression = new ArrayList<>();
         if (expressionVal != null) {
-            if (expressionVal.contains("percent")) {
+            if (expressionVal.toLowerCase().contains("percent")) {
                 handlePercentFunctionExpression(expressionVal, myExpression);
-            } else if (expressionVal.contains("evaluate")) {
+            } else if (expressionVal.toLowerCase().contains("evaluate")) {
                 handleEvaluateExpression(expressionVal, myExpression);
-            } else if (expressionVal.contains("environment")) {
+            } else if (expressionVal.toLowerCase().contains("environment")) {
                 handleEnvironmentFunctionExpression(expressionVal, myExpression);
-            } else if (expressionVal.contains("random")) {
+            } else if (expressionVal.toLowerCase().contains("random")) {
                 handleRandomFunctionExpression(expressionVal, myExpression);
+            }else if (expressionVal.toLowerCase().contains("ticks")) {
+                handleTicksFunctionExpression(expressionVal, myExpression);
             } else if (world.getEntities().get(entityName).getProps().containsKey(expressionVal)) {
                 myExpression.add(new PropertyExpression(expressionVal));
-            } //todo: this is for the proximity action that we have to get a float number only
+            }
+            //todo: this is for the proximity action that we have to get a float number only
             else {
                 if (world.getEntities().containsKey(propName)) {
                     myExpression.add(new GeneralExpression(PropertyType.FLOAT, expressionVal));
@@ -506,6 +537,26 @@ public class EngineImpl implements Engine {
 
         }
         return myExpression;
+    }
+
+    private void handleTicksFunctionExpression(String expressionVal, List<Expression> myExpression) {
+        int startIndex = expressionVal.indexOf('(') + 1;
+        int endIndex = expressionVal.indexOf(')');
+
+        if (startIndex != -1 && endIndex != -1) {
+            String components = expressionVal.substring(startIndex, endIndex);
+            String[] parts = components.split("\\.");
+
+            if (parts.length == 2) {
+                String propertyName = parts[1];
+                myExpression.add(new TickFunction(propertyName));
+            } else {
+                throw new IllegalArgumentException("Invalid input format");
+            }
+        }
+        else {
+            throw new IllegalArgumentException("Invalid input format");
+        }
     }
 
     private void handleEvaluateExpression(String expressionVal, List<Expression> myExpression) {
