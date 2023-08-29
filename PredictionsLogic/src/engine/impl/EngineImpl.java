@@ -514,7 +514,6 @@ public class EngineImpl implements Engine {
         }
     }
 
-
     private void handlePercentFunctionExpression(String expressionVal, List<Expression> myExpression) {
         int openingIndex = expressionVal.indexOf('(');
         int closingIndex = expressionVal.lastIndexOf(')');
@@ -526,8 +525,8 @@ public class EngineImpl implements Engine {
             args.addAll(Arrays.asList(arguments));
         }
         Expression expression1 = getExpression(null, null, args.get(0)).get(0);
-        Expression expression2 = getExpression(null, null, args.get(1)).get(1);
-        myExpression.add(new PercentExpression((String)expression1.getArg(), (String)expression2.getArg()));
+        Expression expression2 = getExpression(null, null, args.get(1)).get(0);
+        //myExpression.add(new PercentExpression(expression1.getArg(), expression2.getArg()));
     }
 
     void handleRandomFunctionExpression(String ExpressionVal, List<Expression> myExpression) {
