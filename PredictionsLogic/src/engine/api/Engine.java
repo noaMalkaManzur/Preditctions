@@ -5,7 +5,6 @@ import Defenitions.EnvironmentDefinitionDTO;
 import Defenitions.RulesDTO;
 import Defenitions.TerminitionDTO;
 import Instance.ActiveEnvDTO;
-import definition.property.api.PropertyDefinition;
 import histogramDTO.HistogramByAmountEntitiesDTO;
 import histogramDTO.HistogramByPropertyEntitiesDTO;
 import histogramDTO.HistoryRunningSimulationDTO;
@@ -44,6 +43,6 @@ public interface Engine
 
     HistogramByPropertyEntitiesDTO setHistogramPerProperty(String guid, String propName);
 
-    PropertyDefinition propertyFromScratch(PropertyDefinition propertyDefinition);
+
     //endregion
 }
