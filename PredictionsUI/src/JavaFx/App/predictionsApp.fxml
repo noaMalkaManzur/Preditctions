@@ -7,10 +7,10 @@
    <content>
       <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
          <top>
-            <fx:include fx:id="headerComponent" source="../SubComponents/header/header.fxml" />
+            <fx:include fx:id="headerComponent" source="../SubComponents/header/header.fxml" BorderPane.alignment="CENTER" />
          </top>
          <center>
-            <fx:include fx:id="bodyComponent" source="../SubComponents/body/body.fxml" />
+            <fx:include fx:id="bodyComponent" source="../SubComponents/body/body.fxml" BorderPane.alignment="CENTER" />
          </center>
       </BorderPane>
    </content>
