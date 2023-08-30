@@ -1,62 +1,43 @@
 package definition.world.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class Grid {
     private int N;
     private int M;
 
-    Grid(int N, int M) {
+    public Grid(int N, int M) {
         this.N = N;
         this.M = M;
     }
 
     boolean checkIfValidCoordinate(Coordinate coordinate) {
-        if (coordinate.getX() >= 0 && coordinate.getX() <= N - 1 && coordinate.getY() >= 0 && coordinate.getY() <= M - 1) {
-            return true;
-        }
-        return false;
+        return coordinate.getX() >= 0 && coordinate.getX() <= N && coordinate.getY() >= 0 && coordinate.getY() <= M;
     }
 
-    private int wrapX(int x) {
-        return (x % N + N) % N;
+    private int distance(Coordinate source, int x, int y) {
+        int dx = Math.abs(source.getX() - x);
+        int dy = Math.abs(source.getY() - y);
+        return Math.max(dx, dy);
     }
-
-    private int wrapY(int y) {
-        return (y % M + M) % M;
-    }
-
-    List<Coordinate> findEnvironmentCells(Coordinate source, int rank) {
-        int[] dx = {-1, -1, -1, 0, 0, 1, 1, 1};
-        int[] dy = {-1, 0, 1, -1, 1, -1, 0, 1};
-
-        List<Coordinate> arrCoordinate = new ArrayList<>();
-        if (checkIfValidCoordinate(source)) {
-
-            for (int i = 0; i < N; i++) {
-                for (int j = 0; j < M; j++) {
-                        for (int k = 0; k < 8; k++) {
-                            int ni = i + dx[k];
-                            int nj = j + dy[k];
-                            double distance = Math.sqrt((ni - source.getX()) * (ni - source.getX()) +
-                                    (nj - source.getY()) * (nj - source.getY()));
-
-                            if (Math.abs(distance - rank) < 1e-6) {
-                                arrCoordinate.add(new Coordinate(ni, nj));
-                            }
-
-                        }
-
+    public Collection<Coordinate> findEnvironmentCells(Coordinate source, int rank) {
+        List<Coordinate> environmentCells = new ArrayList<>();
+        if(checkIfValidCoordinate(source)) {
+            for (int i = source.getX() - rank; i <= source.getX() + rank; i++) {
+                for (int j = source.getY() - rank; j <= source.getY() + rank; j++) {
+                    if (checkIfValidCoordinate(new Coordinate(i, j)) && distance(source, i, j) <= rank) {
+                        environmentCells.add(new Coordinate(i, j));
                     }
                 }
-
-
+            }
         }
         else{
             throw new IllegalArgumentException("Source coordinate is out of boundaries");
         }
-        return arrCoordinate;
+
+        return environmentCells;
     }
 
 }

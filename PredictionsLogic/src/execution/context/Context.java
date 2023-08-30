@@ -6,6 +6,7 @@ import execution.instance.property.PropertyInstance;
 
 public interface Context {
     EntityInstance getPrimaryEntityInstance();
+    EntityInstance getSecondaryEntityInstance();
     void removeEntity(EntityInstance entityInstance);
     PropertyInstance getEnvironmentVariable(String name);
     void setPrimaryInstacne(int idEntityInstance);
@@ -13,5 +14,8 @@ public interface Context {
 
     void setCurrTick(int currTick);
     int getCurrTick();
+    int getColumns();
+    int getRows();
+
 
 }

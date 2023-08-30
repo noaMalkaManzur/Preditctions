@@ -7,7 +7,7 @@ import Histogram.api.Histogram;
 import Histogram.impl.HistogramImpl;
 import Instance.ActiveEnvDTO;
 import Instance.EnvPropertyInstanceDTO;
-import action.impl.proximity.impl.ProximityAction;
+import action.impl.ProximityAction;
 import action.api.Action;
 import action.impl.DecreaseAction;
 import action.impl.IncreaseAction;
@@ -52,10 +52,7 @@ import execution.instance.environment.api.ActiveEnvironment;
 import execution.instance.environment.impl.ActiveEnvironmentImpl;
 import execution.instance.property.PropertyInstanceImpl;
 import expression.api.Expression;
-import expression.impl.EnvironmentFunction;
-import expression.impl.GeneralExpression;
-import expression.impl.PropertyExpression;
-import expression.impl.RandomFunction;
+import expression.impl.*;
 import histogramDTO.HistogramByAmountEntitiesDTO;
 import histogramDTO.HistogramByPropertyEntitiesDTO;
 import histogramDTO.HistoryRunningSimulationDTO;
@@ -79,7 +76,10 @@ public class EngineImpl implements Engine {
     Map<String, Histogram> histogramMap = new HashMap<>();
     private ActiveEnvironment activeEnvironment;
     private int primaryEntStartPop;
-    private int currTick;
+    private int rows;
+    private int columns;
+
+    //private int currTick;
     ValidationEngine validationEngine = new ValidationEngineImpl();
 
     //region Command number 1
@@ -113,7 +113,7 @@ public class EngineImpl implements Engine {
     private void setEnvVariablesFromXML(EnvVariablesManager envManager, List<PRDEnvProperty> prdEnvProperty) {
         prdEnvProperty.stream()
                 .filter(envProp -> {
-                        return validationEngine.isValidEnvProp(envProp, envManager);
+                    return validationEngine.isValidEnvProp(envProp, envManager);
                 })
                 .map(this::convertEnvProp)
                 .forEach(envManager::addEnvironmentVariable);
@@ -127,18 +127,16 @@ public class EngineImpl implements Engine {
                 if (prop.getPRDRange() != null) {
                     myPropRange = new Range(prop.getPRDRange().getFrom(), prop.getPRDRange().getTo());
                     MyValGen = new RandomIntegerGenerator((int) prop.getPRDRange().getFrom(), (int) prop.getPRDRange().getTo());
-                }
-                else
-                    MyValGen = new RandomIntegerGenerator(null,null);
+                } else
+                    MyValGen = new RandomIntegerGenerator(null, null);
                 return new IntegerPropertyDefinition(prop.getPRDName(), PropertyType.DECIMAL, MyValGen, myPropRange, true);
             }
             case "FLOAT": {
                 if (prop.getPRDRange() != null) {
                     myPropRange = new Range(prop.getPRDRange().getFrom(), prop.getPRDRange().getTo());
                     MyValGen = new RandomDoubleGenerator(prop.getPRDRange().getFrom(), prop.getPRDRange().getTo());
-                }
-                else
-                    MyValGen = new RandomIntegerGenerator(null,null);
+                } else
+                    MyValGen = new RandomIntegerGenerator(null, null);
                 return new FloatPropertyDefinition(prop.getPRDName(), PropertyType.FLOAT, MyValGen, myPropRange, true);
             }
             case "BOOLEAN": {
@@ -154,6 +152,7 @@ public class EngineImpl implements Engine {
                 throw new InvalidTypeException("Invalid Type");
         }
     }
+
     //endregion
     //region Entities
     public Map<String, EntityDefinition> getEntitiesFromXML(PRDEntities entities) {
@@ -163,7 +162,7 @@ public class EngineImpl implements Engine {
             //todo: we get the population from the user
             EntityDefinition entityDefinition = new EntityDefinitionImpl(entity.getName(), 100);
             for (PRDProperty prdProperty : entity.getPRDProperties().getPRDProperty())
-                if(entityDefinition.getProps().containsKey(prdProperty.getPRDName()))
+                if (entityDefinition.getProps().containsKey(prdProperty.getPRDName()))
                     throw new PropertyAlreadyExsitException("Entity:" + entity.getName() + " already have a property name:" + prdProperty.getPRDName());
                 else
                     entityDefinition.addPropertyDefinition(convertProperty(prdProperty));
@@ -171,6 +170,7 @@ public class EngineImpl implements Engine {
         }
         return convertedEntities;
     }
+
     public PropertyDefinition convertProperty(PRDProperty prop) {
         switch (prop.getType().toUpperCase()) {
             case "DECIMAL": {
@@ -189,6 +189,7 @@ public class EngineImpl implements Engine {
                 throw new InvalidTypeException("Invalid Type");
         }
     }
+
     private PropertyDefinition createIntegerProp(PRDProperty prop) {
         ValueGenerator MyValGen;
         Boolean isRandomInit = true;
@@ -197,10 +198,10 @@ public class EngineImpl implements Engine {
             myPropRange = new Range(prop.getPRDRange().getFrom(), prop.getPRDRange().getTo());
         }
         if (prop.getPRDValue().isRandomInitialize())
-            if(myPropRange != null)
+            if (myPropRange != null)
                 MyValGen = new RandomIntegerGenerator((int) prop.getPRDRange().getFrom(), (int) prop.getPRDRange().getTo());
             else
-                MyValGen = new RandomIntegerGenerator(null,null);
+                MyValGen = new RandomIntegerGenerator(null, null);
         else {
             if (Integer.parseInt(prop.getPRDValue().getInit()) > prop.getPRDRange().getFrom()
                     || Integer.parseInt(prop.getPRDValue().getInit()) < prop.getPRDRange().getTo()) {
@@ -212,6 +213,7 @@ public class EngineImpl implements Engine {
         }
         return new IntegerPropertyDefinition(prop.getPRDName(), PropertyType.DECIMAL, MyValGen, myPropRange, isRandomInit);
     }
+
     private PropertyDefinition createFloatProperty(PRDProperty prop) {
         ValueGenerator MyValGen;
         Boolean isRandomInit = true;
@@ -220,10 +222,10 @@ public class EngineImpl implements Engine {
             myPropRange = new Range(prop.getPRDRange().getFrom(), prop.getPRDRange().getTo());
         }
         if (prop.getPRDValue().isRandomInitialize())
-            if(myPropRange != null)
+            if (myPropRange != null)
                 MyValGen = new RandomDoubleGenerator(prop.getPRDRange().getFrom(), prop.getPRDRange().getTo());
             else
-                MyValGen = new RandomDoubleGenerator(null,null);
+                MyValGen = new RandomDoubleGenerator(null, null);
         else {
             if (Double.parseDouble(prop.getPRDValue().getInit()) > prop.getPRDRange().getFrom()
                     || Integer.parseInt(prop.getPRDValue().getInit()) < prop.getPRDRange().getTo()) {
@@ -235,6 +237,7 @@ public class EngineImpl implements Engine {
         }
         return new FloatPropertyDefinition(prop.getPRDName(), PropertyType.FLOAT, MyValGen, myPropRange, isRandomInit);
     }
+
     private PropertyDefinition createBooleanProperty(PRDProperty prop) {
         ValueGenerator MyValGen;
         Boolean isRandomInit = true;
@@ -250,6 +253,7 @@ public class EngineImpl implements Engine {
         }
         return new BooleanPropertyDefinition(prop.getPRDName(), PropertyType.BOOLEAN, MyValGen, isRandomInit);
     }
+
     private PropertyDefinition createStringProperty(PRDProperty prop) {
         ValueGenerator MyValGen;
         Boolean isRandomInit = true;
@@ -262,7 +266,6 @@ public class EngineImpl implements Engine {
         return new StringPropertyDefinition(prop.getPRDName(), PropertyType.STRING, MyValGen, isRandomInit);
     }
 
-
     //endregion
     //region Rules
     private Map<String, Rule> getRulesFromXML(PRDRules prdRules) {
@@ -272,6 +275,7 @@ public class EngineImpl implements Engine {
         }
         return convertedRules;
     }
+
     private Rule convertRule(PRDRule rule) {
         ActivationImpl activation = convertActivationFromXML(rule);
         Rule newRule = new RuleImpl(rule.getName(), activation);
@@ -279,6 +283,7 @@ public class EngineImpl implements Engine {
             newRule.addAction(convertActionFromXML(action));
         return newRule;
     }
+
     private ActivationImpl convertActivationFromXML(PRDRule rule) {
         ActivationImpl activation = new ActivationImpl();
         if (rule.getPRDActivation() == null) {
@@ -293,44 +298,66 @@ public class EngineImpl implements Engine {
 
         return activation;
     }
+
     private Action convertActionFromXML(PRDAction action) {
-        if(validationEngine.checkEntityExist(action, world)) {
+        if (validationEngine.checkEntityExist(action, world)) {
             switch (action.getType().toUpperCase()) {
                 case "INCREASE":
-                    if(validationEngine.checkIfEntityHasProp(action.getProperty(),action.getEntity(), world))
-                    {
-                        List<Expression> expressionList = getExpression(action.getEntity(),action.getProperty(), action.getBy());
-                        if(validationEngine.checkArgsAreNumeric(expressionList,action.getEntity(),action.getType(), world))
-                            return new IncreaseAction(world.getEntities().get(action.getEntity()),expressionList, action.getProperty());
+                    if (validationEngine.checkIfEntityHasProp(action.getProperty(), action.getEntity(), world)) {
+                        List<Expression> expressionList = getExpression(action.getEntity(), action.getProperty(), action.getBy());
+                        if (validationEngine.checkArgsAreNumeric(expressionList, action.getEntity(), action.getType(), world))
+                            return new IncreaseAction(world.getEntities().get(action.getEntity()), expressionList, action.getProperty());
                     }
                     break;
                 case "DECREASE":
-                    if(validationEngine.checkIfEntityHasProp(action.getProperty(),action.getEntity(), world)) {
-                        List<Expression> expressionList = getExpression(action.getEntity(),action.getProperty(), action.getBy());
-                        if(validationEngine.checkArgsAreNumeric(expressionList,action.getEntity(),action.getType(), world))
+                    if (validationEngine.checkIfEntityHasProp(action.getProperty(), action.getEntity(), world)) {
+                        List<Expression> expressionList = getExpression(action.getEntity(), action.getProperty(), action.getBy());
+                        if (validationEngine.checkArgsAreNumeric(expressionList, action.getEntity(), action.getType(), world))
                             return new DecreaseAction(world.getEntities().get(action.getEntity()), expressionList, action.getProperty());
                     }
                     break;
                 case "CALCULATION":
-                    if(validationEngine.checkIfEntityHasProp(action.getResultProp(),action.getEntity(), world))
+                    if (validationEngine.checkIfEntityHasProp(action.getResultProp(), action.getEntity(), world))
                         return calculateAccordingToMultiOrDivide(action);
                     break;
                 case "CONDITION":
                     return ConditionActionBySingleOrByMulti(action);
                 case "SET":
-                    if(validationEngine.checkIfEntityHasProp(action.getProperty(),action.getEntity(), world))
+                    if (validationEngine.checkIfEntityHasProp(action.getProperty(), action.getEntity(), world))
                         return new SetAction(world.getEntities().get(action.getEntity()), getExpression(action.getEntity(), action.getProperty(), action.getValue()), action.getProperty());
                     break;
                 case "KILL":
                     return new KillAction(world.getEntities().get(action.getEntity()));
                 case "PROXIMITY":
-                    return new ProximityAction(world.getEntities().get(action.getPRDBetween().getSourceEntity()), getExpression(action.getPRDBetween().getSourceEntity(),action.getPRDBetween().getTargetEntity(),action.getPRDEnvDepth().getOf()));
-                case"REPLACE":
+                    return proximitiyAction(action);
+                //
+                case "REPLACE":
                     return null;
 
             }
         }
         return null;
+    }
+    private Action proximitiyAction(PRDAction action) {
+        List<Action> proximityActionList = proximitiyActionList(action);
+        EntityDefinition entityDefinition = world.getEntities().get(action.getPRDBetween().getSourceEntity());
+        //todo: check if the value of in a numeric
+        List<Expression > expressionList  = getExpression(action.getPRDBetween().getSourceEntity(),action.getPRDBetween().getTargetEntity(), action.getPRDEnvDepth().getOf());
+        return new ProximityAction(entityDefinition, expressionList,proximityActionList);
+    }
+
+    private List<Action> proximitiyActionList(PRDAction action) {
+
+        List<Action> proximityActionList = new ArrayList<>();
+        if (action.getPRDActions().getPRDAction() != null) {
+            for (PRDAction indexAction : action.getPRDActions().getPRDAction()) {
+                proximityActionList.add(convertActionFromXML(indexAction));
+            }
+        } else {
+            throw new IllegalArgumentException("Argument Action was null");
+        }
+        return proximityActionList;
+
     }
 
     private Action ConditionActionBySingleOrByMulti(PRDAction action) {
@@ -347,15 +374,18 @@ public class EngineImpl implements Engine {
             throw new IllegalArgumentException("Condition is null");
         }
     }
+
     private Action MultipleCondition(PRDAction action) {
 
         List<ConditionAction> conditionActionList = createConditionList(action.getPRDCondition());
         String logic = action.getPRDCondition().getLogical();
+        //todo: check with noam if need this propname
         String propName = action.getPRDCondition().getProperty();
         List<Action> thenActionList = createThenActionList(action);
         List<Action> elseActionList = createElseActionList(action);
-        return new MultipleAction(world.getEntities().get(action.getEntity()),null, thenActionList, elseActionList,null,conditionActionList, logic);
+        return new MultipleAction(world.getEntities().get(action.getEntity()), null, thenActionList, elseActionList, null, conditionActionList, logic);
     }
+
     private List<ConditionAction> createConditionList(PRDCondition condition) {
         List<ConditionAction> conditionActionList = new ArrayList<>();
         if (condition.getPRDCondition() != null) {
@@ -363,13 +393,11 @@ public class EngineImpl implements Engine {
                 if (prdCondition.getSingularity().equals("single")) {
                     String valExpression = prdCondition.getValue();
                     String propertyName = prdCondition.getProperty();
-                    if(propertyName.contains("ticks")){
-                        propertyName = getPropertyNameTicks(propertyName);
-                    }
-                    if(validationEngine.checkIfEntityHasProp(propertyName,prdCondition.getEntity(), world)){
+                    propertyName = getPropertyNameByExpression(propertyName);
+                    if (validationEngine.checkIfEntityHasProp(propertyName, prdCondition.getEntity(), world)) {
                         conditionActionList.add(new SingleAction(world.getEntities().get(prdCondition.getEntity()),
-                            getExpression(prdCondition.getEntity(), propertyName, valExpression), null, null,
-                            prdCondition.getProperty(), prdCondition.getOperator()));
+                                getExpression(prdCondition.getEntity(), propertyName, valExpression), null, null,
+                                propertyName, prdCondition.getOperator()));
                     }
                 } else if (prdCondition.getSingularity().equals("multiple")) {
                     List<ConditionAction> multiCondList = createConditionList(prdCondition);
@@ -381,13 +409,54 @@ public class EngineImpl implements Engine {
         return conditionActionList;
     }
 
-    private String getPropertyNameTicks(String propertyName) {
-
-        String[] propName = propertyName.substring(1, propertyName.length() - 1).split("\\.");
-        if (propName.length == 2) {
-            return propName[1];
+    private String getPropertyNameByExpression(String propertyName) {
+        String propNameRes = propertyName;
+        if(propertyName.toLowerCase().contains("ticks")) {
+            propNameRes = getPropertyNameTicksAndEvaluate(propertyName);
         }
-        throw new IllegalArgumentException("invalid property name");
+        else if(propertyName.toLowerCase().contains("environment")){
+            propNameRes = getPropertyNameEnvironment(propertyName);
+        }
+        else if(propertyName.toLowerCase().contains("evaluate")){
+            propNameRes = getPropertyNameTicksAndEvaluate(propertyName);
+        }
+        else if(propertyName.toLowerCase().contains("random") || propertyName.toLowerCase().contains("percent")){
+            throw new IllegalArgumentException("for this expression the args are numeric!");
+        }
+
+        return propNameRes;
+    }
+
+    private String getPropertyNameEnvironment(String propertyName){
+        int startIndex = propertyName.indexOf('(') + 1;
+        int endIndex = propertyName.indexOf(')');
+
+        if (startIndex != 0 && endIndex != -1) {
+            return propertyName.substring(startIndex, endIndex);
+        }
+        else{
+            throw new IllegalArgumentException("incorrect property name");
+        }
+    }
+
+    private String getPropertyNameTicksAndEvaluate(String propertyNameToChange) {
+        int startIndex = propertyNameToChange.indexOf('(') + 1;
+        int endIndex = propertyNameToChange.indexOf(')');
+
+        if (startIndex != -1 && endIndex != -1) {
+            String components = propertyNameToChange.substring(startIndex, endIndex);
+            String[] parts = components.split("\\.");
+
+            if (parts.length == 2) {
+                String propertyName = parts[1];
+                return propertyName;
+            } else {
+                throw new IllegalArgumentException("Invalid input format");
+            }
+        }
+        else {
+            throw new IllegalArgumentException("Invalid input format");
+        }
     }
 
     private Action SingleConditionCal(PRDAction action) {
@@ -396,12 +465,12 @@ public class EngineImpl implements Engine {
         String propName = action.getPRDCondition().getProperty();
         String operator = action.getPRDCondition().getOperator();
         String value = action.getPRDCondition().getValue();
-        if(validationEngine.checkIfEntityHasProp(propName,action.getEntity(), world))
-            return new SingleAction(world.getEntities().get(action.getEntity()), getExpression(action.getEntity(), propName,value), thenActionList,elseActionList, propName, operator);
+        if (validationEngine.checkIfEntityHasProp(propName, action.getEntity(), world))
+            return new SingleAction(world.getEntities().get(action.getEntity()), getExpression(action.getEntity(), propName, value), thenActionList, elseActionList, propName, operator);
         return null;
     }
-    private List<Action> createThenActionList(PRDAction action)
-    {
+
+    private List<Action> createThenActionList(PRDAction action) {
         List<Action> actionListSingle = new ArrayList<>();
         if (action.getPRDThen().getPRDAction() != null) {
             for (PRDAction indexAction : action.getPRDThen().getPRDAction()) {
@@ -410,17 +479,17 @@ public class EngineImpl implements Engine {
         } else {
             throw new IllegalArgumentException("Argument THEN was null");
         }
-        return  actionListSingle;
+        return actionListSingle;
     }
-    private List<Action> createElseActionList(PRDAction action)
-    {
+
+    private List<Action> createElseActionList(PRDAction action) {
         List<Action> actionListSingle = new ArrayList<>();
         if (action.getPRDElse() != null) {
             for (PRDAction indexAction : action.getPRDElse().getPRDAction()) {
                 actionListSingle.add(convertActionFromXML(indexAction));
             }
         }
-        return  actionListSingle;
+        return actionListSingle;
     }
 
     private Action calculateAccordingToMultiOrDivide(PRDAction action) {
@@ -428,12 +497,12 @@ public class EngineImpl implements Engine {
         if (action.getPRDDivide() != null) {
             myExpression.add(getExpression(action.getEntity(), action.getResultProp(), action.getPRDDivide().getArg1()).get(0));
             myExpression.add(getExpression(action.getEntity(), action.getResultProp(), action.getPRDDivide().getArg2()).get(0));
-            if(validationEngine.checkArgsAreNumeric(myExpression,action.getEntity(),action.getType(), world))
+            if (validationEngine.checkArgsAreNumeric(myExpression, action.getEntity(), action.getType(), world))
                 return new DivideAction(ActionTypeDTO.CALCULATION, world.getEntities().get(action.getEntity()), myExpression, action.getResultProp());
         } else if (action.getPRDMultiply() != null) {
             myExpression.add(getExpression(action.getEntity(), action.getResultProp(), action.getPRDMultiply().getArg1()).get(0));
             myExpression.add(getExpression(action.getEntity(), action.getResultProp(), action.getPRDMultiply().getArg2()).get(0));
-            if(validationEngine.checkArgsAreNumeric(myExpression,action.getEntity(),action.getType(), world))
+            if (validationEngine.checkArgsAreNumeric(myExpression, action.getEntity(), action.getType(), world))
                 return new MultiplyAction(ActionTypeDTO.CALCULATION, world.getEntities().get(action.getEntity()), myExpression, action.getResultProp());
         }
 
@@ -443,20 +512,86 @@ public class EngineImpl implements Engine {
     List<Expression> getExpression(String entityName, String propName, String expressionVal) {
         List<Expression> myExpression = new ArrayList<>();
         if (expressionVal != null) {
-            if (expressionVal.contains("environment")) {
+            if (expressionVal.toLowerCase().contains("percent")) {
+                handlePercentFunctionExpression(expressionVal, myExpression);
+            } else if (expressionVal.toLowerCase().contains("evaluate")) {
+                handleEvaluateExpression(expressionVal, myExpression);
+            } else if (expressionVal.toLowerCase().contains("environment")) {
                 handleEnvironmentFunctionExpression(expressionVal, myExpression);
-            } else if (expressionVal.contains("random")) {
+            } else if (expressionVal.toLowerCase().contains("random")) {
                 handleRandomFunctionExpression(expressionVal, myExpression);
-            }
-            else if (world.getEntities().get(entityName).getProps().containsKey(expressionVal)) {
+            }else if (expressionVal.toLowerCase().contains("ticks")) {
+                handleTicksFunctionExpression(expressionVal, myExpression);
+            } else if (world.getEntities().get(entityName).getProps().containsKey(expressionVal)) {
                 myExpression.add(new PropertyExpression(expressionVal));
-            } else {
-                //todo: handle myExpressionList on
-                myExpression.add(new GeneralExpression(world.getEntities().get(entityName).getProps().get(propName).getType(), expressionVal));
             }
+            //todo: this is for the proximity action that we have to get a float number only
+            else {
+                if (world.getEntities().containsKey(propName)) {
+                    myExpression.add(new GeneralExpression(PropertyType.FLOAT, expressionVal));
+                }
+                else{
+                    myExpression.add(new GeneralExpression(world.getEntities().get(entityName).getProps().get(propName).getType(), expressionVal));
+                }
+            }
+
         }
         return myExpression;
     }
+
+    private void handleTicksFunctionExpression(String expressionVal, List<Expression> myExpression) {
+        int startIndex = expressionVal.indexOf('(') + 1;
+        int endIndex = expressionVal.indexOf(')');
+
+        if (startIndex != -1 && endIndex != -1) {
+            String components = expressionVal.substring(startIndex, endIndex);
+            String[] parts = components.split("\\.");
+
+            if (parts.length == 2) {
+                String propertyName = parts[1];
+                myExpression.add(new TickFunction(propertyName));
+            } else {
+                throw new IllegalArgumentException("Invalid input format");
+            }
+        }
+        else {
+            throw new IllegalArgumentException("Invalid input format");
+        }
+    }
+
+    private void handleEvaluateExpression(String expressionVal, List<Expression> myExpression) {
+        int startIndex = expressionVal.indexOf('(') + 1;
+        int endIndex = expressionVal.indexOf(')');
+
+        if (startIndex != -1 && endIndex != -1) {
+            String components = expressionVal.substring(startIndex, endIndex);
+            String[] args = components.split("\\.");
+
+            if (args.length == 2) {
+                if (validationEngine.checkIfEntityHasProp(args[1], args[0], world)) {
+                    myExpression.add(new EvaluateExpression(args[0],args[1]));
+                }
+            } else {
+                throw new IllegalArgumentException("There are not enough args for evaluate expression");
+            }
+        }
+    }
+
+    private void handlePercentFunctionExpression(String expressionVal, List<Expression> myExpression) {
+        int openingIndex = expressionVal.indexOf('(');
+        int closingIndex = expressionVal.lastIndexOf(')');
+        List<String> args = new ArrayList<>();
+
+        if (openingIndex != -1 && closingIndex != -1 && openingIndex < closingIndex) {
+            String argsString = expressionVal.substring(openingIndex + 1, closingIndex);
+            String[] arguments = argsString.split(",", 2);
+            args.addAll(Arrays.asList(arguments));
+        }
+        Expression expression1 = getExpression(null, null, args.get(0)).get(0);
+        Expression expression2 = getExpression(null, null, args.get(1)).get(0);
+        myExpression.add(new PercentExpression(expression1,expression2));
+    }
+
     void handleRandomFunctionExpression(String ExpressionVal, List<Expression> myExpression) {
 
         int startIndex = ExpressionVal.indexOf('(') + 1;
@@ -493,7 +628,8 @@ public class EngineImpl implements Engine {
     //endregion
     //region Termination
     private Termination getTerminationTermFromXML(PRDTermination prdTermination) {
-        int ticksCount = -1;
+        return new TerminationImpl(120, 300);
+        /*int ticksCount = -1;
         int secondCount = -1;
         for (Object obj : prdTermination.getPRDBySecondOrPRDByTicks()) {
             if (obj instanceof PRDByTicks) {
@@ -507,7 +643,7 @@ public class EngineImpl implements Engine {
         if (ticksCount > 0 && secondCount > 0)
             return new TerminationImpl(ticksCount, secondCount);
         else
-            throw new InvalidTerminationTermsException("Simulation Termination terms are invalid Please check them again!");
+            throw new InvalidTerminationTermsException("Simulation Termination terms are invalid Please check them again!");*/
     }
 
     //endregion
@@ -665,6 +801,7 @@ public class EngineImpl implements Engine {
     private void createContext() {
         EntityInstanceManager entityInstanceManager = new EntityInstanceManagerImpl();
         EntityInstance primaryEntityInstance = null;
+        EntityInstance secoundaryEntityInstance = null;
         world.getEntities().forEach((key,value)->
                 {
                     for(int i = 0;i < value.getPopulation();i++)
@@ -673,8 +810,10 @@ public class EngineImpl implements Engine {
                     }
                 });
         primaryEntityInstance = entityInstanceManager.getInstances().get(0);
+        secoundaryEntityInstance = entityInstanceManager.getInstances().get(1);
         primaryEntStartPop = primaryEntityInstance.getEntityDef().getPopulation();
-        context = new ContextImpl(primaryEntityInstance,entityInstanceManager,activeEnvironment);
+        //todo: give the values to rows and columns
+        context = new ContextImpl(primaryEntityInstance,entityInstanceManager,activeEnvironment, secoundaryEntityInstance, rows, columns);
 
     }
     //endregion

@@ -51,6 +51,22 @@ public class EntityInstanceManagerImpl implements EntityInstanceManager {
         instances.removeIf(item -> item.getId() == id);
         setCurrPopulation(instances.size());
     }
+
+    @Override
+    public EntityInstance getEntityInstanceByName(String entityName) {
+        if (!instances.stream().anyMatch(entity -> entity.getEntityDef().getName().equals(entityName))) {
+            throw new IllegalArgumentException("Entity name was not found");
+        }
+
+        EntityInstance foundEntity = instances.stream()
+                .filter(entityInstance -> entityInstance.getEntityDef().getName().equals(entityName))
+                .findFirst()
+                .orElse(null);
+
+        return foundEntity;
+    }
+
+
     @Override
     public int getCurrPopulation() {
         return currPopulation;
