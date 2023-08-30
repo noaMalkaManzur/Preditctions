@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TreeView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+
+<ScrollPane fitToHeight="true" fitToWidth="true" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="JavaFx.SubComponents.detailsTab.DetailsTabController">
+   <content>
+      <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
+         <left>
+            <TreeView fx:id="simTreeView" onContextMenuRequested="#selectedItem" onMouseClicked="#selectedItem" BorderPane.alignment="CENTER" />
+         </left>
+         <center>
+            <StackPane prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+               <children>
+                  <fx:include fx:id="envPropScreen" source="../envProperty/envProperty.fxml" />
+                  <fx:include fx:id="entPropeties" source="../entProperty/entProperties.fxml" />
+               </children>
+            </StackPane>
+         </center>
+      </BorderPane>
+   </content>
+</ScrollPane>
