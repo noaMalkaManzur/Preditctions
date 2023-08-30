@@ -49,7 +49,7 @@ public class ContextImpl implements Context {
     }
 
     @Override
-    public void setPrimaryInstacne(int idEntityInstance) {
+    public void setPrimaryInstance(int idEntityInstance) {
         Optional<EntityInstance> foundInstance = entityInstanceManager.getInstances()
                 .stream()
                 .filter(instance -> instance.getId() == idEntityInstance)

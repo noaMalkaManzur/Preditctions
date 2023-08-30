@@ -2,8 +2,9 @@ package Predictions.PredictionsUI;
 
 
 import action.api.Action;
-import action.impl.IncreaseAction;
 import action.impl.ProximityAction;
+import action.impl.replace.impl.DerivedAction;
+import action.impl.replace.impl.ScratchAction;
 import definition.entity.EntityDefinition;
 import definition.entity.EntityDefinitionImpl;
 import definition.environment.api.EnvVariablesManager;
@@ -49,21 +50,23 @@ public class Main {
         ent1.getProps().put("p1",p1);
         ent1.getProps().put("p3", p3);
         //entity 2:
-        PropertyDefinition p11 = new IntegerPropertyDefinition("p11", PropertyType.DECIMAL,ValueGeneratorFactory.createRandomInteger(0, 60), new Range(0, 100) , true);
+        //PropertyDefinition p11 = new IntegerPropertyDefinition("p11", PropertyType.DECIMAL,ValueGeneratorFactory.createRandomInteger(0, 60), new Range(0, 100) , true);
         PropertyDefinition p22 = new BooleanPropertyDefinition("p22", PropertyType.BOOLEAN, ValueGeneratorFactory.createRandomBoolean(), false);
         EntityDefinition ent2= new EntityDefinitionImpl("ent-2", 5);
-        ent2.getProps().put("p11", p11);
-        ent2.getProps().put("p22", p22);
+        //nt2.getProps().put("p11", p1);
+        ent2.getProps().put("p11", p1);
+        ent2.getProps().put("p2", p22);
+
         //need to add the e1 to the environment manager
         List<Expression> expressionList = new ArrayList<>();
+        expressionList.add(new EvaluateExpression( p1.getName()));
         expressionList.add(new TickFunction("p1"));
-        expressionList.add(new EvaluateExpression(ent1.getName(), p1.getName()));
         expressionList.add(new PercentExpression(new EvaluateExpression(p1.getName()),new EnvironmentFunction("e1")));
         Activation activation = new ActivationImpl(1, 0.9);
         Rule rule1 = new RuleImpl("rule 1", activation);
         List<Action> actionList = new ArrayList<>();
-        actionList.add(new IncreaseAction(ent1,expressionList,p1.getName()));
-
+        actionList.add(new ScratchAction(ent1, null, ent1.getName(),ent2.getName()));
+        actionList.add(new DerivedAction(ent1, null, ent1.getName(), ent2.getName()));
         rule1.addAction(new ProximityAction(ent1,expressionList,actionList));
 
         EnvVariablesManager envVariablesManager = new EnvVariableManagerImpl();
@@ -73,7 +76,7 @@ public class Main {
         EntityInstanceManager entityInstanceManager = new EntityInstanceManagerImpl();
         ActiveEnvironment activeEnvironment = new ActiveEnvironmentImpl();
         for (int i = 0; i < ent1.getPopulation(); i++) {
-            entityInstanceManager.create(ent1);
+            entityInstanceManager.createEntityInstance(ent1);
             // create env variable instance
 
             activeEnvironment = envVariablesManager.createActiveEnvironment();
@@ -82,6 +85,16 @@ public class Main {
             activeEnvironment.addPropertyInstance(new PropertyInstanceImpl(e1, valueFromUser));
             activeEnvironment.addPropertyInstance(new PropertyInstanceImpl(e2, anotherValue));
             }
+        for (int i = 0; i < ent2.getPopulation(); i++) {
+            entityInstanceManager.createEntityInstance(ent2);
+            // create env variable instance
+
+            activeEnvironment = envVariablesManager.createActiveEnvironment();
+            int valueFromUser = 41;
+            int anotherValue = 10;
+            activeEnvironment.addPropertyInstance(new PropertyInstanceImpl(e1, valueFromUser));
+            activeEnvironment.addPropertyInstance(new PropertyInstanceImpl(e2, anotherValue));
+        }
 
         EntityInstance primaryEntityInstance = entityInstanceManager.getInstances().get(0);
         primaryEntityInstance.setCoordinate(new Coordinate(1,2));
@@ -94,7 +107,7 @@ public class Main {
         while (!isTerminated) {
             int finalTicks = ticks;
             context.getEntityManager().getInstances().forEach(entityInstance -> {
-                context.setPrimaryInstacne(1);
+                context.setPrimaryInstance(1);
                 if (rule1.getActivation().isActive(30)) {
                     rule1.getActionsToPerform().forEach(action -> {
                         action.invoke(context, finalTicks);
@@ -103,7 +116,7 @@ public class Main {
             });
             ticks++;
             context.setCurrTick(ticks);
-            if (ticks==30) {
+            if (ticks == 30) {
                 isTerminated = true;
             }
         }

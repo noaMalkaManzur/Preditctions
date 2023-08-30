@@ -170,6 +170,74 @@ public class EngineImpl implements Engine {
         }
         return convertedEntities;
     }
+    public PropertyDefinition propertyFromScratch(PropertyDefinition prop) {
+        switch (prop.getType()) {
+            case DECIMAL: {
+                return createIntegerPropFromScratch(prop);
+            }
+            case FLOAT: {
+                return createFloatPropertyFromScratch(prop);
+            }
+            case BOOLEAN: {
+                return createBooleanPropertyFromScratch(prop);
+            }
+            case STRING: {
+                return createStringPropertyFromScratch(prop);
+            }
+            default:
+                throw new InvalidTypeException("Invalid Type");
+        }
+    }
+
+    private PropertyDefinition createStringPropertyFromScratch(PropertyDefinition prop) {
+        ValueGenerator MyValGen;
+
+        if (prop.getRandomInit())
+            MyValGen = new RandomStringGenerator();
+        else {
+            //todo:ask noam if it is ok
+            MyValGen = new FixedValueGenerator(prop.generateValue());
+
+        }
+        return new StringPropertyDefinition(prop.getName(), PropertyType.STRING, MyValGen, prop.getRandomInit());
+    }
+
+    private PropertyDefinition createBooleanPropertyFromScratch(PropertyDefinition prop) {
+        ValueGenerator MyValGen;
+        if (prop.getRandomInit())
+            MyValGen = new RandomBooleanGenerator();
+        else {
+            MyValGen = new FixedValueGenerator(prop.generateValue());
+        }
+        return new BooleanPropertyDefinition(prop.getName(), PropertyType.BOOLEAN, MyValGen, prop.getRandomInit());
+
+    }
+
+    private PropertyDefinition createFloatPropertyFromScratch(PropertyDefinition prop) {
+        ValueGenerator MyValGen;
+        Range myPropRange = prop.getRange();
+
+        if (prop.getRandomInit()) {
+            MyValGen = new RandomDoubleGenerator(myPropRange.getRangeFrom(), myPropRange.getRangeTo());
+        }
+        else {
+            MyValGen = new FixedValueGenerator(prop.generateValue());
+        }
+        return new IntegerPropertyDefinition(prop.getName(), PropertyType.FLOAT, MyValGen, myPropRange, prop.getRandomInit());
+    }
+
+    private PropertyDefinition createIntegerPropFromScratch(PropertyDefinition prop) {
+        ValueGenerator MyValGen;
+        Range myPropRange = prop.getRange();
+
+        if (prop.getRandomInit()) {
+            MyValGen = new RandomIntegerGenerator((int)myPropRange.getRangeFrom(), (int)myPropRange.getRangeTo());
+        }
+        else {
+            MyValGen = new FixedValueGenerator(prop.generateValue());
+        }
+        return new IntegerPropertyDefinition(prop.getName(), PropertyType.DECIMAL, MyValGen, myPropRange, prop.getRandomInit());
+    }
 
     public PropertyDefinition convertProperty(PRDProperty prop) {
         switch (prop.getType().toUpperCase()) {
@@ -760,7 +828,7 @@ public class EngineImpl implements Engine {
             int finalTicks = ticks;
             context.getEntityManager().getInstances().forEach(entityInstance ->
             {
-                context.setPrimaryInstacne(entityInstance.getId());
+                context.setPrimaryInstance(entityInstance.getId());
                 world.getRules().forEach((name, rule) ->
                 {
                     if (rule.getActivation().isActive(finalTicks)) {
@@ -806,7 +874,7 @@ public class EngineImpl implements Engine {
                 {
                     for(int i = 0;i < value.getPopulation();i++)
                     {
-                        entityInstanceManager.create(value);
+                        entityInstanceManager.createEntityInstance(value);
                     }
                 });
         primaryEntityInstance = entityInstanceManager.getInstances().get(0);
@@ -852,7 +920,6 @@ public class EngineImpl implements Engine {
         return histogramByPropertyEntitiesDTO;
     }
 
-
     public HistogramByAmountEntitiesDTO createHistogramByAmountEntitiesDTO(String guid,String name){
         Histogram histogram = histogramMap.get(guid);
         return new HistogramByAmountEntitiesDTO(name,histogram.getPopBeforeSimulation(),histogram.getPopAfterSimulation());
@@ -861,7 +928,6 @@ public class EngineImpl implements Engine {
         Map<String, String> history = new HashMap<>();
         for (Map.Entry<String, Histogram> entry : histogramMap.entrySet()) {
             history.put(entry.getKey(), entry.getValue().getSimulationTime());
-
         }
         HistoryRunningSimulationDTO historyRunningSimulationDTO = new HistoryRunningSimulationDTO(history);
         return historyRunningSimulationDTO;

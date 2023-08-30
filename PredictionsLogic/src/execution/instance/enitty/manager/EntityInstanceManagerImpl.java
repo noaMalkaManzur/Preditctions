@@ -24,18 +24,20 @@ public class EntityInstanceManagerImpl implements EntityInstanceManager {
         killList = new ArrayList<>();
     }
     @Override
-    public EntityInstance create(EntityDefinition entityDefinition) {
+    public EntityInstance createEntityInstance(EntityDefinition entityDefinition) {
         entitiesCount++;
         EntityInstance newEntityInstance = new EntityInstanceImpl(entityDefinition, entitiesCount);
         instances.add(newEntityInstance);
 
         for (Map.Entry<String, PropertyDefinition> propertyDefinition : entityDefinition.getProps().entrySet()) {
+
             Object value = propertyDefinition.getValue().generateValue();
             PropertyInstance newPropertyInstance = new PropertyInstanceImpl(propertyDefinition.getValue(), value);
             newEntityInstance.addPropertyInstance(newPropertyInstance);
         }
         return newEntityInstance;
     }
+
 
     @Override
     public List<EntityInstance> getInstances() {
@@ -66,6 +68,19 @@ public class EntityInstanceManagerImpl implements EntityInstanceManager {
         return foundEntity;
     }
 
+    @Override
+    public void addEntityInstance(EntityInstance entityInstanceToAdd) {
+        instances.add(entityInstanceToAdd);
+    }
+
+    @Override
+    public PropertyInstance createPropertyInstance(PropertyDefinition propertyDefinition) {
+
+        Object value = propertyDefinition.generateValue();
+        PropertyInstance newPropertyInstance = new PropertyInstanceImpl(propertyDefinition, value);
+
+        return newPropertyInstance;
+    }
 
     @Override
     public int getCurrPopulation() {
