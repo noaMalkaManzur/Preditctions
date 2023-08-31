@@ -7,17 +7,15 @@ import Histogram.api.Histogram;
 import Histogram.impl.HistogramImpl;
 import Instance.ActiveEnvDTO;
 import Instance.EnvPropertyInstanceDTO;
-import action.impl.ProximityAction;
 import action.api.Action;
-import action.impl.DecreaseAction;
-import action.impl.IncreaseAction;
-import action.impl.KillAction;
-import action.impl.SetAction;
+import action.impl.*;
 import action.impl.calculation.impl.DivideAction;
 import action.impl.calculation.impl.MultiplyAction;
 import action.impl.condition.api.ConditionAction;
 import action.impl.condition.impl.MultipleAction;
 import action.impl.condition.impl.SingleAction;
+import action.impl.replace.impl.DerivedAction;
+import action.impl.replace.impl.ScratchAction;
 import definition.entity.EntityDefinition;
 import definition.entity.EntityDefinitionImpl;
 import definition.environment.api.EnvVariablesManager;
@@ -332,12 +330,30 @@ public class EngineImpl implements Engine {
                     return proximitiyAction(action);
                 //
                 case "REPLACE":
-                    return null;
+                    return replaceAction(action);
 
             }
         }
         return null;
     }
+
+    private Action replaceAction(PRDAction action) {
+        if (action.getMode() != null && action.getKill() != null && action.getCreate() != null) {
+            EntityDefinition entityDefinition = world.getEntities().get(action.getEntity());
+            String entityNameToKill = action.getKill();
+            String entityNameToCreate = action.getCreate();
+            if (action.getMode().equals("scratch")) {
+                return new ScratchAction(entityDefinition, null,entityNameToKill,entityNameToCreate);
+            } else if (action.getPRDCondition().getSingularity().equals("derived")) {
+                return new DerivedAction(entityDefinition,null, entityNameToKill, entityNameToCreate);
+            } else {
+                throw new IllegalArgumentException("Not valid argument for condition");
+            }
+        } else {
+            throw new IllegalArgumentException("replace arg was null!");
+        }
+    }
+
     private Action proximitiyAction(PRDAction action) {
         List<Action> proximityActionList = proximitiyActionList(action);
         EntityDefinition entityDefinition = world.getEntities().get(action.getPRDBetween().getSourceEntity());

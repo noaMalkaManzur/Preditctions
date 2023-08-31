@@ -1,44 +1,8 @@
 package Predictions.PredictionsUI;
 
 
-import action.api.Action;
-import action.impl.ProximityAction;
-import action.impl.replace.impl.DerivedAction;
-import action.impl.replace.impl.ScratchAction;
-import definition.entity.EntityDefinition;
-import definition.entity.EntityDefinitionImpl;
-import definition.environment.api.EnvVariablesManager;
-import definition.environment.impl.EnvVariableManagerImpl;
-import definition.property.api.PropertyDefinition;
-import definition.property.api.PropertyType;
-import definition.property.api.Range;
-import definition.property.impl.BooleanPropertyDefinition;
-import definition.property.impl.IntegerPropertyDefinition;
-import definition.value.generator.api.ValueGeneratorFactory;
-import definition.world.impl.Coordinate;
-import execution.context.Context;
-import execution.context.ContextImpl;
-import execution.instance.enitty.EntityInstance;
-import execution.instance.enitty.manager.EntityInstanceManager;
-import execution.instance.enitty.manager.EntityInstanceManagerImpl;
-import execution.instance.environment.api.ActiveEnvironment;
-import execution.instance.environment.impl.ActiveEnvironmentImpl;
-import execution.instance.property.PropertyInstanceImpl;
-import expression.api.Expression;
-import expression.impl.EnvironmentFunction;
-import expression.impl.EvaluateExpression;
-import expression.impl.PercentExpression;
-import expression.impl.TickFunction;
-import rule.Activation;
-import rule.ActivationImpl;
-import rule.Rule;
-import rule.RuleImpl;
-
-import java.util.ArrayList;
-import java.util.List;
-
 public class Main {
-    public static void main(String[] args) {
+   /* public static void main(String[] args) {
         //properties Entity 1:
 
         IntegerPropertyDefinition e1= new IntegerPropertyDefinition("e1", PropertyType.DECIMAL, ValueGeneratorFactory.createRandomInteger(15, 50) , new Range(10, 100), false);
@@ -120,13 +84,13 @@ public class Main {
                 isTerminated = true;
             }
         }
-    }
+    }*/
 
-   /* public static void main(String[] args)
+    public static void main(String[] args)
     {
         PredictionsManagment predictionsManagment = new PredictionsManagment();
         predictionsManagment.run();
         //launch(PredictionsApp.class);
-    }*/
+    }
 }
 
