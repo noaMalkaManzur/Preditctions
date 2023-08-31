@@ -14,8 +14,8 @@ public class SingleAction extends ConditionAction {
     String operator;
 
     public SingleAction(EntityDefinition entityDefinition, List<Expression> expressionList,
-                        List<Action> thenActionList, List<Action> elseActionList, String propertyName, String operator) {
-        super(ActionTypeDTO.CONDITION, entityDefinition, expressionList, thenActionList, elseActionList, propertyName);
+                        List<Action> thenActionList, List<Action> elseActionList, String propertyName, String operator, EntityDefinition secondaryEntityDef) {
+        super(ActionTypeDTO.CONDITION, entityDefinition, expressionList, thenActionList, elseActionList, propertyName,secondaryEntityDef);
         this.operator = operator;
     }
 

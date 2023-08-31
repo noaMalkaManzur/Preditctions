@@ -17,12 +17,11 @@ import java.util.List;
 public class ProximityAction  extends AbstractAction {
     List<Action> actionList;
 
-    public ProximityAction(EntityDefinition entityDefinition, List<Expression> expressionList,List<Action> actionList ) {
-        super(ActionTypeDTO.PROXIMITY, entityDefinition, expressionList);
+    public ProximityAction(EntityDefinition entityDefinition, List<Expression> expressionList,List<Action> actionList, EntityDefinition secondaryEntityDef ) {
+        super(ActionTypeDTO.PROXIMITY, entityDefinition, expressionList, secondaryEntityDef);
         this.actionList = actionList;
 
     }
-
     @Override
     public void invoke(Context context, int currTickToChangeValue) {
 
@@ -30,6 +29,7 @@ public class ProximityAction  extends AbstractAction {
             actionList.forEach(action -> action.invoke(context, currTickToChangeValue));
         }
     }
+
     private boolean checkProximity(Context context){
         EntityInstance primaryEntityInstance = context.getPrimaryEntityInstance();
         EntityInstance secondaryEntityInstance = context.getSecondaryEntityInstance();
@@ -50,4 +50,5 @@ public class ProximityAction  extends AbstractAction {
         }
         return false;
     }
+
 }

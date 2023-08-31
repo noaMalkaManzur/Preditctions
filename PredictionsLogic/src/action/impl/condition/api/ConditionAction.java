@@ -15,8 +15,8 @@ public abstract class ConditionAction extends AbstractAction {
     protected String propertyName;
 
 
-    protected ConditionAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList, List<Action> thenActionList,List<Action> elseActionList, String propertyName) {
-        super(actionType, entityDefinition, expressionList);
+    protected ConditionAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList, List<Action> thenActionList,List<Action> elseActionList, String propertyName, EntityDefinition secondaryEntityDef) {
+        super(actionType, entityDefinition, expressionList, secondaryEntityDef);
         this.thenActionList = thenActionList;
         this.elseActionList = elseActionList;
         this.propertyName = propertyName;

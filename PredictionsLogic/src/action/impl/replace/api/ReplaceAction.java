@@ -13,8 +13,8 @@ import java.util.List;
 public abstract class ReplaceAction extends AbstractAction {
     protected String entityNameToKill;
     protected String entityNameToCreate;
-    public ReplaceAction(EntityDefinition entityDefinition, List<Expression> expressionList, String entityNameToKill, String entityNameToCreate) {
-        super(ActionTypeDTO.REPLACE, entityDefinition, expressionList);
+    public ReplaceAction(EntityDefinition entityDefinition, List<Expression> expressionList, String entityNameToKill, String entityNameToCreate, EntityDefinition secondaryEntityDef) {
+        super(ActionTypeDTO.REPLACE, entityDefinition, expressionList, secondaryEntityDef);
         this.entityNameToKill = entityNameToKill;
         this.entityNameToCreate = entityNameToCreate;
     }
@@ -23,8 +23,8 @@ public abstract class ReplaceAction extends AbstractAction {
     public void invoke(Context context, int currTickToChangeValue) {
         EntityInstance entityInstanceToKill = context.getEntityManager().getEntityInstanceByName(entityNameToKill);
         EntityDefinition entityDefinitionToKill = entityInstanceToKill.getEntityDef();
-
-        KillAction killAction = new KillAction(entityDefinitionToKill);
+        //todo: handle sending null
+        KillAction killAction = new KillAction(entityDefinitionToKill, null);
         killAction.invoke(context, currTickToChangeValue);
         EntityInstance entityInstance =  createEntityInstance(context);
         context.getEntityManager().addEntityInstance(entityInstance);

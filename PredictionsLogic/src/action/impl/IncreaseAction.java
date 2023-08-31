@@ -13,8 +13,8 @@ import java.util.List;
 public class IncreaseAction extends AbstractAction {
     private final String property;
 
-    public IncreaseAction(EntityDefinition entityDefinition, List<Expression> expressionList, String property) {
-        super(ActionTypeDTO.INCREASE, entityDefinition, expressionList);
+    public IncreaseAction(EntityDefinition entityDefinition, List<Expression> expressionList, String property, EntityDefinition secondaryEntityDef) {
+        super(ActionTypeDTO.INCREASE, entityDefinition, expressionList, secondaryEntityDef);
         this.property = property;
     }
 
@@ -53,8 +53,5 @@ public class IncreaseAction extends AbstractAction {
             propertyInstance.setCurrTickForValueChanged(currTickToChangeValue);
         }
     }
-    @Override
-    public String getProperty() {
-        return property;
-    }
+
 }

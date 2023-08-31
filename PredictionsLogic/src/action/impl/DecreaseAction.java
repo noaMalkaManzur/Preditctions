@@ -13,8 +13,8 @@ import java.util.List;
 public class DecreaseAction extends AbstractAction {
     private final String property;
 
-    public DecreaseAction(EntityDefinition entityDefinition, List<Expression> expressionList, String property) {
-        super(ActionTypeDTO.DECREASE, entityDefinition, expressionList);
+    public DecreaseAction(EntityDefinition entityDefinition, List<Expression> expressionList, String property, EntityDefinition secondaryEntityDef) {
+        super(ActionTypeDTO.DECREASE, entityDefinition, expressionList,secondaryEntityDef);
         this.property = property;
     }
 

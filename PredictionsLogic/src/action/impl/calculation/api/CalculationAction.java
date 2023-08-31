@@ -12,8 +12,8 @@ public abstract class CalculationAction extends AbstractAction {
 
     protected String resultProp;
 
-    protected CalculationAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList, String resultProp) {
-        super(actionType, entityDefinition, expressionList);
+    protected CalculationAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList, String resultProp, EntityDefinition secondaryEntityDef) {
+        super(actionType, entityDefinition, expressionList, secondaryEntityDef);
         this.resultProp = resultProp;
     }
     public abstract void invoke(Context context,  int currTickToChangeValue);
