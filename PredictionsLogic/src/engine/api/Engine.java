@@ -42,5 +42,7 @@ public interface Engine
     HistogramByAmountEntitiesDTO createHistogramByAmountEntitiesDTO(String guid,String name);
 
     HistogramByPropertyEntitiesDTO setHistogramPerProperty(String guid, String propName);
+
+
     //endregion
 }
