@@ -25,4 +25,8 @@ public class PercentExpression extends FunctionExpression{
             return Double.parseDouble(value1.toString()) /Double.parseDouble(value2.toString());
         }
     }
+    @Override
+    public String toString(){
+        return  "percent("+ expression1.toString() +"."+ expression2.toString()+")";
+    }
 }

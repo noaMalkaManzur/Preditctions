@@ -1,9 +1,13 @@
 package engine.impl;
 
 import Defenitions.*;
+import Defenitions.Actions.Calculation.CalculationDTO;
+import Defenitions.Actions.Condition.api.ConditionDTO;
 import Defenitions.Actions.IncreaseDecrease.IncreaseDecreaseDTO;
+import Defenitions.Actions.Kill.KillDTO;
 import Defenitions.Actions.api.ActionDTO;
 import Enums.ActionTypeDTO;
+import Enums.MathActionDTO;
 import Generated.*;
 import Histogram.api.Histogram;
 import Histogram.impl.HistogramImpl;
@@ -80,7 +84,8 @@ public class EngineImpl implements Engine {
     private int rows;
     private int columns;
 
-    //private int currTick;
+    private int sizeThenList;
+    private  int sizeElseList;
     ValidationEngine validationEngine = new ValidationEngineImpl();
 
     //region Command number 1
@@ -503,6 +508,7 @@ public class EngineImpl implements Engine {
         } else {
             throw new IllegalArgumentException("Argument THEN was null");
         }
+        this.sizeThenList = actionListSingle.size();
         return actionListSingle;
     }
 
@@ -513,6 +519,7 @@ public class EngineImpl implements Engine {
                 actionListSingle.add(convertActionFromXML(indexAction));
             }
         }
+        this.sizeElseList = actionListSingle.size();
         return actionListSingle;
     }
 
@@ -712,8 +719,16 @@ public class EngineImpl implements Engine {
             case INCREASE:
             case DECREASE:
                 return new IncreaseDecreaseDTO(action.getActionType(),action.getContextEntity().getName(),
-                        null,action.getProperty(),action.getExpressionList().get(0).);
+                        null,action.getProperty(),action.getExpressionList().get(0).toString());
             case CALCULATION:
+
+                return new CalculationDTO(action.getActionType(), action.getContextEntity().getName(), null,
+                        action.getExpressionList().get(0).getArg(), action.getExpressionList().get(1).getArg(), MathActionDTO);
+            case CONDITION:
+                return new ConditionDTO(action.getActionType(), action.getContextEntity().getName(), null,
+                       "d" , sizeThenList, sizeElseList);
+            case KILL:
+                return new KillDTO();
 
         }
     }

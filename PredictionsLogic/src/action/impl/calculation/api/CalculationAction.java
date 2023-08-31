@@ -16,7 +16,6 @@ public abstract class CalculationAction extends AbstractAction {
         super(actionType, entityDefinition, expressionList);
         this.resultProp = resultProp;
     }
-
     public abstract void invoke(Context context,  int currTickToChangeValue);
 
 
