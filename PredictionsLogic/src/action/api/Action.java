@@ -12,6 +12,4 @@ public interface Action {
     Object getExpressionVal(Expression expression, Context context);
     boolean verifyNumericPropertyType(PropertyInstance propertyValue);
     ActionTypeDTO getActionType();
-
-
 }

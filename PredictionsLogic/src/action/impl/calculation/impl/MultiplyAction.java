@@ -12,8 +12,8 @@ import java.util.List;
 
 public class MultiplyAction extends CalculationAction {
 
-    public MultiplyAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList, String resultProp) {
-        super(actionType, entityDefinition, expressionList, resultProp);
+    public MultiplyAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList, String resultProp, EntityDefinition secondaryEntityDef) {
+        super(actionType, entityDefinition, expressionList, resultProp,secondaryEntityDef);
     }
 
     @Override
@@ -47,4 +47,5 @@ public class MultiplyAction extends CalculationAction {
             propertyInstance.setCurrTickForValueChanged(currTickToChangeValue);
         }
     }
+
 }

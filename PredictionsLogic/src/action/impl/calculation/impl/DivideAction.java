@@ -12,8 +12,8 @@ import java.util.List;
 
 public class DivideAction extends CalculationAction {
 
-    public DivideAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList, String resultProp) {
-        super(actionType, entityDefinition, expressionList, resultProp);
+    public DivideAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList, String resultProp, EntityDefinition secondaryEntityDef) {
+        super(actionType, entityDefinition, expressionList, resultProp, secondaryEntityDef);
     }
 
     @Override
@@ -51,4 +51,5 @@ public class DivideAction extends CalculationAction {
             propertyInstance.setCurrTickForValueChanged(currTickToChangeValue);
         }
     }
+
 }

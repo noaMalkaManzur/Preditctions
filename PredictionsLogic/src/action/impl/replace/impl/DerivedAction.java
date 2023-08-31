@@ -14,8 +14,8 @@ import java.util.List;
 
 public class DerivedAction extends ReplaceAction {
 
-    public DerivedAction(EntityDefinition entityDefinition, List<Expression> expressionList, String entityNameToKill, String entityNameToCreate) {
-        super(entityDefinition, expressionList, entityNameToKill, entityNameToCreate);
+    public DerivedAction(EntityDefinition entityDefinition, List<Expression> expressionList, String entityNameToKill, String entityNameToCreate, EntityDefinition secondaryEntityDef) {
+        super(entityDefinition, expressionList, entityNameToKill, entityNameToCreate, secondaryEntityDef);
 
     }
 

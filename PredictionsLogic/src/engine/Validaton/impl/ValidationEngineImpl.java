@@ -1,6 +1,5 @@
 package engine.Validaton.impl;
 
-import Generated.PRDAction;
 import Generated.PRDEnvProperty;
 import definition.environment.api.EnvVariablesManager;
 import definition.property.api.PropertyType;
@@ -49,7 +48,7 @@ public class ValidationEngineImpl implements ValidationEngine {
         return value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false");
     }
 
-@Override
+/*@Override
 public boolean checkEntityExist(PRDAction action, WorldDefinition world) {
     if (action.getType().toLowerCase().contains("proximity")) {
         if (!world.getEntities().containsKey(action.getPRDBetween().getSourceEntity())
@@ -67,7 +66,14 @@ public boolean checkEntityExist(PRDAction action, WorldDefinition world) {
         }
     }
     return true;
-}
+}*/
+    @Override
+    public boolean checkEntityExist(String entityName, WorldDefinition world) {
+        if (!world.getEntities().containsKey(entityName)) {
+            throw new EntityNotExistException("Entity: " + entityName + " does not exist in this world.");
+        }
+        return true;
+    }
 
     @Override
     public boolean checkIfEntityHasProp(String Property, String Entity, WorldDefinition world) {
