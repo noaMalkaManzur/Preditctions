@@ -13,5 +13,10 @@ public class EnvironmentFunction extends FunctionExpression {
     public Object calculateExpression(Context context) {
         return context.getEnvironmentVariable(args[0]).getValue();
     }
+    @Override
+    public String toString(){
+        return "environment(" + args[0] +")";
+    }
+
 
 }

@@ -9,9 +9,15 @@ public class PropertyExpression extends FunctionExpression {
         super(eExpression.PROPERTY, args);
 
     }
-        @Override
-        public Object calculateExpression(Context context) {
-            return context.getPrimaryEntityInstance().getPropertyByName(args[0]).getValue();
-        }
+
+    @Override
+    public Object calculateExpression(Context context) {
+        return context.getPrimaryEntityInstance().getPropertyByName(args[0]).getValue();
+    }
+
+    @Override
+    public String toString(){
+        return "property(" + args[0] + ")";
+    }
 }
 

@@ -47,4 +47,8 @@ public class MultiplyAction extends CalculationAction {
             propertyInstance.setCurrTickForValueChanged(currTickToChangeValue);
         }
     }
+    @Override
+    public String toString() {
+        return "multiply";
+    }
 }

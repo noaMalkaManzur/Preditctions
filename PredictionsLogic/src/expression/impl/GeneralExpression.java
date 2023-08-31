@@ -28,4 +28,8 @@ public class GeneralExpression extends FunctionExpression {
                 return null;
         }
     }
+    @Override
+    public String toString(){
+        return args[0];
+    }
 }

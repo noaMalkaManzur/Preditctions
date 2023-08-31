@@ -50,5 +50,10 @@ public class DivideAction extends CalculationAction {
             propertyInstance.updateValue(divRes);
             propertyInstance.setCurrTickForValueChanged(currTickToChangeValue);
         }
+
+    }
+    @Override
+    public String toString() {
+        return "divide";
     }
 }
