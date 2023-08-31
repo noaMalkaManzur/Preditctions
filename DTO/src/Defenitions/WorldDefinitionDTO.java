@@ -1,5 +1,7 @@
 package Defenitions;
 
+import definition.world.impl.Grid;
+
 import java.util.Map;
 
 public class WorldDefinitionDTO
@@ -8,13 +10,17 @@ public class WorldDefinitionDTO
     private final EnvironmentDefinitionDTO environmentVars;
     private final Map<String,RulesDTO> rules;
     private final TerminitionDTO terms;
+    private final GridDTO grid;
 
-    public WorldDefinitionDTO(Map<String, EntityDefinitionDTO> entities, EnvironmentDefinitionDTO environmentVars, Map<String, RulesDTO> rules, TerminitionDTO terms) {
+    public WorldDefinitionDTO(Map<String, EntityDefinitionDTO> entities, EnvironmentDefinitionDTO environmentVars, Map<String, RulesDTO> rules, TerminitionDTO terms,GridDTO grid) {
         this.entities = entities;
         this.environmentVars = environmentVars;
         this.rules = rules;
         this.terms = terms;
+        this.grid = grid;
     }
+
+    public GridDTO getGrid() {return grid;}
 
     public Map<String, EntityDefinitionDTO> getEntities() {
         return entities;

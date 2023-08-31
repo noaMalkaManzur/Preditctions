@@ -28,4 +28,8 @@ public class RandomFunction extends FunctionExpression {
         Random random = new Random();
         return random.nextInt(range+1);
     }
+    @Override
+    public String toString(){
+        return "random(" + args[0] + ")";
+    }
 }

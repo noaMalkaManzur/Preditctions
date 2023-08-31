@@ -1,7 +1,6 @@
 package Defenitions;
 
-import action.api.Action;
-import rule.Activation;
+import Defenitions.Actions.api.ActionDTO;
 
 import java.util.List;
 

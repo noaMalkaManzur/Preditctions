@@ -34,10 +34,12 @@ public abstract class AbstractAction implements Action {
     public boolean verifyNumericPropertyType(PropertyInstance propertyValue) {
         return PropertyType.DECIMAL.equals(propertyValue.getPropertyDefinition().getType()) || PropertyType.FLOAT.equals(propertyValue.getPropertyDefinition().getType());
     }
+    @Override
     public List<Expression> getExpressionList() {
         return expressionList;
     }
     public ActionTypeDTO getActionType(){return actionType;}
+    public abstract String getProperty();
 
 
 }

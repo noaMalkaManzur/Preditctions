@@ -2,6 +2,7 @@ package definition.world.api;
 
 import definition.entity.EntityDefinition;
 import definition.environment.api.EnvVariablesManager;
+import definition.world.impl.Grid;
 import rule.Rule;
 
 import java.util.Map;
@@ -23,4 +24,9 @@ public interface WorldDefinition
     public Termination getTerminationTerm();
 
     public void setTerminationTerm(Termination terminationTerm);
+
+    void setGrid(Grid grid);
+
+    Grid getGrid();
+
 }
