@@ -1,6 +1,8 @@
 package engine.impl;
 
 import Defenitions.*;
+import Defenitions.Actions.IncreaseDecrease.IncreaseDecreaseDTO;
+import Defenitions.Actions.api.ActionDTO;
 import Enums.ActionTypeDTO;
 import Generated.*;
 import Histogram.api.Histogram;
@@ -35,6 +37,7 @@ import definition.value.generator.random.impl.numeric.RandomIntegerGenerator;
 import definition.value.generator.random.impl.string.RandomStringGenerator;
 import definition.world.api.Termination;
 import definition.world.api.WorldDefinition;
+import definition.world.impl.Grid;
 import definition.world.impl.TerminationImpl;
 import definition.world.impl.WorldImpl;
 import engine.Validaton.api.ValidationEngine;
@@ -96,6 +99,7 @@ public class EngineImpl implements Engine {
                     world = new WorldImpl();
                     activeEnvironment = new ActiveEnvironmentImpl();
                     setEnvVariablesFromXML(envManager, prdWorld.getPRDEnvironment().getPRDEnvProperty());
+                    world.setGrid(getGridFromFile(prdWorld));
                     world.setEnvVariables(envManager);
                     world.setEntities(getEntitiesFromXML(prdWorld.getPRDEntities()));
                     world.setRules(getRulesFromXML(prdWorld.getPRDRules()));
@@ -105,6 +109,10 @@ public class EngineImpl implements Engine {
         } catch (JAXBException | FileNotFoundException | BadFileSuffixException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private Grid getGridFromFile(PRDWorld prdWorld) {
+        return new Grid(prdWorld.getPRDGrid().getRows(),prdWorld.getPRDGrid().getColumns());
     }
 
     //region Enviroment
@@ -667,12 +675,12 @@ public class EngineImpl implements Engine {
     //region Command number 2
     public Map<String, EntityDefinitionDTO> getEntitiesDTO() {
         Map<String, EntityDefinitionDTO> entityDTO = new HashMap<>();
-        Map<String, EntityPropDefinitionDTO> propsDTO = new HashMap<>();
+
         for (Map.Entry<String, EntityDefinition> entDef : world.getEntities().entrySet()) {
             String name = entDef.getKey();
             int pop = entDef.getValue().getPopulation();
-
             EntityPropDefinitionDTO propertyDefinitionDTO;
+            Map<String, EntityPropDefinitionDTO> propsDTO = new HashMap<>();
             for (Map.Entry<String, PropertyDefinition> propDef : entDef.getValue().getProps().entrySet()) {
                 propertyDefinitionDTO = new EntityPropDefinitionDTO(propDef.getKey(), propDef.getValue().getType(), propDef.getValue().getRandomInit(), propDef.getValue().getRange());
                 propsDTO.put(propertyDefinitionDTO.getName(), propertyDefinitionDTO);
@@ -691,20 +699,39 @@ public class EngineImpl implements Engine {
             ActivationDTO activationDTO = new ActivationDTO(rule.getActivation().getProbability(), rule.getActivation().getTicks());
             List<ActionDTO> actionsDTOS = new ArrayList<>();
             for (Action action : rule.getActionsToPerform()) {
-                actionsDTOS.add(new ActionDTO(action.getActionType()));
+                actionsDTOS.add(createActionDTO(action));
             }
             rulesDTO.put(ruleName, new RulesDTO(ruleName, activationDTO, actionsDTOS));
         }
         return rulesDTO;
     }
 
+    private ActionDTO createActionDTO(Action action) {
+        switch (action.getActionType())
+        {
+            case INCREASE:
+            case DECREASE:
+                return new IncreaseDecreaseDTO(action.getActionType(),action.getContextEntity().getName(),
+                        null,action.getProperty(),action.getExpressionList().get(0).);
+            case CALCULATION:
+
+        }
+    }
+
     public TerminitionDTO getTerminationDTO(){
-        TerminitionDTO terminitionDTO = new TerminitionDTO(world.getTerminationTerm().getBySeconds(), world.getTerminationTerm().getByTicks());
-        return terminitionDTO;
+        return new TerminitionDTO(world.getTerminationTerm().getBySeconds(), world.getTerminationTerm().getByTicks());
     }
     public SimulationInfoDTO getSimulationInfo(){
-        SimulationInfoDTO simulationInfoDTO = new SimulationInfoDTO(getEntitiesDTO(),getRulesDTO(),getTerminationDTO());
-        return simulationInfoDTO;
+        return new SimulationInfoDTO(getEntitiesDTO(),getRulesDTO(),getTerminationDTO());
+    }
+
+    public WorldDefinitionDTO getWorldDefinitionDTO()
+    {
+         return new WorldDefinitionDTO(getEntitiesDTO(),getEnvDTO(),getRulesDTO(),getTerminationDTO(),getGridDTO());
+    }
+    public GridDTO getGridDTO()
+    {
+        return new GridDTO(world.getGrid().getRows(),world.getGrid().getCols());
     }
 
     //endregion

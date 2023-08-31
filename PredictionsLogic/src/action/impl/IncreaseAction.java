@@ -53,4 +53,8 @@ public class IncreaseAction extends AbstractAction {
             propertyInstance.setCurrTickForValueChanged(currTickToChangeValue);
         }
     }
+    @Override
+    public String getProperty() {
+        return property;
+    }
 }

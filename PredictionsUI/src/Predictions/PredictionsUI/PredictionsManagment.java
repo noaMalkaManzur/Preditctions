@@ -1,6 +1,7 @@
 package Predictions.PredictionsUI;
 
 import Defenitions.*;
+import Defenitions.Actions.api.ActionDTO;
 import Instance.ActiveEnvDTO;
 import definition.property.api.PropertyType;
 import engine.Validaton.api.ValidationEngine;

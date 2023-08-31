@@ -14,5 +14,4 @@ public class EnvironmentFunction extends FunctionExpression {
         return context.getEnvironmentVariable(args[0]).getValue();
     }
 
-
 }

@@ -14,6 +14,7 @@ public class WorldImpl implements WorldDefinition
     private EnvVariablesManager envVariables;
     private Map<String,Rule> rules;
     private Termination terminationTerm;
+    private Grid grid;
 
     public Map<String, EntityDefinition> getEntities() {
         return entities;
@@ -46,4 +47,8 @@ public class WorldImpl implements WorldDefinition
     public void setTerminationTerm(Termination terminationTerm) {
         this.terminationTerm = terminationTerm;
     }
+
+    public Grid getGrid() {return grid;}
+
+    public void setGrid(Grid grid) {this.grid = grid;}
 }

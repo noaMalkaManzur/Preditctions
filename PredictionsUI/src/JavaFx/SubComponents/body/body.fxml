@@ -5,14 +5,13 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.AnchorPane?>
 
-
 <ScrollPane fitToHeight="true" fitToWidth="true" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="JavaFx.SubComponents.body.BodyController">
    <content>
       <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" tabClosingPolicy="UNAVAILABLE">
         <tabs>
           <Tab text="Details">
                <content>
-                  <fx:include source="../detailsTab/detailsTab.fxml" />
+                  <fx:include fx:id="detailsTabComponent" source="../detailsTab/detailsTab.fxml" />
                </content>
           </Tab>
           <Tab text="New Execution" />
