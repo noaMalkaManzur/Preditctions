@@ -5,16 +5,24 @@ import java.util.Collection;
 import java.util.List;
 
 public class Grid {
-    private int N;
-    private int M;
+    private int rows;
+    private int cols;
+
+    public int getRows() {
+        return rows;
+    }
+
+    public int getCols() {
+        return cols;
+    }
 
     public Grid(int N, int M) {
-        this.N = N;
-        this.M = M;
+        this.rows = N;
+        this.cols = M;
     }
 
     boolean checkIfValidCoordinate(Coordinate coordinate) {
-        return coordinate.getX() >= 0 && coordinate.getX() <= N && coordinate.getY() >= 0 && coordinate.getY() <= M;
+        return coordinate.getX() >= 0 && coordinate.getX() <= rows && coordinate.getY() >= 0 && coordinate.getY() <= cols;
     }
 
     private int distance(Coordinate source, int x, int y) {

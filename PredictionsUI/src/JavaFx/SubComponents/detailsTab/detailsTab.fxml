@@ -5,17 +5,17 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.StackPane?>
 
-<ScrollPane fitToHeight="true" fitToWidth="true" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="JavaFx.SubComponents.detailsTab.DetailsTabController">
+<ScrollPane fx:id="detailsComponent" fitToHeight="true" fitToWidth="true" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="JavaFx.SubComponents.detailsTab.DetailsTabController">
    <content>
       <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
          <left>
-            <TreeView fx:id="simTreeView" onContextMenuRequested="#selectedItem" onMouseClicked="#selectedItem" BorderPane.alignment="CENTER" />
+            <TreeView fx:id="treeViewComponent" onContextMenuRequested="#selectedItem" onMouseClicked="#selectedItem" BorderPane.alignment="CENTER" />
          </left>
          <center>
-            <StackPane prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <StackPane BorderPane.alignment="CENTER" visible="false" fx:id="stackPaneComponent">
                <children>
-                  <fx:include fx:id="envPropScreen" source="../envProperty/envProperty.fxml" />
-                  <fx:include fx:id="entPropeties" source="../entProperty/entProperties.fxml" />
+                  <fx:include fx:id="envPropScreenComponent" source="../envProperty/envScreen.fxml" />
+                  <fx:include fx:id="entPropScreenComponent" source="../entProperty/entityScreen.fxml" />
                </children>
             </StackPane>
          </center>
