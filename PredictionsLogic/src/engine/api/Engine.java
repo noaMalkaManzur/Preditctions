@@ -15,7 +15,7 @@ public interface Engine
     void loadXmlFiles(String fileName);
     //endregion
     //region Command 2
-    Map<String, RulesDTO> getRulesDTO();
+    RulesDTO getRulesDTO();
     TerminitionDTO getTerminationDTO();
     Map<String, EntityDefinitionDTO> getEntitiesDTO();
     SimulationInfoDTO getSimulationInfo();

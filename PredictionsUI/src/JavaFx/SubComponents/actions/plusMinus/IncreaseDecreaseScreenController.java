@@ -7,7 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
-public class IncreaseDecreaseActionsController {
+public class IncreaseDecreaseScreenController {
     DetailsTabController detailsTabController;
 
     @FXML
