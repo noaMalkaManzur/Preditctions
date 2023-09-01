@@ -7,9 +7,9 @@ public class SingleDTO extends ConditionDTO {
     private final String propertyName;
     private final String Operator;
     private final String Value;
-    public SingleDTO(ActionTypeDTO type, String primaryEntityName, String secondaryEntityName, String singularity,
+    public SingleDTO(ActionTypeDTO type, String primaryEntityName, String secondaryEntityName,
                      String propertyName, String operator, String value,int thenSize,int elseSize) {
-        super(type, primaryEntityName, secondaryEntityName, singularity, thenSize, elseSize);
+        super(type, primaryEntityName, secondaryEntityName, thenSize, elseSize);
         this.propertyName = propertyName;
         Operator = operator;
         Value = value;

@@ -131,7 +131,7 @@ public class PredictionsManagment {
     }
     private void gettingRulesInfo(SimulationInfoDTO simulationInfoDTO, StringBuilder simulationInfo) {
         simulationInfo.append("Rules:").append(System.lineSeparator());
-        for (RulesDTO ruleDTO : simulationInfoDTO.getRules().values()) {
+        for (RuleDTO ruleDTO : simulationInfoDTO.getRules().values()) {
             simulationInfo.append("     Rule name: ").append(ruleDTO.getName()).append(System.lineSeparator());
             simulationInfo.append("         Is applied by ticks: ").
                     append(ruleDTO.getActivation().getTicks()).append(" and by probability of: ").
