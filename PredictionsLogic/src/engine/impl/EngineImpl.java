@@ -46,6 +46,7 @@ import definition.value.generator.random.impl.numeric.RandomIntegerGenerator;
 import definition.value.generator.random.impl.string.RandomStringGenerator;
 import definition.world.api.Termination;
 import definition.world.api.WorldDefinition;
+import definition.world.impl.Grid;
 import definition.world.impl.TerminationImpl;
 import definition.world.impl.WorldImpl;
 import engine.Validaton.api.ValidationEngine;
@@ -110,6 +111,7 @@ public class EngineImpl implements Engine {
                     activeEnvironment = new ActiveEnvironmentImpl();
                     setEnvVariablesFromXML(envManager, prdWorld.getPRDEnvironment().getPRDEnvProperty());
                     world.setEnvVariables(envManager);
+                    world.setGrid(getGridFromFile(prdWorld));
                     world.setEntities(getEntitiesFromXML(prdWorld.getPRDEntities()));
                     world.setRules(getRulesFromXML(prdWorld.getPRDRules()));
                     world.setTerminationTerm(getTerminationTermFromXML(prdWorld.getPRDTermination()));
@@ -118,6 +120,9 @@ public class EngineImpl implements Engine {
         } catch (JAXBException | FileNotFoundException | BadFileSuffixException e) {
             throw new RuntimeException(e);
         }
+    }
+    private Grid getGridFromFile(PRDWorld prdWorld) {
+        return new Grid(prdWorld.getPRDGrid().getRows(),prdWorld.getPRDGrid().getColumns());
     }
 
     //region Enviroment
@@ -945,6 +950,7 @@ public class EngineImpl implements Engine {
             int finalTicks = ticks;
             context.getEntityManager().getInstances().forEach(entityInstance ->
             {
+                entityInstance.setCoordinate(world.getGrid().getRandomCoordinate(entityInstance));
                 context.setPrimaryInstance(entityInstance.getId());
                 world.getRules().forEach((name, rule) ->
                 {

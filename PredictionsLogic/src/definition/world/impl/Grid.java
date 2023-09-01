@@ -1,12 +1,16 @@
 package definition.world.impl;
 
+import execution.instance.enitty.EntityInstance;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Random;
 
 public class Grid {
     private int rows;
     private int cols;
+    private  List<Cell> cells = new ArrayList<>();
 
     public int getRows() {
         return rows;
@@ -16,14 +20,33 @@ public class Grid {
         return cols;
     }
 
-    public Grid(int N, int M) {
-        this.rows = N;
-        this.cols = M;
+    public Grid(int rows, int cols) {
+        this.rows = rows;
+        this.cols = cols;
     }
 
     boolean checkIfValidCoordinate(Coordinate coordinate) {
         return coordinate.getX() >= 0 && coordinate.getX() <= rows && coordinate.getY() >= 0 && coordinate.getY() <= cols;
     }
+    public Coordinate getRandomCoordinate(EntityInstance entityInstance) {
+        Random random = new Random();
+
+        while (true) {
+            int x = random.nextInt(rows);
+            int y = random.nextInt(cols);
+            Coordinate coordinate = new Coordinate(x, y);
+
+            boolean occupied = cells.stream()
+                    .anyMatch(cell -> cell.getCoordinate().getX() == x && cell.getCoordinate().getY() == y && cell.getIsOccupied());
+
+            if (!occupied) {
+                Cell newCell = new Cell(coordinate, true, entityInstance);
+                cells.add(newCell);
+                return coordinate;
+            }
+        }
+    }
+
 
     private int distance(Coordinate source, int x, int y) {
         int dx = Math.abs(source.getX() - x);
