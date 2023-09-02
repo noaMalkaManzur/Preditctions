@@ -52,6 +52,7 @@ public class DivideAction extends CalculationAction {
         }
 
     }
+
     @Override
     public String toString() {
         return "divide";

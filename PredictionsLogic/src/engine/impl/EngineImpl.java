@@ -525,6 +525,7 @@ public class EngineImpl implements Engine {
                 if (prdCondition.getSingularity().equals("single")) {
                     String valExpression = prdCondition.getValue();
                     String propertyName = prdCondition.getProperty();
+                    //todo: change it too order number 6!!!!
                     propertyName = getPropertyNameByExpression(propertyName);
                     if (validationEngine.checkIfEntityHasProp(propertyName, prdCondition.getEntity(), world)) {
                         if (action.getPRDSecondaryEntity() != null) {
@@ -620,6 +621,7 @@ public class EngineImpl implements Engine {
             return new SingleAction(world.getEntities().get(action.getEntity()), getExpression(action.getEntity(), propName, value), thenActionList, elseActionList, propName, operator, secondaryEntity);
         }
         //todo: handle this dont forget!!
+
         action.getPRDSecondaryEntity().getPRDSelection().getPRDCondition();
         action.getPRDSecondaryEntity().getPRDSelection().getCount();
 
@@ -945,6 +947,61 @@ public class EngineImpl implements Engine {
         createContext();
         int ticks = 0;
         boolean isTerminated = false;
+        List<Action> activeAction = new ArrayList<>();
+        List <EntityInstance> secondaryEntityInstance  = new ArrayList<>();
+        while (!isTerminated)
+        {
+            int finalTicks = ticks;
+            //creating coordinate for every entity instance
+            //todo:check how to move every entity instance
+            context.getEntityManager().getInstances().forEach(entityInstance ->
+            {
+                entityInstance.setCoordinate(world.getGrid().getRandomCoordinate(entityInstance));
+                context.setPrimaryInstance(entityInstance.getId());
+
+            });
+            world.getRules().forEach((name, rule) ->
+            {
+                if (rule.getActivation().isActive(finalTicks)) {
+                    rule.getActionsToPerform().forEach(action -> {
+                        activeAction.add(action);
+                    });
+                }
+            });
+
+            context.getEntityManager().getInstances().forEach(entityInstance -> {
+                activeAction.forEach(action -> {
+                    if (action.getContextEntity().getName().equals(entityInstance.getEntityDef().getName())) {
+                        if(action.hasSecondaryEntity()){
+                            secondaryEntityInstance.add(entityInstance);
+                        }
+                        else{
+                            action.invoke(context,finalTicks);
+                        }
+                    }
+                });
+            });
+
+            ticks++;
+            context.setCurrTick(ticks);
+            activateKillAction();
+            if(validationEngine.simulationEnded(ticks,simulationStart, world))
+                isTerminated = true;
+        }
+        String endReason = getTerminationReason(ticks,simulationStart);
+        createHistogram(Guid);
+        return Guid+ "\n" + endReason;
+    }
+    /*
+        public String runSimulation()
+    {
+        //region HistogramCreation
+        String Guid = UUID.randomUUID().toString();
+        Instant simulationStart = Instant.now();
+        //endregion
+        createContext();
+        int ticks = 0;
+        boolean isTerminated = false;
         while (!isTerminated)
         {
             int finalTicks = ticks;
@@ -970,7 +1027,7 @@ public class EngineImpl implements Engine {
         String endReason = getTerminationReason(ticks,simulationStart);
         createHistogram(Guid);
         return Guid+ "\n" + endReason;
-    }
+    }*/
     //todo: ask noam if i can delete this arg: simulationStart
     private String getTerminationReason(int ticks, Instant simulationStart) {
         String ticksMsg = "The simulation has ended because " + ticks +" ticks has passed";

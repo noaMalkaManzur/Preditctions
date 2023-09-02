@@ -47,7 +47,6 @@ public class Grid {
         }
     }
 
-
     private int distance(Coordinate source, int x, int y) {
         int dx = Math.abs(source.getX() - x);
         int dy = Math.abs(source.getY() - y);

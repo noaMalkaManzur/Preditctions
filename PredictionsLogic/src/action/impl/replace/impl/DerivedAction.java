@@ -16,7 +16,6 @@ public class DerivedAction extends ReplaceAction {
 
     public DerivedAction(EntityDefinition entityDefinition, List<Expression> expressionList, String entityNameToKill, String entityNameToCreate, EntityDefinition secondaryEntityDef) {
         super(entityDefinition, expressionList, entityNameToKill, entityNameToCreate, secondaryEntityDef);
-
     }
 
     @Override
@@ -45,4 +44,5 @@ public class DerivedAction extends ReplaceAction {
 
         return resEntityInstance;
     }
+
 }

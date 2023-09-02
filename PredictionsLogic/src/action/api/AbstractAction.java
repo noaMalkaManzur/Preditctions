@@ -38,6 +38,12 @@ public abstract class AbstractAction implements Action {
         return expressionList;
     }
     public ActionTypeDTO getActionType(){return actionType;}
+    @Override
+    public boolean hasSecondaryEntity() {
+        return secondaryEntityDefinition != null;
+    }
+
+
 
 
 }

@@ -13,6 +13,7 @@ public class SetAction extends AbstractAction
 {
     private String property;
 
+
     public SetAction(EntityDefinition entityDefinition, List<Expression> expressionList, String property, EntityDefinition secondaryEntityDef) {
         super(ActionTypeDTO.SET, entityDefinition, expressionList, secondaryEntityDef);
         this.property = property;
@@ -43,5 +44,6 @@ public class SetAction extends AbstractAction
             propertyInstance.setCurrTickForValueChanged(currTickToChangeValue);
         }
     }
+
 
 }
