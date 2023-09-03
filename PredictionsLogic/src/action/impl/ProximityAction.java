@@ -5,6 +5,7 @@ import action.api.AbstractAction;
 import action.api.Action;
 import definition.entity.EntityDefinition;
 import definition.property.api.PropertyType;
+import definition.secondaryEntity.api.SecondaryEntityDefinition;
 import definition.world.impl.Coordinate;
 import definition.world.impl.Grid;
 import execution.context.Context;
@@ -17,7 +18,7 @@ import java.util.List;
 public class ProximityAction  extends AbstractAction {
     List<Action> actionList;
 
-    public ProximityAction(EntityDefinition entityDefinition, List<Expression> expressionList,List<Action> actionList, EntityDefinition secondaryEntityDef ) {
+    public ProximityAction(EntityDefinition entityDefinition, List<Expression> expressionList,List<Action> actionList, SecondaryEntityDefinition secondaryEntityDef ) {
         super(ActionTypeDTO.PROXIMITY, entityDefinition, expressionList, secondaryEntityDef);
         this.actionList = actionList;
 

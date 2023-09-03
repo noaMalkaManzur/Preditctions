@@ -3,6 +3,7 @@ package action.impl.replace.impl;
 import action.impl.replace.api.ReplaceAction;
 import definition.entity.EntityDefinition;
 import definition.entity.EntityDefinitionImpl;
+import definition.secondaryEntity.api.SecondaryEntityDefinition;
 import execution.context.Context;
 import execution.instance.enitty.EntityInstance;
 import execution.instance.enitty.EntityInstanceImpl;
@@ -14,7 +15,7 @@ import java.util.List;
 
 public class DerivedAction extends ReplaceAction {
 
-    public DerivedAction(EntityDefinition entityDefinition, List<Expression> expressionList, String entityNameToKill, String entityNameToCreate, EntityDefinition secondaryEntityDef) {
+    public DerivedAction(EntityDefinition entityDefinition, List<Expression> expressionList, String entityNameToKill, String entityNameToCreate, SecondaryEntityDefinition secondaryEntityDef) {
         super(entityDefinition, expressionList, entityNameToKill, entityNameToCreate, secondaryEntityDef);
     }
 
