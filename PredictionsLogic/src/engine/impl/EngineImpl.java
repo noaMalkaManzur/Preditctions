@@ -554,23 +554,12 @@ public class EngineImpl implements Engine {
                     //todo: change it too order number 6!!!!
                     propertyName = getPropertyNameByExpression(propertyName);
                     if (validationEngine.checkIfEntityHasProp(propertyName, prdCondition.getEntity(), world)) {
-                        if (action.getPRDSecondaryEntity() != null) {
-                            if (validationEngine.checkEntityExist(action.getPRDSecondaryEntity().getEntity(), world)) {
-                                ConditionAction conditionAction = convertConditionActionSecondEntity(action);
-                                secondaryEntity = new SecondaryEntityDefinitionImpl(action.getPRDSecondaryEntity().getEntity(), action.getPRDSecondaryEntity().getPRDSelection().getCount(), conditionAction);                            }
-                                //conditionActionList.add(action.getPRDSecondaryEntity().getPRDSelection().getPRDCondition());
-                        }
                         conditionActionList.add(new SingleAction(world.getEntities().get(prdCondition.getEntity()),
                                 getExpression(prdCondition.getEntity(), propertyName, valExpression), null, null,
                                 propertyName, prdCondition.getOperator(), secondaryEntity));
                     }
                 } else if (prdCondition.getSingularity().equals("multiple")) {
                     List<ConditionAction> multiCondList = createConditionList(prdCondition, action);
-                    if (action.getPRDSecondaryEntity() != null) {
-                        if (validationEngine.checkEntityExist(action.getPRDSecondaryEntity().getEntity(), world)) {
-                            ConditionAction conditionAction = convertConditionActionSecondEntity(action);
-                            secondaryEntity = new SecondaryEntityDefinitionImpl(action.getPRDSecondaryEntity().getEntity(), action.getPRDSecondaryEntity().getPRDSelection().getCount(), conditionAction);                        }
-                    }
                     conditionActionList.add(new MultipleAction(world.getEntities().get(prdCondition.getEntity()),
                             null, null, null, condition.getProperty(), multiCondList, prdCondition.getLogical(), secondaryEntity));
                 }
