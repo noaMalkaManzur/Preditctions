@@ -1,11 +1,7 @@
-package JavaFx.SubComponents.actions.plusMinus;
+package JavaFx.SubComponents.actions.Kill;
 
-import Defenitions.Actions.IncreaseDecrease.IncreaseDecreaseDTO;
-import Defenitions.Actions.api.ActionDTO;
-import Defenitions.EntityPropDefinitionDTO;
-import Defenitions.EnvPropertyDefinitionDTO;
+import Defenitions.Actions.Kill.KillDTO;
 import JavaFx.SubComponents.detailsTab.DetailsTabController;
-import definition.property.api.Range;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -14,24 +10,19 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
-import java.util.Map;
+public class KillScreenController {
+    private DetailsTabController detailsTabController;
+    @FXML
+    private TableView<KillDTO> tableViewComponent;
 
-public class IncreaseDecreaseScreenController {
-    DetailsTabController detailsTabController;
+    @FXML
+    private TableColumn<KillDTO, String> typeCol;
 
     @FXML
-    private TableView<IncreaseDecreaseDTO> tableViewComponent;
-    @FXML
-    private TableColumn<IncreaseDecreaseDTO, String> typeCol;
-    @FXML
-    private TableColumn<IncreaseDecreaseDTO, String> primaryEntCol;
-    @FXML
-    private TableColumn<IncreaseDecreaseDTO, String> secondaryEntCol;
-    @FXML
-    private TableColumn<IncreaseDecreaseDTO, String> propCol;
-    @FXML
-    private TableColumn<IncreaseDecreaseDTO, String> byCol;
+    private TableColumn<KillDTO, String> primaryEntCol;
 
+    @FXML
+    private TableColumn<KillDTO,String> secondaryEntCol;
     public void initializeTableView() {
         typeCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getType().toString()));
 
@@ -44,16 +35,15 @@ public class IncreaseDecreaseScreenController {
                 return new SimpleObjectProperty<>(null); // Display null for null range
             }
         });
-        propCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getPropertyName()));
-        byCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getByExpression()));
+
+
     }
-    public void updateTableView(IncreaseDecreaseDTO increaseDecreaseDTO) {
+    public void updateTableView(KillDTO killDTO) {
         tableViewComponent.getItems().clear();
-        ObservableList<IncreaseDecreaseDTO> data = FXCollections.observableArrayList(increaseDecreaseDTO);
+        ObservableList<KillDTO> data = FXCollections.observableArrayList(killDTO);
         tableViewComponent.setItems(data);
     }
     public void setDetailsTabController(DetailsTabController detailsTabController) {
         this.detailsTabController = detailsTabController;
     }
-
 }

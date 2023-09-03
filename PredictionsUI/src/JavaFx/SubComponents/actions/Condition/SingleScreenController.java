@@ -1,11 +1,9 @@
-package JavaFx.SubComponents.actions.plusMinus;
+package JavaFx.SubComponents.actions.Condition;
 
-import Defenitions.Actions.IncreaseDecrease.IncreaseDecreaseDTO;
-import Defenitions.Actions.api.ActionDTO;
-import Defenitions.EntityPropDefinitionDTO;
-import Defenitions.EnvPropertyDefinitionDTO;
+import Defenitions.Actions.Calculation.CalculationDTO;
+import Defenitions.Actions.Condition.impl.SingleDTO;
 import JavaFx.SubComponents.detailsTab.DetailsTabController;
-import definition.property.api.Range;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -14,23 +12,34 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
-import java.util.Map;
+public class SingleScreenController {
 
-public class IncreaseDecreaseScreenController {
-    DetailsTabController detailsTabController;
+    private DetailsTabController detailsTabController;
 
     @FXML
-    private TableView<IncreaseDecreaseDTO> tableViewComponent;
+    private TableView<SingleDTO> tableViewComponent;
+
     @FXML
-    private TableColumn<IncreaseDecreaseDTO, String> typeCol;
+    private TableColumn<SingleDTO, String> typeCol;
+
     @FXML
-    private TableColumn<IncreaseDecreaseDTO, String> primaryEntCol;
+    private TableColumn<SingleDTO, String> primaryEntCol;
+
     @FXML
-    private TableColumn<IncreaseDecreaseDTO, String> secondaryEntCol;
+    private TableColumn<SingleDTO, String> secondaryEntCol;
+
     @FXML
-    private TableColumn<IncreaseDecreaseDTO, String> propCol;
+    private TableColumn<SingleDTO, String> propCol;
+
     @FXML
-    private TableColumn<IncreaseDecreaseDTO, String> byCol;
+    private TableColumn<SingleDTO, String> operatorCol;
+
+    @FXML
+    private TableColumn<SingleDTO, String> valueCol;
+    @FXML
+    private TableColumn<SingleDTO, Integer> thenCol;
+    @FXML
+    private TableColumn<SingleDTO, Integer> elseCol;
 
     public void initializeTableView() {
         typeCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getType().toString()));
@@ -45,11 +54,16 @@ public class IncreaseDecreaseScreenController {
             }
         });
         propCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getPropertyName()));
-        byCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getByExpression()));
+        operatorCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getOperator()));
+        valueCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getValue()));
+        thenCol.setCellValueFactory(data -> new SimpleObjectProperty<>(data.getValue().getThenSize()));
+        elseCol.setCellValueFactory(data -> new SimpleObjectProperty<>(data.getValue().getElseSize()));
+
+
     }
-    public void updateTableView(IncreaseDecreaseDTO increaseDecreaseDTO) {
+    public void updateTableView(SingleDTO singleDTO) {
         tableViewComponent.getItems().clear();
-        ObservableList<IncreaseDecreaseDTO> data = FXCollections.observableArrayList(increaseDecreaseDTO);
+        ObservableList<SingleDTO> data = FXCollections.observableArrayList(singleDTO);
         tableViewComponent.setItems(data);
     }
     public void setDetailsTabController(DetailsTabController detailsTabController) {

@@ -16,6 +16,17 @@
                <children>
                   <fx:include fx:id="envPropScreenComponent" source="../envProperty/envScreen.fxml" />
                   <fx:include fx:id="entPropScreenComponent" source="../entProperty/entityScreen.fxml" />
+                  <fx:include fx:id="plusMinusScreenComponent" source="../actions/plusMinus/increaseDecreaseActions.fxml" />
+                  <fx:include fx:id="calcScreenComponent" source="../actions/Calculation/CalculationScreen.fxml" />
+                  <fx:include fx:id="singleScreenComponent" source="../actions/Condition/SingleScreen.fxml" />
+                  <fx:include fx:id="multipleScreenComponent" source="../actions/Condition/MultipleScreen.fxml" />
+                  <fx:include fx:id="setScreenComponent" source="../actions/Set/SetScreen.fxml" />
+                  <fx:include fx:id="killScreenComponent" source="../actions/Kill/KillScreen.fxml" />
+                  <fx:include fx:id="replaceScreenComponent" source="../actions/Replace/replaceScreen.fxml" />
+                  <fx:include fx:id="proximityScreenComponent" source="../actions/Proximity/proximityScreen.fxml" />
+                  <fx:include fx:id="activationScreenComponent" source="../activation/activationScreen.fxml" />
+                  <fx:include fx:id="gridScreenComponent" source="../grid/gridScreen.fxml" />
+                  <fx:include fx:id="terminationScreenComponent" source="../termination/terminationScreen.fxml" />
                </children>
             </StackPane>
          </center>

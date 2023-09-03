@@ -12,4 +12,12 @@ public class MultipleDTO extends ConditionDTO {
         this.logic = logic;
         this.condNum = condNum;
     }
+
+    public String getLogic() {
+        return logic;
+    }
+
+    public int getCondNum() {
+        return condNum;
+    }
 }

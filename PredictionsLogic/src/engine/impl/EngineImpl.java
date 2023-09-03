@@ -127,7 +127,7 @@ public class EngineImpl implements Engine {
         return new Grid(prdWorld.getPRDGrid().getRows(),prdWorld.getPRDGrid().getColumns());
     }
 
-    //region Enviroment
+    //region Environment
     private void setEnvVariablesFromXML(EnvVariablesManager envManager, List<PRDEnvProperty> prdEnvProperty) {
         prdEnvProperty.stream()
                 .filter(envProp -> {
@@ -449,7 +449,7 @@ public class EngineImpl implements Engine {
                     actionDTOS.add(new ReplaceDTO(ActionTypeDTO.REPLACE,action.getEntity(),secondaryEntityDTO,action.getKill(),action.getCreate(), ModesDTO.SCRATCH));
                 return new ScratchAction(null, null,entityNameToKill,entityNameToCreate, secondaryEntity);
             }
-            else if (action.getPRDCondition().getSingularity().equals("derived")) {
+            else if (action.getMode().equals("derived")) {
                 if (action.getPRDSecondaryEntity() != null) {
                     if(validationEngine.checkEntityExist(action.getPRDSecondaryEntity().getEntity(), world)) {
                         ConditionAction conditionAction = convertConditionActionSecondEntity(action);
@@ -840,9 +840,9 @@ public class EngineImpl implements Engine {
     //endregion
     //region Termination
     private Termination getTerminationTermFromXML(PRDTermination prdTermination) {
-        return new TerminationImpl(120, 300);
-        /*int ticksCount = -1;
-        int secondCount = -1;
+        //return new TerminationImpl(120, 300,);
+        Integer ticksCount = null;
+        Integer secondCount = null;
         for (Object obj : prdTermination.getPRDBySecondOrPRDByTicks()) {
             if (obj instanceof PRDByTicks) {
                 PRDByTicks prdByTicks = (PRDByTicks) obj;
@@ -852,10 +852,12 @@ public class EngineImpl implements Engine {
                 secondCount = prdBySecond.getCount();
             }
         }
-        if (ticksCount > 0 && secondCount > 0)
-            return new TerminationImpl(ticksCount, secondCount);
+        if (ticksCount != null && secondCount != null)
+            return new TerminationImpl(ticksCount, secondCount,null);
+        else if(prdTermination.getPRDByUser() != null)
+            return new TerminationImpl(null, null,true);
         else
-            throw new InvalidTerminationTermsException("Simulation Termination terms are invalid Please check them again!");*/
+            throw new InvalidTerminationTermsException("Simulation Termination terms are invalid Please check them again!");
     }
 
     //endregion
@@ -878,26 +880,15 @@ public class EngineImpl implements Engine {
     }
 
     public RulesDTO getRulesDTO() {
-
-//        Map<String, RuleDTO> rulesDTO = new HashMap<>();
-//        for (Map.Entry<String, Rule> ruleEntry : world.getRules().entrySet()) {
-//            String ruleName = ruleEntry.getKey();
-//            Rule rule = ruleEntry.getValue();
-//            ActivationDTO activationDTO = new ActivationDTO(rule.getActivation().getProbability(), rule.getActivation().getTicks());
-//            List<ActionDTO> actionsDTOS = new ArrayList<>();
-//            for (Action action : rule.getActionsToPerform()) {
-//                //actionsDTOS.add(new ActionDTO(action.getActionType()));
-//            }
-//            rulesDTO.put(ruleName, new RuleDTO(ruleName, activationDTO, actionsDTOS));
-//        }
-//        return rulesDTO;
         return rulesDTO;
-
+    }
+    public GridDTO getGridDTO()
+    {
+        return new GridDTO(world.getGrid().getRows(),world.getGrid().getCols());
     }
 
     public TerminitionDTO getTerminationDTO(){
-        TerminitionDTO terminitionDTO = new TerminitionDTO(world.getTerminationTerm().getBySeconds(), world.getTerminationTerm().getByTicks());
-        return terminitionDTO;
+        return new TerminitionDTO(world.getTerminationTerm().getBySeconds(), world.getTerminationTerm().getByTicks(),world.getTerminationTerm().getByUser());
     }
     public SimulationInfoDTO getSimulationInfo(){
 //        SimulationInfoDTO simulationInfoDTO = new SimulationInfoDTO(getEntitiesDTO(),getRulesDTO(),getTerminationDTO());

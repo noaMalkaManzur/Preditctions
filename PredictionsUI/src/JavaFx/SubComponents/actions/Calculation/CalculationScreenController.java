@@ -1,11 +1,8 @@
-package JavaFx.SubComponents.actions.plusMinus;
+package JavaFx.SubComponents.actions.Calculation;
 
+import Defenitions.Actions.Calculation.CalculationDTO;
 import Defenitions.Actions.IncreaseDecrease.IncreaseDecreaseDTO;
-import Defenitions.Actions.api.ActionDTO;
-import Defenitions.EntityPropDefinitionDTO;
-import Defenitions.EnvPropertyDefinitionDTO;
 import JavaFx.SubComponents.detailsTab.DetailsTabController;
-import definition.property.api.Range;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -14,23 +11,25 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
-import java.util.Map;
-
-public class IncreaseDecreaseScreenController {
+public class CalculationScreenController {
     DetailsTabController detailsTabController;
 
     @FXML
-    private TableView<IncreaseDecreaseDTO> tableViewComponent;
+    private TableView<CalculationDTO> tableViewComponent;
     @FXML
-    private TableColumn<IncreaseDecreaseDTO, String> typeCol;
+    private TableColumn<CalculationDTO, String> typeCol;
     @FXML
-    private TableColumn<IncreaseDecreaseDTO, String> primaryEntCol;
+    private TableColumn<CalculationDTO, String> primaryEntCol;
     @FXML
-    private TableColumn<IncreaseDecreaseDTO, String> secondaryEntCol;
+    private TableColumn<CalculationDTO, String> secondaryEntCol;
     @FXML
-    private TableColumn<IncreaseDecreaseDTO, String> propCol;
+    private TableColumn<CalculationDTO, String> resPropCol;
     @FXML
-    private TableColumn<IncreaseDecreaseDTO, String> byCol;
+    private TableColumn<CalculationDTO, String> firstArgCol;
+    @FXML
+    private TableColumn<CalculationDTO, String> secondArgCol;
+    @FXML
+    private TableColumn<CalculationDTO, String> actionCol;
 
     public void initializeTableView() {
         typeCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getType().toString()));
@@ -44,16 +43,18 @@ public class IncreaseDecreaseScreenController {
                 return new SimpleObjectProperty<>(null); // Display null for null range
             }
         });
-        propCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getPropertyName()));
-        byCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getByExpression()));
+        resPropCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getResult_Prop()));
+        firstArgCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getFirstArg()));
+        secondArgCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getSecondArg()));
+        actionCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getMathType().toString()));
+
     }
-    public void updateTableView(IncreaseDecreaseDTO increaseDecreaseDTO) {
+    public void updateTableView(CalculationDTO calculationDTO) {
         tableViewComponent.getItems().clear();
-        ObservableList<IncreaseDecreaseDTO> data = FXCollections.observableArrayList(increaseDecreaseDTO);
+        ObservableList<CalculationDTO> data = FXCollections.observableArrayList(calculationDTO);
         tableViewComponent.setItems(data);
     }
     public void setDetailsTabController(DetailsTabController detailsTabController) {
         this.detailsTabController = detailsTabController;
     }
-
 }

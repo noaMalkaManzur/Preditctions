@@ -1,11 +1,8 @@
-package JavaFx.SubComponents.actions.plusMinus;
+package JavaFx.SubComponents.actions.Replace;
 
-import Defenitions.Actions.IncreaseDecrease.IncreaseDecreaseDTO;
-import Defenitions.Actions.api.ActionDTO;
-import Defenitions.EntityPropDefinitionDTO;
-import Defenitions.EnvPropertyDefinitionDTO;
+import Defenitions.Actions.Proximity.ProximityDTO;
+import Defenitions.Actions.Replace.ReplaceDTO;
 import JavaFx.SubComponents.detailsTab.DetailsTabController;
-import definition.property.api.Range;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -14,24 +11,29 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
-import java.util.Map;
-
-public class IncreaseDecreaseScreenController {
-    DetailsTabController detailsTabController;
+public class ReplaceScreenController {
+    private DetailsTabController detailsTabController;
 
     @FXML
-    private TableView<IncreaseDecreaseDTO> tableViewComponent;
-    @FXML
-    private TableColumn<IncreaseDecreaseDTO, String> typeCol;
-    @FXML
-    private TableColumn<IncreaseDecreaseDTO, String> primaryEntCol;
-    @FXML
-    private TableColumn<IncreaseDecreaseDTO, String> secondaryEntCol;
-    @FXML
-    private TableColumn<IncreaseDecreaseDTO, String> propCol;
-    @FXML
-    private TableColumn<IncreaseDecreaseDTO, String> byCol;
+    private TableView<ReplaceDTO> tableViewComponent;
 
+    @FXML
+    private TableColumn<ReplaceDTO, String> typeCol;
+
+    @FXML
+    private TableColumn<ReplaceDTO, String> primaryEntCol;
+
+    @FXML
+    private TableColumn<ReplaceDTO, String> secondaryEntCol;
+
+    @FXML
+    private TableColumn<ReplaceDTO, String> killCol;
+
+    @FXML
+    private TableColumn<ReplaceDTO, String> createCol;
+
+    @FXML
+    private TableColumn<ReplaceDTO, String> modeCol;
     public void initializeTableView() {
         typeCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getType().toString()));
 
@@ -44,16 +46,18 @@ public class IncreaseDecreaseScreenController {
                 return new SimpleObjectProperty<>(null); // Display null for null range
             }
         });
-        propCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getPropertyName()));
-        byCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getByExpression()));
+        killCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getToKill()));
+        createCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getToCreate()));
+        modeCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getMode().toString()));
     }
-    public void updateTableView(IncreaseDecreaseDTO increaseDecreaseDTO) {
+    public void updateTableView(ReplaceDTO replaceDTO) {
         tableViewComponent.getItems().clear();
-        ObservableList<IncreaseDecreaseDTO> data = FXCollections.observableArrayList(increaseDecreaseDTO);
+        ObservableList<ReplaceDTO> data = FXCollections.observableArrayList(replaceDTO);
         tableViewComponent.setItems(data);
     }
     public void setDetailsTabController(DetailsTabController detailsTabController) {
         this.detailsTabController = detailsTabController;
     }
+
 
 }
