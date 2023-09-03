@@ -1,6 +1,5 @@
 package engine.impl;
 
-import Defenitions.*;
 import Defenitions.Actions.Calculation.CalculationDTO;
 import Defenitions.Actions.Condition.impl.MultipleDTO;
 import Defenitions.Actions.Condition.impl.SingleDTO;
@@ -10,6 +9,7 @@ import Defenitions.Actions.Proximity.ProximityDTO;
 import Defenitions.Actions.Replace.ReplaceDTO;
 import Defenitions.Actions.Set.SetDTO;
 import Defenitions.Actions.api.ActionDTO;
+import Defenitions.*;
 import Enums.ActionTypeDTO;
 import Enums.MathActionDTO;
 import Enums.ModesDTO;
@@ -38,6 +38,8 @@ import definition.property.impl.BooleanPropertyDefinition;
 import definition.property.impl.FloatPropertyDefinition;
 import definition.property.impl.IntegerPropertyDefinition;
 import definition.property.impl.StringPropertyDefinition;
+import definition.secondaryEntity.api.SecondaryEntityDefinition;
+import definition.secondaryEntity.impl.SecondaryEntityDefinitionImpl;
 import definition.value.generator.api.ValueGenerator;
 import definition.value.generator.fixed.FixedValueGenerator;
 import definition.value.generator.random.impl.bool.RandomBooleanGenerator;
@@ -46,6 +48,7 @@ import definition.value.generator.random.impl.numeric.RandomIntegerGenerator;
 import definition.value.generator.random.impl.string.RandomStringGenerator;
 import definition.world.api.Termination;
 import definition.world.api.WorldDefinition;
+import definition.world.impl.Grid;
 import definition.world.impl.TerminationImpl;
 import definition.world.impl.WorldImpl;
 import engine.Validaton.api.ValidationEngine;
@@ -110,6 +113,7 @@ public class EngineImpl implements Engine {
                     activeEnvironment = new ActiveEnvironmentImpl();
                     setEnvVariablesFromXML(envManager, prdWorld.getPRDEnvironment().getPRDEnvProperty());
                     world.setEnvVariables(envManager);
+                    world.setGrid(getGridFromFile(prdWorld));
                     world.setEntities(getEntitiesFromXML(prdWorld.getPRDEntities()));
                     world.setRules(getRulesFromXML(prdWorld.getPRDRules()));
                     world.setTerminationTerm(getTerminationTermFromXML(prdWorld.getPRDTermination()));
@@ -119,8 +123,11 @@ public class EngineImpl implements Engine {
             throw new RuntimeException(e);
         }
     }
+    private Grid getGridFromFile(PRDWorld prdWorld) {
+        return new Grid(prdWorld.getPRDGrid().getRows(),prdWorld.getPRDGrid().getColumns());
+    }
 
-    //region Enviroment
+    //region Environment
     private void setEnvVariablesFromXML(EnvVariablesManager envManager, List<PRDEnvProperty> prdEnvProperty) {
         prdEnvProperty.stream()
                 .filter(envProp -> {
@@ -318,7 +325,7 @@ public class EngineImpl implements Engine {
     }
 
     private Action convertActionFromXML(PRDAction action) {
-        EntityDefinition secondaryEntity = null;
+        SecondaryEntityDefinition secondaryEntity = null;
         String secondaryEntityDTO = null;
             switch (action.getType().toUpperCase()) {
                 case "INCREASE":
@@ -328,7 +335,8 @@ public class EngineImpl implements Engine {
                             if (validationEngine.checkArgsAreNumeric(expressionList, action.getEntity(), action.getType(), world)){
                                 if (action.getPRDSecondaryEntity() != null) {
                                     if(validationEngine.checkEntityExist(action.getPRDSecondaryEntity().getEntity(), world)) {
-                                        secondaryEntity = world.getEntities().get(action.getPRDSecondaryEntity().getEntity());
+                                        ConditionAction conditionAction = convertConditionActionSecondEntity(action);
+                                        secondaryEntity = new SecondaryEntityDefinitionImpl(action.getPRDSecondaryEntity().getEntity(), action.getPRDSecondaryEntity().getPRDSelection().getCount(), conditionAction);
                                         secondaryEntityDTO = action.getPRDSecondaryEntity().getEntity();
                                     }
                                 }
@@ -346,7 +354,8 @@ public class EngineImpl implements Engine {
                             if (validationEngine.checkArgsAreNumeric(expressionList, action.getEntity(), action.getType(), world)) {
                                 if (action.getPRDSecondaryEntity() != null) {
                                     if(validationEngine.checkEntityExist(action.getPRDSecondaryEntity().getEntity(), world)) {
-                                        secondaryEntity = world.getEntities().get(action.getPRDSecondaryEntity().getEntity());
+                                        ConditionAction conditionAction = convertConditionActionSecondEntity(action);
+                                        secondaryEntity = new SecondaryEntityDefinitionImpl(action.getPRDSecondaryEntity().getEntity(), action.getPRDSecondaryEntity().getPRDSelection().getCount(), conditionAction);
                                         secondaryEntityDTO = action.getPRDSecondaryEntity().getEntity();
                                     }
                                 }
@@ -371,7 +380,8 @@ public class EngineImpl implements Engine {
                         if (validationEngine.checkIfEntityHasProp(action.getProperty(), action.getEntity(), world))
                             if (action.getPRDSecondaryEntity() != null) {
                                 if(validationEngine.checkEntityExist(action.getPRDSecondaryEntity().getEntity(), world)) {
-                                    secondaryEntity = world.getEntities().get(action.getPRDSecondaryEntity().getEntity());
+                                    ConditionAction conditionAction = convertConditionActionSecondEntity(action);
+                                    secondaryEntity = new SecondaryEntityDefinitionImpl(action.getPRDSecondaryEntity().getEntity(), action.getPRDSecondaryEntity().getPRDSelection().getCount(), conditionAction);
                                     secondaryEntityDTO = action.getPRDSecondaryEntity().getEntity();
                                 }
                             }
@@ -384,7 +394,8 @@ public class EngineImpl implements Engine {
                     if(validationEngine.checkEntityExist(action.getEntity(), world)) {
                         if (action.getPRDSecondaryEntity() != null) {
                             if(validationEngine.checkEntityExist(action.getPRDSecondaryEntity().getEntity(), world)) {
-                                secondaryEntity = world.getEntities().get(action.getPRDSecondaryEntity().getEntity());
+                                ConditionAction conditionAction = convertConditionActionSecondEntity(action);
+                                secondaryEntity = new SecondaryEntityDefinitionImpl(action.getPRDSecondaryEntity().getEntity(), action.getPRDSecondaryEntity().getPRDSelection().getCount(), conditionAction);
                                 secondaryEntityDTO = action.getPRDSecondaryEntity().getEntity();
                             }
                         }
@@ -404,8 +415,24 @@ public class EngineImpl implements Engine {
         return null;
     }
 
+    private ConditionAction convertConditionActionSecondEntity(PRDAction action) {
+        PRDCondition prdCondition = action.getPRDSecondaryEntity().getPRDSelection().getPRDCondition();
+        String singularity = prdCondition.getSingularity();
+        List<ConditionAction> conditionActionList = createConditionList(action.getPRDSecondaryEntity().getPRDSelection().getPRDCondition(), action);
+
+        if(singularity.toLowerCase().equals("single")) {
+             return new SingleAction(world.getEntities().get(prdCondition.getEntity()), getExpression(prdCondition.getEntity(),
+                    prdCondition.getProperty(), prdCondition.getValue()), null, null, prdCondition.getProperty(), prdCondition.getOperator(), null);
+        }
+        else if(singularity.toLowerCase().equals("multiple")){
+            return new MultipleAction(world.getEntities().get(prdCondition.getEntity()), getExpression(prdCondition.getEntity(),
+                    prdCondition.getProperty(), prdCondition.getValue()), null, null, prdCondition.getProperty(), conditionActionList, prdCondition.getLogical(), null);
+        }
+        return null;
+    }
+
     private Action replaceAction(PRDAction action) {
-        EntityDefinition secondaryEntity = null;
+        SecondaryEntityDefinition secondaryEntity = null;
         String secondaryEntityDTO = null;
         if (action.getMode() != null && action.getKill() != null && action.getCreate() != null) {
             String entityNameToKill = action.getKill();
@@ -413,7 +440,8 @@ public class EngineImpl implements Engine {
             if (action.getMode().equals("scratch")) {
                 if (action.getPRDSecondaryEntity() != null) {
                     if(validationEngine.checkEntityExist(action.getPRDSecondaryEntity().getEntity(), world)) {
-                        secondaryEntity = world.getEntities().get(action.getPRDSecondaryEntity().getEntity());
+                        ConditionAction conditionAction = convertConditionActionSecondEntity(action);
+                        secondaryEntity = new SecondaryEntityDefinitionImpl(action.getPRDSecondaryEntity().getEntity(), action.getPRDSecondaryEntity().getPRDSelection().getCount(), conditionAction);
                         secondaryEntityDTO = action.getPRDSecondaryEntity().getEntity();
                     }
                 }
@@ -421,10 +449,11 @@ public class EngineImpl implements Engine {
                     actionDTOS.add(new ReplaceDTO(ActionTypeDTO.REPLACE,action.getEntity(),secondaryEntityDTO,action.getKill(),action.getCreate(), ModesDTO.SCRATCH));
                 return new ScratchAction(null, null,entityNameToKill,entityNameToCreate, secondaryEntity);
             }
-            else if (action.getPRDCondition().getSingularity().equals("derived")) {
+            else if (action.getMode().equals("derived")) {
                 if (action.getPRDSecondaryEntity() != null) {
                     if(validationEngine.checkEntityExist(action.getPRDSecondaryEntity().getEntity(), world)) {
-                        secondaryEntity = world.getEntities().get(action.getPRDSecondaryEntity().getEntity());
+                        ConditionAction conditionAction = convertConditionActionSecondEntity(action);
+                        secondaryEntity = new SecondaryEntityDefinitionImpl(action.getPRDSecondaryEntity().getEntity(), action.getPRDSecondaryEntity().getPRDSelection().getCount(), conditionAction);
                         secondaryEntityDTO = action.getPRDSecondaryEntity().getEntity();
                     }
                 }
@@ -440,7 +469,7 @@ public class EngineImpl implements Engine {
     }
 
     private Action proximitiyAction(PRDAction action) {
-        EntityDefinition secondaryEntity = null;
+        SecondaryEntityDefinition secondaryEntity = null;
         String secondaryEntityDTO = null;
         List<Action> proximityActionList = proximitiyActionList(action);
         EntityDefinition entityDefinition = world.getEntities().get(action.getPRDBetween().getSourceEntity());
@@ -449,7 +478,8 @@ public class EngineImpl implements Engine {
 
         if (action.getPRDSecondaryEntity() != null) {
             if(validationEngine.checkEntityExist(action.getPRDSecondaryEntity().getEntity(), world)) {
-                secondaryEntity = world.getEntities().get(action.getPRDSecondaryEntity().getEntity());
+                ConditionAction conditionAction = convertConditionActionSecondEntity(action);
+                secondaryEntity = new SecondaryEntityDefinitionImpl(action.getPRDSecondaryEntity().getEntity(), action.getPRDSecondaryEntity().getPRDSelection().getCount(), conditionAction);
                 secondaryEntityDTO = action.getPRDSecondaryEntity().getEntity();
             }
         }
@@ -492,7 +522,7 @@ public class EngineImpl implements Engine {
     }
 
     private Action MultipleCondition(PRDAction action) {
-        EntityDefinition secondaryEntity = null;
+        SecondaryEntityDefinition secondaryEntity = null;
         String secondaryEntityDTO = null;
         List<ConditionAction> conditionActionList = createConditionList(action.getPRDCondition(), action);
         String logic = action.getPRDCondition().getLogical();
@@ -502,7 +532,8 @@ public class EngineImpl implements Engine {
         List<Action> elseActionList = createElseActionList(action);
         if (action.getPRDSecondaryEntity() != null) {
             if(validationEngine.checkEntityExist(action.getPRDSecondaryEntity().getEntity(), world)) {
-                secondaryEntity = world.getEntities().get(action.getPRDSecondaryEntity().getEntity());
+                ConditionAction conditionAction = convertConditionActionSecondEntity(action);
+                secondaryEntity = new SecondaryEntityDefinitionImpl(action.getPRDSecondaryEntity().getEntity(), action.getPRDSecondaryEntity().getPRDSelection().getCount(), conditionAction);
                 secondaryEntityDTO = action.getPRDSecondaryEntity().getEntity();
             }
         }
@@ -513,18 +544,20 @@ public class EngineImpl implements Engine {
 
     private List<ConditionAction> createConditionList(PRDCondition condition, PRDAction action) {
         List<ConditionAction> conditionActionList = new ArrayList<>();
-        EntityDefinition secondaryEntity = null;
+        SecondaryEntityDefinition secondaryEntity = null;
 
         if (condition.getPRDCondition() != null) {
             for (PRDCondition prdCondition : condition.getPRDCondition()) {
                 if (prdCondition.getSingularity().equals("single")) {
                     String valExpression = prdCondition.getValue();
                     String propertyName = prdCondition.getProperty();
+                    //todo: change it too order number 6!!!!
                     propertyName = getPropertyNameByExpression(propertyName);
                     if (validationEngine.checkIfEntityHasProp(propertyName, prdCondition.getEntity(), world)) {
                         if (action.getPRDSecondaryEntity() != null) {
-                            if (validationEngine.checkEntityExist(action.getPRDSecondaryEntity().getEntity(), world))
-                                secondaryEntity = world.getEntities().get(action.getPRDSecondaryEntity().getEntity());
+                            if (validationEngine.checkEntityExist(action.getPRDSecondaryEntity().getEntity(), world)) {
+                                ConditionAction conditionAction = convertConditionActionSecondEntity(action);
+                                secondaryEntity = new SecondaryEntityDefinitionImpl(action.getPRDSecondaryEntity().getEntity(), action.getPRDSecondaryEntity().getPRDSelection().getCount(), conditionAction);                            }
                                 //conditionActionList.add(action.getPRDSecondaryEntity().getPRDSelection().getPRDCondition());
                         }
                         conditionActionList.add(new SingleAction(world.getEntities().get(prdCondition.getEntity()),
@@ -534,8 +567,9 @@ public class EngineImpl implements Engine {
                 } else if (prdCondition.getSingularity().equals("multiple")) {
                     List<ConditionAction> multiCondList = createConditionList(prdCondition, action);
                     if (action.getPRDSecondaryEntity() != null) {
-                        if (validationEngine.checkEntityExist(action.getPRDSecondaryEntity().getEntity(), world))
-                            secondaryEntity = world.getEntities().get(action.getPRDSecondaryEntity().getEntity());
+                        if (validationEngine.checkEntityExist(action.getPRDSecondaryEntity().getEntity(), world)) {
+                            ConditionAction conditionAction = convertConditionActionSecondEntity(action);
+                            secondaryEntity = new SecondaryEntityDefinitionImpl(action.getPRDSecondaryEntity().getEntity(), action.getPRDSecondaryEntity().getPRDSelection().getCount(), conditionAction);                        }
                     }
                     conditionActionList.add(new MultipleAction(world.getEntities().get(prdCondition.getEntity()),
                             null, null, null, condition.getProperty(), multiCondList, prdCondition.getLogical(), secondaryEntity));
@@ -596,17 +630,19 @@ public class EngineImpl implements Engine {
     }
 
     private Action SingleConditionCal(PRDAction action) {
-        EntityDefinition secondaryEntity = null;
+        SecondaryEntityDefinition secondaryEntity = null;
         String secondaryEntityDTO = null;
         List<Action> thenActionList = createThenActionList(action);
         List<Action> elseActionList = createElseActionList(action);
         String propName = action.getPRDCondition().getProperty();
         String operator = action.getPRDCondition().getOperator();
         String value = action.getPRDCondition().getValue();
+
         if (validationEngine.checkIfEntityHasProp(propName, action.getEntity(), world)) {
             if (action.getPRDSecondaryEntity() != null) {
                 if(validationEngine.checkEntityExist(action.getPRDSecondaryEntity().getEntity(), world)) {
-                    secondaryEntity = world.getEntities().get(action.getPRDSecondaryEntity().getEntity());
+                    ConditionAction conditionAction = convertConditionActionSecondEntity(action);
+                    secondaryEntity = new SecondaryEntityDefinitionImpl(action.getPRDSecondaryEntity().getEntity(), action.getPRDSecondaryEntity().getPRDSelection().getCount(), conditionAction);
                     secondaryEntityDTO = action.getPRDSecondaryEntity().getEntity();
                 }
             }
@@ -615,8 +651,6 @@ public class EngineImpl implements Engine {
             return new SingleAction(world.getEntities().get(action.getEntity()), getExpression(action.getEntity(), propName, value), thenActionList, elseActionList, propName, operator, secondaryEntity);
         }
         //todo: handle this dont forget!!
-        action.getPRDSecondaryEntity().getPRDSelection().getPRDCondition();
-        action.getPRDSecondaryEntity().getPRDSelection().getCount();
 
         return null;
     }
@@ -648,7 +682,7 @@ public class EngineImpl implements Engine {
     }
 
     private Action calculateAccordingToMultiOrDivide(PRDAction action) {
-        EntityDefinition secondaryEntity = null;
+        SecondaryEntityDefinition secondaryEntity = null;
         String secondaryEntityDTO = null;
         List<Expression> myExpression = new ArrayList<>();
 
@@ -658,8 +692,8 @@ public class EngineImpl implements Engine {
             if (validationEngine.checkArgsAreNumeric(myExpression, action.getEntity(), action.getType(), world)) {
                 if (action.getPRDSecondaryEntity() != null) {
                     if(validationEngine.checkEntityExist(action.getPRDSecondaryEntity().getEntity(), world)) {
-                        secondaryEntity = world.getEntities().get(action.getPRDSecondaryEntity().getEntity());
-                        secondaryEntityDTO = action.getPRDSecondaryEntity().getEntity();
+                        ConditionAction conditionAction = convertConditionActionSecondEntity(action);
+                        secondaryEntity = new SecondaryEntityDefinitionImpl(action.getPRDSecondaryEntity().getEntity(), action.getPRDSecondaryEntity().getPRDSelection().getCount(), conditionAction);                        secondaryEntityDTO = action.getPRDSecondaryEntity().getEntity();
                     }
                 }
                 if(!actionDTOFlag)
@@ -673,8 +707,8 @@ public class EngineImpl implements Engine {
             if (validationEngine.checkArgsAreNumeric(myExpression, action.getEntity(), action.getType(), world)) {
                 if (action.getPRDSecondaryEntity() != null) {
                     if(validationEngine.checkEntityExist(action.getPRDSecondaryEntity().getEntity(), world)) {
-                        secondaryEntity = world.getEntities().get(action.getPRDSecondaryEntity().getEntity());
-                        secondaryEntityDTO = action.getPRDSecondaryEntity().getEntity();
+                        ConditionAction conditionAction = convertConditionActionSecondEntity(action);
+                        secondaryEntity = new SecondaryEntityDefinitionImpl(action.getPRDSecondaryEntity().getEntity(), action.getPRDSecondaryEntity().getPRDSelection().getCount(), conditionAction);                        secondaryEntityDTO = action.getPRDSecondaryEntity().getEntity();
                     }
                 }
                 if(!actionDTOFlag)
@@ -806,9 +840,9 @@ public class EngineImpl implements Engine {
     //endregion
     //region Termination
     private Termination getTerminationTermFromXML(PRDTermination prdTermination) {
-        return new TerminationImpl(120, 300);
-        /*int ticksCount = -1;
-        int secondCount = -1;
+        //return new TerminationImpl(120, 300,);
+        Integer ticksCount = null;
+        Integer secondCount = null;
         for (Object obj : prdTermination.getPRDBySecondOrPRDByTicks()) {
             if (obj instanceof PRDByTicks) {
                 PRDByTicks prdByTicks = (PRDByTicks) obj;
@@ -818,10 +852,12 @@ public class EngineImpl implements Engine {
                 secondCount = prdBySecond.getCount();
             }
         }
-        if (ticksCount > 0 && secondCount > 0)
-            return new TerminationImpl(ticksCount, secondCount);
+        if (ticksCount != null && secondCount != null)
+            return new TerminationImpl(ticksCount, secondCount,null);
+        else if(prdTermination.getPRDByUser() != null)
+            return new TerminationImpl(null, null,true);
         else
-            throw new InvalidTerminationTermsException("Simulation Termination terms are invalid Please check them again!");*/
+            throw new InvalidTerminationTermsException("Simulation Termination terms are invalid Please check them again!");
     }
 
     //endregion
@@ -844,26 +880,15 @@ public class EngineImpl implements Engine {
     }
 
     public RulesDTO getRulesDTO() {
-
-//        Map<String, RuleDTO> rulesDTO = new HashMap<>();
-//        for (Map.Entry<String, Rule> ruleEntry : world.getRules().entrySet()) {
-//            String ruleName = ruleEntry.getKey();
-//            Rule rule = ruleEntry.getValue();
-//            ActivationDTO activationDTO = new ActivationDTO(rule.getActivation().getProbability(), rule.getActivation().getTicks());
-//            List<ActionDTO> actionsDTOS = new ArrayList<>();
-//            for (Action action : rule.getActionsToPerform()) {
-//                //actionsDTOS.add(new ActionDTO(action.getActionType()));
-//            }
-//            rulesDTO.put(ruleName, new RuleDTO(ruleName, activationDTO, actionsDTOS));
-//        }
-//        return rulesDTO;
         return rulesDTO;
-
+    }
+    public GridDTO getGridDTO()
+    {
+        return new GridDTO(world.getGrid().getRows(),world.getGrid().getCols());
     }
 
     public TerminitionDTO getTerminationDTO(){
-        TerminitionDTO terminitionDTO = new TerminitionDTO(world.getTerminationTerm().getBySeconds(), world.getTerminationTerm().getByTicks());
-        return terminitionDTO;
+        return new TerminitionDTO(world.getTerminationTerm().getBySeconds(), world.getTerminationTerm().getByTicks(),world.getTerminationTerm().getByUser());
     }
     public SimulationInfoDTO getSimulationInfo(){
 //        SimulationInfoDTO simulationInfoDTO = new SimulationInfoDTO(getEntitiesDTO(),getRulesDTO(),getTerminationDTO());
@@ -940,11 +965,67 @@ public class EngineImpl implements Engine {
         createContext();
         int ticks = 0;
         boolean isTerminated = false;
+        List<Action> activeAction = new ArrayList<>();
+        List <EntityInstance> secondaryEntityInstance  = new ArrayList<>();
+        while (!isTerminated)
+        {
+            int finalTicks = ticks;
+            //creating coordinate for every entity instance
+            //todo:check how to move every entity instance
+            context.getEntityManager().getInstances().forEach(entityInstance ->
+            {
+                entityInstance.setCoordinate(world.getGrid().getRandomCoordinate(entityInstance));
+                context.setPrimaryInstance(entityInstance.getId());
+
+            });
+            world.getRules().forEach((name, rule) ->
+            {
+                if (rule.getActivation().isActive(finalTicks)) {
+                    rule.getActionsToPerform().forEach(action -> {
+                        activeAction.add(action);
+                    });
+                }
+            });
+
+            context.getEntityManager().getInstances().forEach(entityInstance -> {
+                activeAction.forEach(action -> {
+                    if (action.getContextEntity().getName().equals(entityInstance.getEntityDef().getName())) {
+                        if(action.hasSecondaryEntity()){
+                            secondaryEntityInstance.add(entityInstance);
+                        }
+                        else{
+                            action.invoke(context,finalTicks);
+                        }
+                    }
+                });
+            });
+
+            ticks++;
+            context.setCurrTick(ticks);
+            activateKillAction();
+            if(validationEngine.simulationEnded(ticks,simulationStart, world))
+                isTerminated = true;
+        }
+        String endReason = getTerminationReason(ticks,simulationStart);
+        createHistogram(Guid);
+        return Guid+ "\n" + endReason;
+    }
+    /*
+        public String runSimulation()
+    {
+        //region HistogramCreation
+        String Guid = UUID.randomUUID().toString();
+        Instant simulationStart = Instant.now();
+        //endregion
+        createContext();
+        int ticks = 0;
+        boolean isTerminated = false;
         while (!isTerminated)
         {
             int finalTicks = ticks;
             context.getEntityManager().getInstances().forEach(entityInstance ->
             {
+                entityInstance.setCoordinate(world.getGrid().getRandomCoordinate(entityInstance));
                 context.setPrimaryInstance(entityInstance.getId());
                 world.getRules().forEach((name, rule) ->
                 {
@@ -964,7 +1045,7 @@ public class EngineImpl implements Engine {
         String endReason = getTerminationReason(ticks,simulationStart);
         createHistogram(Guid);
         return Guid+ "\n" + endReason;
-    }
+    }*/
     //todo: ask noam if i can delete this arg: simulationStart
     private String getTerminationReason(int ticks, Instant simulationStart) {
         String ticksMsg = "The simulation has ended because " + ticks +" ticks has passed";

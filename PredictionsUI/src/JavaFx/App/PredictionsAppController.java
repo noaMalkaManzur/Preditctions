@@ -1,7 +1,6 @@
 package JavaFx.App;
 
-import Defenitions.EntityDefinitionDTO;
-import Defenitions.EnvironmentDefinitionDTO;
+import Defenitions.*;
 import JavaFx.SubComponents.body.BodyController;
 import JavaFx.SubComponents.header.HeaderController;
 import engine.api.Engine;
@@ -59,5 +58,17 @@ public class PredictionsAppController {
 
     public EnvironmentDefinitionDTO getEnvDTO() {
         return engine.getEnvDTO();
+    }
+
+    public RulesDTO getRulesDTO() {
+        return engine.getRulesDTO();
+    }
+
+    public GridDTO getGridDTO() {
+        return engine.getGridDTO();
+    }
+
+    public TerminitionDTO getTerminationDTO() {
+        return engine.getTerminationDTO();
     }
 }

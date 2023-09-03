@@ -5,6 +5,17 @@ import Enums.ActionTypeDTO;
 import Enums.MathActionDTO;
 
 public class CalculationDTO extends ActionDTO {
+    private final String result_Prop;
+    private final String firstArg;
+    private final String secondArg;
+    private final MathActionDTO mathType;
+    public CalculationDTO(ActionTypeDTO type, String primaryEntityName, String secondaryEntityName, String resultProp, String firstArg, String secondArg, MathActionDTO mathType) {
+        super(type, primaryEntityName, secondaryEntityName);
+        result_Prop = resultProp;
+        this.firstArg = firstArg;
+        this.secondArg = secondArg;
+        this.mathType = mathType;
+    }
     public String getResult_Prop() {
         return result_Prop;
     }
@@ -19,17 +30,5 @@ public class CalculationDTO extends ActionDTO {
 
     public MathActionDTO getMathType() {
         return mathType;
-    }
-
-    private final String result_Prop;
-    private final String firstArg;
-    private final String secondArg;
-    private final MathActionDTO mathType;
-    public CalculationDTO(ActionTypeDTO type, String primaryEntityName, String secondaryEntityName, String resultProp, String firstArg, String secondArg, MathActionDTO mathType) {
-        super(type, primaryEntityName, secondaryEntityName);
-        result_Prop = resultProp;
-        this.firstArg = firstArg;
-        this.secondArg = secondArg;
-        this.mathType = mathType;
     }
 }

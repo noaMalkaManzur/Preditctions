@@ -135,7 +135,7 @@ public class PredictionsManagment {
             simulationInfo.append("     Rule name: ").append(ruleDTO.getName()).append(System.lineSeparator());
             simulationInfo.append("         Is applied by ticks: ").
                     append(ruleDTO.getActivation().getTicks()).append(" and by probability of: ").
-                    append(ruleDTO.getActivation().getProbabilty()).append(System.lineSeparator());
+                    append(ruleDTO.getActivation().getProbability()).append(System.lineSeparator());
             simulationInfo.append("         Amount of action for this role: ").append(ruleDTO.getActions().size()).append(System.lineSeparator());
             for (ActionDTO actionDTO : ruleDTO.getActions()) {
                 simulationInfo.append("         Action type names: ").append(actionDTO.getType()).append(System.lineSeparator());

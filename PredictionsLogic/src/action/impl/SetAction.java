@@ -3,6 +3,7 @@ package action.impl;
 import Enums.ActionTypeDTO;
 import action.api.AbstractAction;
 import definition.entity.EntityDefinition;
+import definition.secondaryEntity.api.SecondaryEntityDefinition;
 import execution.context.Context;
 import execution.instance.property.PropertyInstance;
 import expression.api.Expression;
@@ -13,7 +14,8 @@ public class SetAction extends AbstractAction
 {
     private String property;
 
-    public SetAction(EntityDefinition entityDefinition, List<Expression> expressionList, String property, EntityDefinition secondaryEntityDef) {
+
+    public SetAction(EntityDefinition entityDefinition, List<Expression> expressionList, String property, SecondaryEntityDefinition secondaryEntityDef) {
         super(ActionTypeDTO.SET, entityDefinition, expressionList, secondaryEntityDef);
         this.property = property;
     }
@@ -43,5 +45,6 @@ public class SetAction extends AbstractAction
             propertyInstance.setCurrTickForValueChanged(currTickToChangeValue);
         }
     }
+
 
 }

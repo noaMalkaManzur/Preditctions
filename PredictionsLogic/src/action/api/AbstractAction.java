@@ -3,6 +3,7 @@ package action.api;
 import Enums.ActionTypeDTO;
 import definition.entity.EntityDefinition;
 import definition.property.api.PropertyType;
+import definition.secondaryEntity.api.SecondaryEntityDefinition;
 import execution.context.Context;
 import execution.instance.property.PropertyInstance;
 import expression.api.Expression;
@@ -12,10 +13,10 @@ import java.util.List;
 public abstract class AbstractAction implements Action {
     private ActionTypeDTO actionType;
     private final EntityDefinition primaryEntityDefinition;
-    private EntityDefinition secondaryEntityDefinition;
+    private SecondaryEntityDefinition secondaryEntityDefinition;
     private List<Expression> expressionList;
 
-    protected AbstractAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList, EntityDefinition secondaryEntityDefinition) {
+    protected AbstractAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList, SecondaryEntityDefinition secondaryEntityDefinition) {
         this.actionType = actionType;
         this.primaryEntityDefinition = entityDefinition;
         this.expressionList = expressionList;
@@ -38,6 +39,9 @@ public abstract class AbstractAction implements Action {
         return expressionList;
     }
     public ActionTypeDTO getActionType(){return actionType;}
-
+    @Override
+    public boolean hasSecondaryEntity() {
+        return secondaryEntityDefinition != null;
+    }
 
 }

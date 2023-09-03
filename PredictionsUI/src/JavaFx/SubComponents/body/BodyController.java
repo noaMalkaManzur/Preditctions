@@ -1,8 +1,6 @@
 package JavaFx.SubComponents.body;
 
-import Defenitions.EntityDefinitionDTO;
-import Defenitions.EnvPropertyDefinitionDTO;
-import Defenitions.EnvironmentDefinitionDTO;
+import Defenitions.*;
 import JavaFx.App.PredictionsAppController;
 import JavaFx.SubComponents.detailsTab.DetailsTabController;
 import javafx.fxml.FXML;
@@ -39,5 +37,14 @@ public class BodyController {
 
     public EnvironmentDefinitionDTO getEnvDTO() {
         return mainController.getEnvDTO();
+    }
+    public RulesDTO getRulesDTO(){return mainController.getRulesDTO();}
+
+    public GridDTO getGridDTO() {
+        return mainController.getGridDTO();
+    }
+
+    public TerminitionDTO getTerminationDTO() {
+        return mainController.getTerminationDTO();
     }
 }

@@ -41,6 +41,8 @@ public interface Engine
 
     HistogramByPropertyEntitiesDTO setHistogramPerProperty(String guid, String propName);
 
+    GridDTO getGridDTO();
+
 
     //endregion
 }

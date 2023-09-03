@@ -4,6 +4,7 @@ import Enums.ActionTypeDTO;
 import action.api.AbstractAction;
 import definition.entity.EntityDefinition;
 import definition.property.api.PropertyType;
+import definition.secondaryEntity.api.SecondaryEntityDefinition;
 import execution.context.Context;
 import execution.instance.property.PropertyInstance;
 import expression.api.Expression;
@@ -13,7 +14,7 @@ import java.util.List;
 public class IncreaseAction extends AbstractAction {
     private final String property;
 
-    public IncreaseAction(EntityDefinition entityDefinition, List<Expression> expressionList, String property, EntityDefinition secondaryEntityDef) {
+    public IncreaseAction(EntityDefinition entityDefinition, List<Expression> expressionList, String property, SecondaryEntityDefinition secondaryEntityDef) {
         super(ActionTypeDTO.INCREASE, entityDefinition, expressionList, secondaryEntityDef);
         this.property = property;
     }
