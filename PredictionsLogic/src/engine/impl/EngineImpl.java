@@ -959,14 +959,10 @@ public class EngineImpl implements Engine {
         while (!isTerminated)
         {
             int finalTicks = ticks;
-            //creating coordinate for every entity instance
-            //todo:check how to move every entity instance
-            context.getEntityManager().getInstances().forEach(entityInstance ->
-            {
-                entityInstance.setCoordinate(world.getGrid().getRandomCoordinate(entityInstance));
-                context.setPrimaryInstance(entityInstance.getId());
 
-            });
+            context.getEntityManager().getInstances().forEach(entityInstance ->
+                    entityInstance.setCoordinate(world.getGrid().getNextMove(entityInstance)));
+
             world.getRules().forEach((name, rule) ->
             {
                 if (rule.getActivation().isActive(finalTicks)) {
@@ -988,6 +984,7 @@ public class EngineImpl implements Engine {
                     }
                 });
             });
+
 
             ticks++;
             context.setCurrTick(ticks);
@@ -1062,6 +1059,8 @@ public class EngineImpl implements Engine {
                     for(int i = 0;i < value.getPopulation();i++)
                     {
                         entityInstanceManager.createEntityInstance(value);
+                        entityInstanceManager.getInstances().get(i).setCoordinate(world.getGrid().getRandomCoordinateInit(entityInstanceManager.getInstances().get(i)));
+
                     }
                 });
         primaryEntityInstance = entityInstanceManager.getInstances().get(0);
