@@ -6,6 +6,7 @@ import JavaFx.SubComponents.header.HeaderController;
 import engine.api.Engine;
 import javafx.beans.property.*;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ScrollPane;
 
 import java.util.Map;
@@ -43,9 +44,25 @@ public class PredictionsAppController {
     }
 
     public void readWorldData(String absolutePath) {
-        selectedFile.set(absolutePath);
-        engine.loadXmlFiles(absolutePath);
-        bodyComponentController.populateTree();
+        try {
+            engine.loadXmlFiles(absolutePath);
+            selectedFile.set(absolutePath);
+            bodyComponentController.populateTree();
+            bodyComponentController.enableTabPane();
+            Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
+            successAlert.setTitle("Success");
+            successAlert.setHeaderText(null);
+            successAlert.setContentText("Loaded file succeeded!");
+            successAlert.showAndWait();
+        } catch (RuntimeException exception) {
+            // Failure message
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+            errorAlert.setTitle("Error");
+            errorAlert.setHeaderText(null);
+            errorAlert.setContentText("Operation failed: " + exception.getMessage());
+            errorAlert.showAndWait();
+            bodyComponentController.clearTree();
+        }
     }
     public void setEngine(Engine engine)
     {

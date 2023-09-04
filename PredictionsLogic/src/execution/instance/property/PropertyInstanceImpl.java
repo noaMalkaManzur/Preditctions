@@ -4,7 +4,7 @@ import definition.property.api.PropertyDefinition;
 
 public class PropertyInstanceImpl implements PropertyInstance {
 
-    private PropertyDefinition propertyDefinition;
+    private final PropertyDefinition propertyDefinition;
     private Object value;
     private int currTickForValueChanged;
 
@@ -16,6 +16,7 @@ public class PropertyInstanceImpl implements PropertyInstance {
     public PropertyDefinition getPropertyDefinition() {
         return propertyDefinition;
     }
+
     @Override
     public Object getValue() {
         return value;
