@@ -7,7 +7,7 @@ import execution.instance.property.PropertyInstance;
 
 import java.util.List;
 
-public interface EntityInstanceManager {
+public interface    EntityInstanceManager {
 
     EntityInstance createEntityInstance(EntityDefinition entityDefinition);
     List<EntityInstance> getInstances();

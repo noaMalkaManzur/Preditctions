@@ -24,4 +24,5 @@ public class SecondaryEntityDefinitionImpl implements SecondaryEntityDefinition 
     public ConditionAction getConditionAction() {
         return conditionAction;
     }
+
 }

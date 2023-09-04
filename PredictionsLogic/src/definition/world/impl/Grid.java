@@ -65,30 +65,37 @@ public class Grid {
                 case 0:
                     if (checkIfValidCoordinate(leftCoordinate) && isCoordinateUnoccupied(leftCoordinate, cells)) {
                         resCoordinate = leftCoordinate;
+                        cells.remove(entityInstance.getId() -1);
+                        cells.add(new Cell(resCoordinate,true, entityInstance));
                         validMoveFound = true;
                     }
                     break;
                 case 1:
                     if (checkIfValidCoordinate(rightCoordinate) && isCoordinateUnoccupied(rightCoordinate, cells)) {
                         resCoordinate = rightCoordinate;
+                        cells.remove(entityInstance.getId() -1);
+                        cells.add(new Cell(resCoordinate,true, entityInstance));
                         validMoveFound = true;
                     }
                     break;
                 case 2:
                     if (checkIfValidCoordinate(upCoordinate) && isCoordinateUnoccupied(upCoordinate, cells)) {
                         resCoordinate = upCoordinate;
+                        cells.remove(entityInstance.getId() -1 );
+                        cells.add(new Cell(resCoordinate,true, entityInstance));
                         validMoveFound = true;
                     }
                     break;
                 case 3:
                     if (checkIfValidCoordinate(downCoordinate) && isCoordinateUnoccupied(downCoordinate, cells)) {
                         resCoordinate = downCoordinate;
+                        cells.remove(entityInstance.getId() - 1);
+                        cells.add(new Cell(resCoordinate,true, entityInstance));
                         validMoveFound = true;
                     }
                     break;
             }
         }
-
         return resCoordinate;
     }
 
