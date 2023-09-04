@@ -16,5 +16,4 @@ public interface Context {
     int getColumns();
     int getRows();
 
-
 }

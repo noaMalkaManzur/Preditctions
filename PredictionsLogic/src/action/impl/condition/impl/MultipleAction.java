@@ -20,7 +20,6 @@ public class MultipleAction extends ConditionAction {
         this.conditionList = conditionList;
         this.logic = logic;
     }
-
     @Override
     public boolean checkCondition(Context context) {
         boolean result;
@@ -32,5 +31,4 @@ public class MultipleAction extends ConditionAction {
         }
         return result;
     }
-
 }
