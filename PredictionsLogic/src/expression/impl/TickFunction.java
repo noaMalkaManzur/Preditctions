@@ -7,6 +7,7 @@ public class TickFunction extends  FunctionExpression{
     String entityName;
     public TickFunction(String... args) {
         super(eExpression.FUNCTION, args);
+        entityName = args[1];
     }
     @Override
     public Object calculateExpression(Context context) {

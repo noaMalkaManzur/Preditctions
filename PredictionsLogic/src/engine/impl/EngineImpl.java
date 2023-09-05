@@ -421,10 +421,14 @@ public class EngineImpl implements Engine {
         PRDCondition prdCondition = action.getPRDSecondaryEntity().getPRDSelection().getPRDCondition();
         String singularity = prdCondition.getSingularity();
         List<ConditionAction> conditionActionList = createConditionList(action.getPRDSecondaryEntity().getPRDSelection().getPRDCondition(), action);
-
+        List<Expression> expressionList = new ArrayList<>();
         if(singularity.toLowerCase().equals("single")) {
-             return new SingleAction(world.getEntities().get(prdCondition.getEntity()), getExpression(prdCondition.getEntity(),
-                    prdCondition.getProperty(), prdCondition.getValue()), null, null, prdCondition.getProperty(), prdCondition.getOperator(), null);
+//             return new SingleAction(world.getEntities().get(prdCondition.getEntity()), getExpression(prdCondition.getEntity(),
+//                    prdCondition.getProperty(), prdCondition.getValue()), null, null, prdCondition.getProperty(), prdCondition.getOperator(), null);
+            expressionList.add(getExpression(prdCondition.getEntity(),prdCondition.getProperty(), prdCondition.getProperty()).get(0));
+            expressionList.add(getExpression(prdCondition.getEntity(),prdCondition.getProperty(), prdCondition.getValue()).get(0));
+            return new SingleAction(world.getEntities().get(prdCondition.getEntity()), getExpression(prdCondition.getEntity(),
+                    prdCondition.getProperty(), prdCondition.getValue()), null, null, prdCondition.getOperator(), null);
         }
         else if(singularity.toLowerCase().equals("multiple")){
             return new MultipleAction(world.getEntities().get(prdCondition.getEntity()), getExpression(prdCondition.getEntity(),
@@ -554,11 +558,13 @@ public class EngineImpl implements Engine {
                     String valExpression = prdCondition.getValue();
                     String propertyName = prdCondition.getProperty();
                     //todo: change it too order number 6!!!!
-                    propertyName = getPropertyNameByExpression(propertyName);
-                    if (validationEngine.checkIfEntityHasProp(propertyName, prdCondition.getEntity(), world)) {
+                    //propertyName = getPropertyNameByExpression(propertyName);
+                    if (validationEngine.checkIfEntityHasProp(getPropertyNameByExpression(propertyName), prdCondition.getEntity(), world)) {
+                        List<Expression> expressionList = new ArrayList<>();
+                        expressionList.add(getExpression(action.getEntity(),null,propertyName).get(0));
+                        expressionList.add(getExpression(action.getEntity(),getPropertyNameByExpression(propertyName),prdCondition.getValue()).get(0));
                         conditionActionList.add(new SingleAction(world.getEntities().get(prdCondition.getEntity()),
-                                getExpression(prdCondition.getEntity(), propertyName, valExpression), null, null,
-                                propertyName, prdCondition.getOperator(), secondaryEntity));
+                               expressionList, null, null,prdCondition.getOperator(), secondaryEntity));
                     }
                 } else if (prdCondition.getSingularity().equals("multiple")) {
                     List<ConditionAction> multiCondList = createConditionList(prdCondition, action);
@@ -628,6 +634,9 @@ public class EngineImpl implements Engine {
         String propName = action.getPRDCondition().getProperty();
         String operator = action.getPRDCondition().getOperator();
         String value = action.getPRDCondition().getValue();
+        List<Expression> expressionList = new ArrayList<>();
+        expressionList.add(getExpression(action.getEntity(),action.getProperty(),action.getProperty()).get(0));
+        expressionList.add(getExpression(action.getEntity(),action.getProperty(),action.getPRDCondition().getValue()).get(0));
 
         if (validationEngine.checkIfEntityHasProp(propName, action.getEntity(), world)) {
             if (action.getPRDSecondaryEntity() != null) {
@@ -639,7 +648,7 @@ public class EngineImpl implements Engine {
             }
             if(!actionDTOFlag)
                 actionDTOS.add(new SingleDTO(ActionTypeDTO.CONDITION,action.getEntity(),secondaryEntityDTO,propName,operator,value,thenActionList.size(),elseActionList.size()));
-            return new SingleAction(world.getEntities().get(action.getEntity()), getExpression(action.getEntity(), propName, value), thenActionList, elseActionList, propName, operator, secondaryEntity);
+            return new SingleAction(world.getEntities().get(action.getEntity()), expressionList, thenActionList, elseActionList, operator, secondaryEntity);
         }
         //todo: handle this dont forget!!
 
@@ -752,7 +761,7 @@ public class EngineImpl implements Engine {
 
             if (parts.length == 2) {
                 String propertyName = parts[1];
-                myExpression.add(new TickFunction(propertyName));
+                myExpression.add(new TickFunction(propertyName,parts[0]));
             } else {
                 throw new IllegalArgumentException("Invalid input format");
             }

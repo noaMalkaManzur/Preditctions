@@ -13,15 +13,22 @@ import java.util.List;
 public abstract class ConditionAction extends AbstractAction {
     protected List<Action> thenActionList;
     protected List<Action> elseActionList;
-    protected String propertyName;
+    //protected String propertyName;
 
 
-    protected ConditionAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList, List<Action> thenActionList,List<Action> elseActionList, String propertyName, SecondaryEntityDefinition secondaryEntityDef) {
+//    protected ConditionAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList, List<Action> thenActionList,List<Action> elseActionList, String propertyName, SecondaryEntityDefinition secondaryEntityDef) {
+//        super(actionType, entityDefinition, expressionList, secondaryEntityDef);
+//        this.thenActionList = thenActionList;
+//        this.elseActionList = elseActionList;
+//        //this.propertyName = propertyName;
+//    }
+    protected ConditionAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList, List<Action> thenActionList,List<Action> elseActionList, SecondaryEntityDefinition secondaryEntityDef) {
         super(actionType, entityDefinition, expressionList, secondaryEntityDef);
         this.thenActionList = thenActionList;
         this.elseActionList = elseActionList;
-        this.propertyName = propertyName;
+        //this.propertyName = propertyName;
     }
+
 
 
     public abstract boolean checkCondition(Context context);
