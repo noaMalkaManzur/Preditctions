@@ -266,6 +266,7 @@ public class DetailsTabController{
         plusMinusScreenComponent.setVisible(false);
         calcScreenComponent.setVisible(false);
         singleScreenComponent.setVisible(false);
+        multipleScreenComponent.setVisible(false);
         setScreenComponent.setVisible(false);
         proximityScreenComponent.setVisible(false);
         killScreenComponent.setVisible(false);

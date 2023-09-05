@@ -15,16 +15,19 @@ public class SingleAction extends ConditionAction {
     String operator;
 
     public SingleAction(EntityDefinition entityDefinition, List<Expression> expressionList,
-                        List<Action> thenActionList, List<Action> elseActionList, String propertyName, String operator, SecondaryEntityDefinition secondaryEntityDef) {
-        super(ActionTypeDTO.CONDITION, entityDefinition, expressionList, thenActionList, elseActionList, propertyName,secondaryEntityDef);
+                        List<Action> thenActionList, List<Action> elseActionList, String operator, SecondaryEntityDefinition secondaryEntityDef) {
+        super(ActionTypeDTO.CONDITION, entityDefinition, expressionList, thenActionList, elseActionList,secondaryEntityDef);
         this.operator = operator;
     }
 
     @Override
     public boolean checkCondition(Context context) {
 
-        Object valueByExpression = getExpressionList().get(0).calculateExpression(context);
-        Object propValue = context.getPrimaryEntityInstance().getPropertyByName(propertyName).getValue();
+        Object propValue = getExpressionList().get(0).calculateExpression(context);
+
+        Object valueByExpression = getExpressionList().get(1).calculateExpression(context);
+
+        //Object propValue = context.getPrimaryEntityInstance().getPropertyByName(propertyName).getValue();
 
         switch (operator.toLowerCase()) {
             case "=":
