@@ -2,19 +2,23 @@ package Defenitions;
 
 public class TerminitionDTO
 {
-    private final double bySeconds;
-    private final double byTicks;
+    private final Integer bySeconds;
+    private final Integer byTicks;
+    private final Boolean byUser;
 
-    public double getBySeconds() {
+    public TerminitionDTO(Integer bySeconds, Integer byTicks, Boolean byUser) {
+        this.bySeconds = bySeconds;
+        this.byTicks = byTicks;
+        this.byUser = byUser;
+    }
+    public boolean getByUser() {
+        return byUser;
+    }
+    public Integer getBySeconds() {
         return bySeconds;
     }
 
-    public double getByTicks() {
+    public Integer getByTicks() {
         return byTicks;
-    }
-
-    public TerminitionDTO(double bySeconds, double byTicks) {
-        this.bySeconds = bySeconds;
-        this.byTicks = byTicks;
     }
 }

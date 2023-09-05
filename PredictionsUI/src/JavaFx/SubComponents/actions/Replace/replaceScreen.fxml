@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+
+<ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" visible="false" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="JavaFx.SubComponents.actions.Replace.ReplaceScreenController">
+   <content>
+      <TableView fx:id="tableViewComponent">
+        <columns>
+          <TableColumn fx:id="typeCol" prefWidth="44.0" text="Type" />
+          <TableColumn fx:id="primaryEntCol" prefWidth="111.0" text="Primary Entity" />
+            <TableColumn fx:id="secondaryEntCol" prefWidth="151.0" text="Secondary Entity" />
+            <TableColumn fx:id="killCol" prefWidth="38.0" text="Kill" />
+            <TableColumn fx:id="createCol" prefWidth="53.0" text="Create" />
+            <TableColumn fx:id="modeCol" prefWidth="53.0" text="Mode" />
+        </columns>
+      </TableView>
+   </content>
+</ScrollPane>

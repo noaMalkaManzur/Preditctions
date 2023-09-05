@@ -1,6 +1,5 @@
 package engine.Validaton.impl;
 
-import Generated.PRDAction;
 import Generated.PRDEnvProperty;
 import definition.environment.api.EnvVariablesManager;
 import definition.property.api.PropertyType;
@@ -49,16 +48,30 @@ public class ValidationEngineImpl implements ValidationEngine {
         return value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false");
     }
 
-    //todo: change back
-    @Override
-    public boolean checkEntityExist(PRDAction action, WorldDefinition world) {
-       /* if(action.getEntity() == null && action.getType().equals("proximity")){
-            return true;
+/*@Override
+public boolean checkEntityExist(PRDAction action, WorldDefinition world) {
+    if (action.getType().toLowerCase().contains("proximity")) {
+        if (!world.getEntities().containsKey(action.getPRDBetween().getSourceEntity())
+                || !world.getEntities().containsKey(action.getPRDBetween().getTargetEntity())) {
+            throw new EntityNotExistException("One or both entities do not exist in this world.");
         }
-        if(!world.getEntities().containsKey(action.getEntity()))
-        {
+    } else if (action.getType().toLowerCase().contains("replace")) {
+        if (!world.getEntities().containsKey(action.getKill())
+                || !world.getEntities().containsKey(action.getCreate())) {
+            throw new EntityNotExistException("One or both entities do not exist in this world.");
+        }
+    } else {
+        if (!world.getEntities().containsKey(action.getEntity())) {
             throw new EntityNotExistException("Entity: " + action.getEntity() + " does not exist in this world.");
-        }*/
+        }
+    }
+    return true;
+}*/
+    @Override
+    public boolean checkEntityExist(String entityName, WorldDefinition world) {
+        if (!world.getEntities().containsKey(entityName)) {
+            throw new EntityNotExistException("Entity: " + entityName + " does not exist in this world.");
+        }
         return true;
     }
 

@@ -24,18 +24,20 @@ public class EntityInstanceManagerImpl implements EntityInstanceManager {
         killList = new ArrayList<>();
     }
     @Override
-    public EntityInstance create(EntityDefinition entityDefinition) {
+    public EntityInstance createEntityInstance(EntityDefinition entityDefinition) {
         entitiesCount++;
         EntityInstance newEntityInstance = new EntityInstanceImpl(entityDefinition, entitiesCount);
         instances.add(newEntityInstance);
 
         for (Map.Entry<String, PropertyDefinition> propertyDefinition : entityDefinition.getProps().entrySet()) {
+
             Object value = propertyDefinition.getValue().generateValue();
             PropertyInstance newPropertyInstance = new PropertyInstanceImpl(propertyDefinition.getValue(), value);
             newEntityInstance.addPropertyInstance(newPropertyInstance);
         }
         return newEntityInstance;
     }
+
 
     @Override
     public List<EntityInstance> getInstances() {
@@ -51,6 +53,35 @@ public class EntityInstanceManagerImpl implements EntityInstanceManager {
         instances.removeIf(item -> item.getId() == id);
         setCurrPopulation(instances.size());
     }
+
+    @Override
+    public EntityInstance getEntityInstanceByName(String entityName) {
+        if (!instances.stream().anyMatch(entity -> entity.getEntityDef().getName().equals(entityName))) {
+            throw new IllegalArgumentException("Entity name was not found");
+        }
+
+        EntityInstance foundEntity = instances.stream()
+                .filter(entityInstance -> entityInstance.getEntityDef().getName().equals(entityName))
+                .findFirst()
+                .orElse(null);
+
+        return foundEntity;
+    }
+
+    @Override
+    public void addEntityInstance(EntityInstance entityInstanceToAdd) {
+        instances.add(entityInstanceToAdd);
+    }
+
+    @Override
+    public PropertyInstance createPropertyInstance(PropertyDefinition propertyDefinition) {
+
+        Object value = propertyDefinition.generateValue();
+        PropertyInstance newPropertyInstance = new PropertyInstanceImpl(propertyDefinition, value);
+
+        return newPropertyInstance;
+    }
+
     @Override
     public int getCurrPopulation() {
         return currPopulation;

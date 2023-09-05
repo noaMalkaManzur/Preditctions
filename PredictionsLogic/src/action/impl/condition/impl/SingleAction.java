@@ -4,6 +4,7 @@ import Enums.ActionTypeDTO;
 import action.api.Action;
 import action.impl.condition.api.ConditionAction;
 import definition.entity.EntityDefinition;
+import definition.secondaryEntity.api.SecondaryEntityDefinition;
 import execution.context.Context;
 import expression.api.Expression;
 
@@ -14,8 +15,8 @@ public class SingleAction extends ConditionAction {
     String operator;
 
     public SingleAction(EntityDefinition entityDefinition, List<Expression> expressionList,
-                        List<Action> thenActionList, List<Action> elseActionList, String propertyName, String operator) {
-        super(ActionTypeDTO.CONDITION, entityDefinition, expressionList, thenActionList, elseActionList, propertyName);
+                        List<Action> thenActionList, List<Action> elseActionList, String propertyName, String operator, SecondaryEntityDefinition secondaryEntityDef) {
+        super(ActionTypeDTO.CONDITION, entityDefinition, expressionList, thenActionList, elseActionList, propertyName,secondaryEntityDef);
         this.operator = operator;
     }
 

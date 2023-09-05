@@ -26,7 +26,7 @@ public class PredictionsApp extends Application {
         PredictionsAppController predictionsAppController = fxmlLoader.getController();
         predictionsAppController.setEngine(engine);
 
-        Scene scene = new Scene(load, 1000, 850);
+        Scene scene = new Scene(load);
         primaryStage.setTitle("Predictions Simulator");
         primaryStage.setScene(scene);
         primaryStage.show();

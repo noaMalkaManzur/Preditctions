@@ -4,6 +4,7 @@ import Enums.ActionTypeDTO;
 import action.api.Action;
 import action.impl.condition.api.ConditionAction;
 import definition.entity.EntityDefinition;
+import definition.secondaryEntity.api.SecondaryEntityDefinition;
 import execution.context.Context;
 import expression.api.Expression;
 
@@ -14,12 +15,11 @@ public class MultipleAction extends ConditionAction {
     String logic;
 
     public MultipleAction(EntityDefinition entityDefinition, List<Expression> expressionList,
-                          List<Action> thenActionList, List<Action> elseActionList, String propertyName, List<ConditionAction> conditionList, String logic) {
-        super(ActionTypeDTO.CONDITION, entityDefinition, expressionList, thenActionList, elseActionList, propertyName);
+                          List<Action> thenActionList, List<Action> elseActionList, String propertyName, List<ConditionAction> conditionList, String logic, SecondaryEntityDefinition secondaryEntityDef) {
+        super(ActionTypeDTO.CONDITION, entityDefinition, expressionList, thenActionList, elseActionList, propertyName, secondaryEntityDef);
         this.conditionList = conditionList;
         this.logic = logic;
     }
-
     @Override
     public boolean checkCondition(Context context) {
         boolean result;
@@ -31,5 +31,4 @@ public class MultipleAction extends ConditionAction {
         }
         return result;
     }
-
 }

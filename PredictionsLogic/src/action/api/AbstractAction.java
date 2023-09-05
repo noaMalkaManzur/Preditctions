@@ -3,6 +3,7 @@ package action.api;
 import Enums.ActionTypeDTO;
 import definition.entity.EntityDefinition;
 import definition.property.api.PropertyType;
+import definition.secondaryEntity.api.SecondaryEntityDefinition;
 import execution.context.Context;
 import execution.instance.property.PropertyInstance;
 import expression.api.Expression;
@@ -11,17 +12,19 @@ import java.util.List;
 
 public abstract class AbstractAction implements Action {
     private ActionTypeDTO actionType;
-    private final EntityDefinition entityDefinition;
+    private final EntityDefinition primaryEntityDefinition;
+    private SecondaryEntityDefinition secondaryEntityDefinition;
     private List<Expression> expressionList;
 
-    protected AbstractAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList) {
+    protected AbstractAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList, SecondaryEntityDefinition secondaryEntityDefinition) {
         this.actionType = actionType;
-        this.entityDefinition = entityDefinition;
+        this.primaryEntityDefinition = entityDefinition;
         this.expressionList = expressionList;
+        this.secondaryEntityDefinition = secondaryEntityDefinition;
     }
     @Override
     public EntityDefinition getContextEntity() {
-        return entityDefinition;
+        return primaryEntityDefinition;
     }
     @Override
     public Object getExpressionVal(Expression expression, Context context)
@@ -36,5 +39,11 @@ public abstract class AbstractAction implements Action {
         return expressionList;
     }
     public ActionTypeDTO getActionType(){return actionType;}
+    @Override
+    public boolean hasSecondaryEntity() {
+        return secondaryEntityDefinition != null;
+    }
+    @Override
+    public SecondaryEntityDefinition getSecondaryEntityDefinition(){return secondaryEntityDefinition;}
 
 }

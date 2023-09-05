@@ -5,6 +5,8 @@ import execution.instance.enitty.manager.EntityInstanceManager;
 import execution.instance.environment.api.ActiveEnvironment;
 import execution.instance.property.PropertyInstance;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class ContextImpl implements Context {
@@ -16,6 +18,7 @@ public class ContextImpl implements Context {
     private int currTick;
     private int rows;
     private int columns;
+    private List<EntityInstance> entitySecondaryInstances = new ArrayList<>();
 
     public ContextImpl(EntityInstance primaryEntityInstance, EntityInstanceManager entityInstanceManager,
                        ActiveEnvironment activeEnvironment, EntityInstance secondaryEntityInstance, int rows, int columns) {
@@ -49,7 +52,7 @@ public class ContextImpl implements Context {
     }
 
     @Override
-    public void setPrimaryInstacne(int idEntityInstance) {
+    public void setPrimaryInstance(int idEntityInstance) {
         Optional<EntityInstance> foundInstance = entityInstanceManager.getInstances()
                 .stream()
                 .filter(instance -> instance.getId() == idEntityInstance)
@@ -81,5 +84,6 @@ public class ContextImpl implements Context {
     public int getRows() {
         return rows;
     }
+
 
 }

@@ -9,13 +9,11 @@ public interface Context {
     EntityInstance getSecondaryEntityInstance();
     void removeEntity(EntityInstance entityInstance);
     PropertyInstance getEnvironmentVariable(String name);
-    void setPrimaryInstacne(int idEntityInstance);
+    void setPrimaryInstance(int idEntityInstance);
     EntityInstanceManager getEntityManager();
-
     void setCurrTick(int currTick);
     int getCurrTick();
     int getColumns();
     int getRows();
-
 
 }

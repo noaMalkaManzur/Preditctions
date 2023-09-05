@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+
+<ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" visible="false" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="JavaFx.SubComponents.actions.Proximity.ProximityScreenController">
+   <content>
+      <TableView fx:id="tableViewComponent" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+        <columns>
+          <TableColumn fx:id="typeCol" prefWidth="75.0" text="Type" />
+          <TableColumn fx:id="primaryEntCol" prefWidth="102.0" text="Primary Entity" />
+            <TableColumn fx:id="secondaryEntCol" prefWidth="102.0" text="Secondary Entity" />
+            <TableColumn fx:id="sourceCol" prefWidth="77.0" text="Source" />
+            <TableColumn fx:id="targetCol" prefWidth="68.0" text="Target" />
+            <TableColumn fx:id="depthCol" prefWidth="66.0" text="Depth" />
+            <TableColumn fx:id="actionsCol" prefWidth="106.0" text="Actions Count" />
+        </columns>
+      </TableView>
+   </content>
+</ScrollPane>

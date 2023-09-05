@@ -4,6 +4,7 @@ import Enums.ActionTypeDTO;
 import action.impl.calculation.api.CalculationAction;
 import definition.entity.EntityDefinition;
 import definition.property.api.PropertyType;
+import definition.secondaryEntity.api.SecondaryEntityDefinition;
 import execution.context.Context;
 import execution.instance.property.PropertyInstance;
 import expression.api.Expression;
@@ -12,8 +13,8 @@ import java.util.List;
 
 public class MultiplyAction extends CalculationAction {
 
-    public MultiplyAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList, String resultProp) {
-        super(actionType, entityDefinition, expressionList, resultProp);
+    public MultiplyAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList, String resultProp, SecondaryEntityDefinition secondaryEntityDef) {
+        super(actionType, entityDefinition, expressionList, resultProp,secondaryEntityDef);
     }
 
     @Override
@@ -47,4 +48,5 @@ public class MultiplyAction extends CalculationAction {
             propertyInstance.setCurrTickForValueChanged(currTickToChangeValue);
         }
     }
+
 }

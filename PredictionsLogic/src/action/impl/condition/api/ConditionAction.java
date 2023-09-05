@@ -4,6 +4,7 @@ import Enums.ActionTypeDTO;
 import action.api.AbstractAction;
 import action.api.Action;
 import definition.entity.EntityDefinition;
+import definition.secondaryEntity.api.SecondaryEntityDefinition;
 import execution.context.Context;
 import expression.api.Expression;
 
@@ -15,8 +16,8 @@ public abstract class ConditionAction extends AbstractAction {
     protected String propertyName;
 
 
-    protected ConditionAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList, List<Action> thenActionList,List<Action> elseActionList, String propertyName) {
-        super(actionType, entityDefinition, expressionList);
+    protected ConditionAction(ActionTypeDTO actionType, EntityDefinition entityDefinition, List<Expression> expressionList, List<Action> thenActionList,List<Action> elseActionList, String propertyName, SecondaryEntityDefinition secondaryEntityDef) {
+        super(actionType, entityDefinition, expressionList, secondaryEntityDef);
         this.thenActionList = thenActionList;
         this.elseActionList = elseActionList;
         this.propertyName = propertyName;

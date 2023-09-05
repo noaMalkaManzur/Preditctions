@@ -1,9 +1,6 @@
 package engine.api;
 
-import Defenitions.EntityDefinitionDTO;
-import Defenitions.EnvironmentDefinitionDTO;
-import Defenitions.RulesDTO;
-import Defenitions.TerminitionDTO;
+import Defenitions.*;
 import Instance.ActiveEnvDTO;
 import histogramDTO.HistogramByAmountEntitiesDTO;
 import histogramDTO.HistogramByPropertyEntitiesDTO;
@@ -18,10 +15,11 @@ public interface Engine
     void loadXmlFiles(String fileName);
     //endregion
     //region Command 2
-    Map<String, RulesDTO> getRulesDTO();
+    RulesDTO getRulesDTO();
     TerminitionDTO getTerminationDTO();
     Map<String, EntityDefinitionDTO> getEntitiesDTO();
-    public SimulationInfoDTO getSimulationInfo();
+    SimulationInfoDTO getSimulationInfo();
+    WorldDefinitionDTO getWorldDefinitionDTO();
     //endregion
     //region Command 3
     EnvironmentDefinitionDTO getEnvDTO();
@@ -42,5 +40,9 @@ public interface Engine
     HistogramByAmountEntitiesDTO createHistogramByAmountEntitiesDTO(String guid,String name);
 
     HistogramByPropertyEntitiesDTO setHistogramPerProperty(String guid, String propName);
+
+    GridDTO getGridDTO();
+
+
     //endregion
 }

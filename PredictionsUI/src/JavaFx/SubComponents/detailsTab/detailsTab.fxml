@@ -1,19 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
 
-
-<ScrollPane fitToHeight="true" fitToWidth="true" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="JavaFx.SubComponents.detailsTab.DetailsTabController">
+<ScrollPane fx:id="detailsComponent" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="JavaFx.SubComponents.detailsTab.DetailsTabController">
    <content>
-      <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0">
+      <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity">
          <left>
-            <TreeView fx:id="simTreeView" onContextMenuRequested="#selectedItem" onMouseClicked="#selectedItem" BorderPane.alignment="CENTER" />
+            <TreeView fx:id="treeViewComponent" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onContextMenuRequested="#selectedItem" onMouseClicked="#selectedItem" BorderPane.alignment="CENTER" />
          </left>
          <center>
-            <TextArea fx:id="detailsTextArea" BorderPane.alignment="CENTER" />
+            <StackPane fx:id="stackPaneComponent" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" visible="false" BorderPane.alignment="CENTER">
+               <children>
+                  <fx:include fx:id="envPropScreenComponent" source="../envProperty/envScreen.fxml" />
+                  <fx:include fx:id="entPropScreenComponent" source="../entProperty/entityScreen.fxml" />
+                  <fx:include fx:id="plusMinusScreenComponent" source="../actions/plusMinus/increaseDecreaseActions.fxml" />
+                  <fx:include fx:id="calcScreenComponent" source="../actions/Calculation/CalculationScreen.fxml" />
+                  <fx:include fx:id="singleScreenComponent" source="../actions/Condition/SingleScreen.fxml" />
+                  <fx:include fx:id="multipleScreenComponent" source="../actions/Condition/MultipleScreen.fxml" />
+                  <fx:include fx:id="setScreenComponent" source="../actions/Set/SetScreen.fxml" />
+                  <fx:include fx:id="killScreenComponent" source="../actions/Kill/KillScreen.fxml" />
+                  <fx:include fx:id="replaceScreenComponent" source="../actions/Replace/replaceScreen.fxml" />
+                  <fx:include fx:id="proximityScreenComponent" source="../actions/Proximity/proximityScreen.fxml" />
+                  <fx:include fx:id="activationScreenComponent" source="../activation/activationScreen.fxml" />
+                  <fx:include fx:id="gridScreenComponent" source="../grid/gridScreen.fxml" />
+                  <fx:include fx:id="terminationScreenComponent" source="../termination/terminationScreen.fxml" />
+               </children>
+            </StackPane>
          </center>
       </BorderPane>
    </content>
