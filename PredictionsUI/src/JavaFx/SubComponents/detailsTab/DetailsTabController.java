@@ -334,4 +334,11 @@ public class DetailsTabController{
         return ActionBranch;
     }
 
+    public void clearTree()
+    {
+        if (treeViewComponent.getRoot() != null) {
+            treeViewComponent.getRoot().getChildren().clear();
+            treeViewComponent.setRoot(null);
+        }
+    }
 }

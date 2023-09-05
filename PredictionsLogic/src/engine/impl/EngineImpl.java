@@ -957,7 +957,6 @@ public class EngineImpl implements Engine {
         int ticks = 0;
         boolean isTerminated = false;
         List<Action> activeAction = new ArrayList<>();
-        List<EntityInstance> entityInstancesFiltered = new ArrayList<>();
         while (!isTerminated)
         {
             int finalTicks = ticks;
@@ -970,25 +969,18 @@ public class EngineImpl implements Engine {
 
             });
             List<Action> finalActiveAction = activeAction;
-            Set<String> addedEntityNames = new HashSet<>();
 
             context.getEntityManager().getInstances().forEach(entityInstance -> {
                 finalActiveAction.forEach(action -> {
                     if (action.getContextEntity().getName().equals(entityInstance.getEntityDef().getName())) {
                         if (action.hasSecondaryEntity()) {
                             String secondaryEntityName = action.getSecondaryEntityDefinition().getName();
-                            if (!addedEntityNames.contains(secondaryEntityName)) {
-                                entityInstancesFiltered.addAll(
-                                        context.getEntityManager().getInstances().stream()
-                                                .filter(entityInstance1 -> entityInstance1.getEntityDef().getName().equals(secondaryEntityName))
-                                                .collect(Collectors.toList())
-                                );
-                                addedEntityNames.add(secondaryEntityName);
-                                handleSecondaryEntityList(action, entityInstancesFiltered, context);
-                            }
-                        } else {
-                            // action.invoke(context, finalTicks);
+                            List<EntityInstance> entityInstancesFiltered = context.getEntityManager().getInstances().stream()
+                                    .filter(entityInstance1 -> entityInstance1.getEntityDef().getName().equals(secondaryEntityName)).collect(Collectors.toList());
+                            entityInstancesFiltered = handleSecondaryEntityList(action, entityInstancesFiltered, context);
                         }
+                    } else {
+                        // action.invoke(context, finalTicks);
                     }
                 });
             });
