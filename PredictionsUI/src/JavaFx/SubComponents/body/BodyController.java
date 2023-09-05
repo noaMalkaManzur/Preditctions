@@ -5,12 +5,15 @@ import JavaFx.App.PredictionsAppController;
 import JavaFx.SubComponents.detailsTab.DetailsTabController;
 import javafx.fxml.FXML;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TabPane;
 
 import java.util.List;
 import java.util.Map;
 
 public class BodyController {
     private PredictionsAppController mainController;
+    @FXML
+    private TabPane tabPaneComponent;
 
     @FXML
     private ScrollPane detailsTabComponent;
@@ -46,5 +49,13 @@ public class BodyController {
 
     public TerminitionDTO getTerminationDTO() {
         return mainController.getTerminationDTO();
+    }
+
+    public void clearTree() {
+        detailsTabComponentController.clearTree();
+    }
+    public void enableTabPane()
+    {
+        tabPaneComponent.setDisable(false);
     }
 }
