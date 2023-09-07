@@ -3,6 +3,8 @@ package expression.impl;
 import execution.context.Context;
 import expression.api.eExpression;
 
+import java.util.Objects;
+
 public class EvaluateExpression extends FunctionExpression{
     String entityName;
     public EvaluateExpression(String... args) {
@@ -12,9 +14,8 @@ public class EvaluateExpression extends FunctionExpression{
     @Override
     public Object calculateExpression(Context context) {
 
-        if(entityName  == context.getPrimaryEntityInstance().toString())
+        if(Objects.equals(entityName, context.getPrimaryEntityInstance().toString()))
             return context.getPrimaryEntityInstance().getPropertyByName(args[0]).getValue();
-
         return context.getSecondaryEntityInstance().getPropertyByName(args[0]).getValue();
     }
     @Override

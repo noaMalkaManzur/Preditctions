@@ -131,9 +131,7 @@ public class EngineImpl implements Engine {
     //region Environment
     private void setEnvVariablesFromXML(EnvVariablesManager envManager, List<PRDEnvProperty> prdEnvProperty) {
         prdEnvProperty.stream()
-                .filter(envProp -> {
-                    return validationEngine.isValidEnvProp(envProp, envManager);
-                })
+                .filter(envProp -> validationEngine.isValidEnvProp(envProp, envManager))
                 .map(this::convertEnvProp)
                 .forEach(envManager::addEnvironmentVariable);
     }
@@ -421,16 +419,12 @@ public class EngineImpl implements Engine {
         String singularity = prdCondition.getSingularity();
         List<ConditionAction> conditionActionList = createConditionList(action.getPRDSecondaryEntity().getPRDSelection().getPRDCondition(), action);
         List<Expression> expressionList = new ArrayList<>();
-        if(singularity.toLowerCase().equals("single")) {
-//             return new SingleAction(world.getEntities().get(prdCondition.getEntity()), getExpression(prdCondition.getEntity(),
-//                    prdCondition.getProperty(), prdCondition.getValue()), null, null, prdCondition.getProperty(), prdCondition.getOperator(), null);
+        if(singularity.equalsIgnoreCase("single")) {
             expressionList.add(getExpression(prdCondition.getEntity(),prdCondition.getProperty(), prdCondition.getProperty()).get(0));
             expressionList.add(getExpression(prdCondition.getEntity(),prdCondition.getProperty(), prdCondition.getValue()).get(0));
             return new SingleAction(world.getEntities().get(prdCondition.getEntity()), expressionList, null, null, prdCondition.getOperator(), null);
-            /*return new SingleAction(world.getEntities().get(prdCondition.getEntity()), getExpression(prdCondition.getEntity(),
-                    prdCondition.getProperty(), prdCondition.getValue()), null, null, prdCondition.getOperator(), null);*/
         }
-        else if(singularity.toLowerCase().equals("multiple")){
+        else if(singularity.equalsIgnoreCase("multiple")){
             return new MultipleAction(world.getEntities().get(prdCondition.getEntity()), getExpression(prdCondition.getEntity(),
                     prdCondition.getProperty(), prdCondition.getValue()), null, null, prdCondition.getProperty(), conditionActionList, prdCondition.getLogical(), null);
         }
@@ -992,13 +986,10 @@ public class EngineImpl implements Engine {
                                     .filter(entityInstance1 -> entityInstance1.getEntityDef().getName().equals(secondaryEntityName)).collect(Collectors.toList());
                             //context.setEntitySecondaryList(handleSecondaryEntityList(action, entityInstancesFiltered, context));
                             afterConditionInstances  = handleSecondaryEntityList(action, entityInstancesFiltered, context);
-                            if(afterConditionInstances!= null) {
-                                afterConditionInstances.forEach(secondEntity -> {
-                                    context.setSecondEntity(secondEntity);
-                                    action.invoke(context, finalTicks);
-
-                                });
-                            }
+                            afterConditionInstances.forEach(secondEntity -> {
+                                context.setSecondEntity(secondEntity);
+                                action.invoke(context, finalTicks);
+                            });
                         }
                         else{
                             action.invoke(context, finalTicks);
