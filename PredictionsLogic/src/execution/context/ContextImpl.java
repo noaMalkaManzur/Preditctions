@@ -46,7 +46,6 @@ public class ContextImpl implements Context {
     public void removeEntity(EntityInstance entityInstance) {
         entityInstanceManager.killEntity(entityInstance.getId());
     }
-
     @Override
     public PropertyInstance getEnvironmentVariable(String name) {
         return activeEnvironment.getProperty(name);
@@ -65,12 +64,10 @@ public class ContextImpl implements Context {
     public EntityInstanceManager getEntityManager() {
         return entityInstanceManager;
     }
-
     @Override
     public void setCurrTick(int currTick) {
         this.currTick = currTick;
     }
-
     @Override
     public int getCurrTick() {
         return currTick;
@@ -94,7 +91,6 @@ public class ContextImpl implements Context {
     public List<EntityInstance> getEntitySecondaryList() {
         return entitySecondaryInstances;
     }
-
     @Override
     public void setSecondEntity(EntityInstance secondaryEntityInstance) {
         this.secondaryEntityInstance =  secondaryEntityInstance;

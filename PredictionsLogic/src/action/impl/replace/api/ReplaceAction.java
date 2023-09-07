@@ -22,7 +22,9 @@ public abstract class ReplaceAction extends AbstractAction {
     public abstract EntityInstance createEntityInstance(Context context);
     @Override
     public void invoke(Context context, int currTickToChangeValue) {
-        EntityInstance entityInstanceToKill = context.getEntityManager().getEntityInstanceByName(entityNameToKill);
+        //todo: need to handle getting entity instance to kill
+        //EntityInstance entityInstanceToKill = context.getEntityManager().getEntityInstanceByName(entityNameToKill);
+        EntityInstance entityInstanceToKill = context.getPrimaryEntityInstance();
         EntityDefinition entityDefinitionToKill = entityInstanceToKill.getEntityDef();
         //todo: handle sending null
         KillAction killAction = new KillAction(entityDefinitionToKill, null);

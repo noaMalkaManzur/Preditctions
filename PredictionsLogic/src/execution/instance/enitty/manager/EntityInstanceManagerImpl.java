@@ -55,7 +55,7 @@ public class EntityInstanceManagerImpl implements EntityInstanceManager {
         setCurrPopulation(instances.size());
     }
 
-    @Override
+/*    @Override
     public EntityInstance getEntityInstanceByName(String entityName) {
         if (!instances.stream().anyMatch(entity -> entity.getEntityDef().getName().equals(entityName))) {
             throw new IllegalArgumentException("Entity name was not found");
@@ -67,7 +67,7 @@ public class EntityInstanceManagerImpl implements EntityInstanceManager {
                 .orElse(null);
 
         return foundEntity;
-    }
+    }*/
 
     @Override
     public void addEntityInstance(EntityInstance entityInstanceToAdd) {

@@ -7,7 +7,6 @@ public class EnvironmentFunction extends FunctionExpression {
 
     public EnvironmentFunction(String... args) {
         super(eExpression.FUNCTION, args);
-
     }
     @Override
     public Object calculateExpression(Context context) {

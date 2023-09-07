@@ -998,9 +998,10 @@ public class EngineImpl implements Engine {
                                     action.invoke(context, finalTicks);
 
                                 });
-                            }else{
-                                action.invoke(context, finalTicks);
                             }
+                        }
+                        else{
+                            action.invoke(context, finalTicks);
                         }
                     }
                 });

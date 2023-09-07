@@ -20,7 +20,7 @@ public class PercentExpression extends FunctionExpression{
         if (Double.parseDouble(value2.toString()) == 0) {
             throw new IllegalArgumentException("Second argument cannot be zero");
         }
-        //todo: need to ask aviad about the type we are sending back, there is no decimal
+        //todo: need to ask aviad about the type we are sending back, there is no decimal if we can return double
         else{
             return Double.parseDouble(value1.toString()) /Double.parseDouble(value2.toString());
         }
