@@ -322,7 +322,6 @@ public class EngineImpl implements Engine {
         }
         //Create ActivationDTO
 
-
         return activation;
     }
 
@@ -427,8 +426,9 @@ public class EngineImpl implements Engine {
 //                    prdCondition.getProperty(), prdCondition.getValue()), null, null, prdCondition.getProperty(), prdCondition.getOperator(), null);
             expressionList.add(getExpression(prdCondition.getEntity(),prdCondition.getProperty(), prdCondition.getProperty()).get(0));
             expressionList.add(getExpression(prdCondition.getEntity(),prdCondition.getProperty(), prdCondition.getValue()).get(0));
-            return new SingleAction(world.getEntities().get(prdCondition.getEntity()), getExpression(prdCondition.getEntity(),
-                    prdCondition.getProperty(), prdCondition.getValue()), null, null, prdCondition.getOperator(), null);
+            return new SingleAction(world.getEntities().get(prdCondition.getEntity()), expressionList, null, null, prdCondition.getOperator(), null);
+            /*return new SingleAction(world.getEntities().get(prdCondition.getEntity()), getExpression(prdCondition.getEntity(),
+                    prdCondition.getProperty(), prdCondition.getValue()), null, null, prdCondition.getOperator(), null);*/
         }
         else if(singularity.toLowerCase().equals("multiple")){
             return new MultipleAction(world.getEntities().get(prdCondition.getEntity()), getExpression(prdCondition.getEntity(),
@@ -627,6 +627,7 @@ public class EngineImpl implements Engine {
     }
 
     private Action SingleConditionCal(PRDAction action) {
+
         SecondaryEntityDefinition secondaryEntity = null;
         String secondaryEntityDTO = null;
         List<Action> thenActionList = createThenActionList(action);
@@ -650,7 +651,6 @@ public class EngineImpl implements Engine {
                 actionDTOS.add(new SingleDTO(ActionTypeDTO.CONDITION,action.getEntity(),secondaryEntityDTO,propName,operator,value,thenActionList.size(),elseActionList.size()));
             return new SingleAction(world.getEntities().get(action.getEntity()), expressionList, thenActionList, elseActionList, operator, secondaryEntity);
         }
-        //todo: handle this dont forget!!
 
         return null;
     }
@@ -734,10 +734,12 @@ public class EngineImpl implements Engine {
                 handleRandomFunctionExpression(expressionVal, myExpression);
             }else if (expressionVal.toLowerCase().contains("ticks")) {
                 handleTicksFunctionExpression(expressionVal, myExpression);
+                //todo: change the propertyNAME By CHECKING PROP ACCORDING TO SECONDARY ENTITY NAME OR PRIMARY ENTITY NAME
             } else if (world.getEntities().get(entityName).getProps().containsKey(expressionVal)) {
                 myExpression.add(new PropertyExpression(expressionVal));
             }
             //todo: this is for the proximity action that we have to get a float number only
+            // in the action proximity there is no entity name, that why i did the if else
             else {
                 if (world.getEntities().containsKey(propName)) {
                     myExpression.add(new GeneralExpression(PropertyType.FLOAT, expressionVal));
@@ -966,6 +968,7 @@ public class EngineImpl implements Engine {
         int ticks = 0;
         boolean isTerminated = false;
         List<Action> activeAction = new ArrayList<>();
+        List<EntityInstance> afterConditionList = new ArrayList<>();
         while (!isTerminated)
         {
             int finalTicks = ticks;
@@ -983,17 +986,25 @@ public class EngineImpl implements Engine {
                 finalActiveAction.forEach(action -> {
                     if (action.getContextEntity().getName().equals(entityInstance.getEntityDef().getName())) {
                         if (action.hasSecondaryEntity()) {
+                            List<EntityInstance> afterConditionInstances = new ArrayList<>();
                             String secondaryEntityName = action.getSecondaryEntityDefinition().getName();
                             List<EntityInstance> entityInstancesFiltered = context.getEntityManager().getInstances().stream()
                                     .filter(entityInstance1 -> entityInstance1.getEntityDef().getName().equals(secondaryEntityName)).collect(Collectors.toList());
-                            entityInstancesFiltered = handleSecondaryEntityList(action, entityInstancesFiltered, context);
+                            //context.setEntitySecondaryList(handleSecondaryEntityList(action, entityInstancesFiltered, context));
+                            afterConditionInstances  = handleSecondaryEntityList(action, entityInstancesFiltered, context);
+                            if(afterConditionInstances!= null) {
+                                afterConditionInstances.forEach(secondEntity -> {
+                                    context.setSecondEntity(secondEntity);
+                                    action.invoke(context, finalTicks);
+
+                                });
+                            }else{
+                                action.invoke(context, finalTicks);
+                            }
                         }
-                    } else {
-                        // action.invoke(context, finalTicks);
                     }
                 });
             });
-
 
             ticks++;
             context.setCurrTick(ticks);
@@ -1022,17 +1033,15 @@ public class EngineImpl implements Engine {
             try {
                 int counter = Integer.parseInt(count);
                 int size = Math.min(counter, afterFilterSelection.size());
-                List<EntityInstance> randomItems = new ArrayList<>(afterFilterSelection);
-                Collections.shuffle(randomItems);
-                return randomItems.subList(0, size);
+                List<EntityInstance> randomList = new ArrayList<>(afterFilterSelection);
+                Collections.shuffle(randomList);
+                return randomList.subList(0, size);
 
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException("Selection for secondary entity is not a number or 'all'");
             }
         }
     }
-
-
 
 
     private List<Action> getActiveAction(int finalTicks) {

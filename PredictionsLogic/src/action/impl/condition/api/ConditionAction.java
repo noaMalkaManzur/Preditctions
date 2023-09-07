@@ -36,7 +36,7 @@ public abstract class ConditionAction extends AbstractAction {
     @Override
     public void invoke(Context context,  int currTickToChangeValue) {
 
-        if (this.checkCondition(context))
+            if (this.checkCondition(context))
         {
             thenActionList.forEach(action -> {
                 action.invoke(context, currTickToChangeValue);
