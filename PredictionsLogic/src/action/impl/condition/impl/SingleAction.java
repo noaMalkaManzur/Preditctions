@@ -29,7 +29,7 @@ public class SingleAction extends ConditionAction {
 
         //Object propValue = context.getPrimaryEntityInstance().getPropertyByName(propertyName).getValue();
 
-        switch (operator.toLowerCase()) {
+        switch(operator.toLowerCase()){
             case "=":
                 return propValue.equals(valueByExpression);
             case "!=":

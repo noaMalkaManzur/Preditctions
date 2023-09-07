@@ -12,13 +12,14 @@ import java.util.Optional;
 public class ContextImpl implements Context {
 
     private EntityInstance primaryEntityInstance;
-    private  EntityInstance secondaryEntityInstance;
+    private EntityInstance secondaryEntityInstance;
     private EntityInstanceManager entityInstanceManager;
     private ActiveEnvironment activeEnvironment;
     private int currTick;
     private int rows;
     private int columns;
     private List<EntityInstance> entitySecondaryInstances = new ArrayList<>();
+
 
     public ContextImpl(EntityInstance primaryEntityInstance, EntityInstanceManager entityInstanceManager,
                        ActiveEnvironment activeEnvironment, EntityInstance secondaryEntityInstance, int rows, int columns) {
@@ -85,5 +86,18 @@ public class ContextImpl implements Context {
         return rows;
     }
 
+    @Override
+    public void setEntitySecondaryList(List<EntityInstance> entitySecondaryList) {
+        this.entitySecondaryInstances = entitySecondaryList;
+    }
+    @Override
+    public List<EntityInstance> getEntitySecondaryList() {
+        return entitySecondaryInstances;
+    }
+
+    @Override
+    public void setSecondEntity(EntityInstance secondaryEntityInstance) {
+        this.secondaryEntityInstance =  secondaryEntityInstance;
+    }
 
 }

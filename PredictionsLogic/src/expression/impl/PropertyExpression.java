@@ -12,6 +12,14 @@ public class PropertyExpression extends FunctionExpression {
 
     @Override
     public Object calculateExpression(Context context) {
+
+        if(context.getSecondaryEntityInstance() != null) {
+            String nameSecondaryEntity = context.getSecondaryEntityInstance().getEntityDef().getName();
+            if(context.getPrimaryEntityInstance().getEntityDef().getName()  == nameSecondaryEntity){
+                return context.getSecondaryEntityInstance().getPropertyByName(args[0]).getValue();
+            }
+
+        }
         return context.getPrimaryEntityInstance().getPropertyByName(args[0]).getValue();
     }
 

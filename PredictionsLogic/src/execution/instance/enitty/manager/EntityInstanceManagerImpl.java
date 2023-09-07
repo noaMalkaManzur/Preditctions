@@ -46,7 +46,8 @@ public class EntityInstanceManagerImpl implements EntityInstanceManager {
 
     @Override
     public void killEntity(int id) {
-        killList.add(id);
+        if(!killList.contains(id))
+            killList.add(id);
     }
     @Override
     public void executeKill(int id) {
