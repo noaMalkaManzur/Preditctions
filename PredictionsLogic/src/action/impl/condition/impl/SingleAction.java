@@ -34,7 +34,7 @@ public class SingleAction extends ConditionAction {
                 return propValue.equals(valueByExpression);
             case "!=":
                 return !propValue.equals(valueByExpression);
-            case"bt":
+            case "bt":
                 return Bt(propValue,valueByExpression);
             case "lt":
                 return Lt(propValue,valueByExpression);
