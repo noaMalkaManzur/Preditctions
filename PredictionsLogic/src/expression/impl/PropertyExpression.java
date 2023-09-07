@@ -3,22 +3,22 @@ package expression.impl;
 import execution.context.Context;
 import expression.api.eExpression;
 
+import java.util.Objects;
+
 public class PropertyExpression extends FunctionExpression {
 
     public PropertyExpression(String... args) {
         super(eExpression.PROPERTY, args);
 
     }
-
     @Override
     public Object calculateExpression(Context context) {
 
         if(context.getSecondaryEntityInstance() != null) {
             String nameSecondaryEntity = context.getSecondaryEntityInstance().getEntityDef().getName();
-            if(context.getPrimaryEntityInstance().getEntityDef().getName()  == nameSecondaryEntity){
+            if(Objects.equals(context.getPrimaryEntityInstance().getEntityDef().getName(), nameSecondaryEntity)){
                 return context.getSecondaryEntityInstance().getPropertyByName(args[0]).getValue();
             }
-
         }
         return context.getPrimaryEntityInstance().getPropertyByName(args[0]).getValue();
     }

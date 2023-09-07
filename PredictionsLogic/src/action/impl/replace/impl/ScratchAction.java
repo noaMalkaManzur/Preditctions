@@ -19,8 +19,10 @@ public class ScratchAction extends ReplaceAction {
     @Override
     public EntityInstance createEntityInstance(Context context) {
 
-        EntityInstance entityInstanceToKill = context.getEntityManager().getEntityInstanceByName(entityNameToKill);
-        EntityInstance entityInstanceToCreate = context.getEntityManager().getEntityInstanceByName(entityNameToCreate);
+        EntityInstance entityInstanceToKill = context.getPrimaryEntityInstance();
+        //EntityInstance entityInstanceToKill = context.getEntityManager().getEntityInstanceByName(entityNameToKill);
+        //EntityInstance entityInstanceToCreate = context.getEntityManager().getEntityInstanceByName(entityNameToCreate);
+        EntityInstance entityInstanceToCreate = context.getSecondaryEntityInstance();
         EntityDefinition entityDefinitionToCreate = entityInstanceToCreate.getEntityDef();
         EntityDefinition entityDefinitionRes = new EntityDefinitionImpl(entityNameToCreate,entityDefinitionToCreate.getPopulation());
 
@@ -32,7 +34,6 @@ public class ScratchAction extends ReplaceAction {
         });
 
         return resEntityInstance;
-
     }
 
 }

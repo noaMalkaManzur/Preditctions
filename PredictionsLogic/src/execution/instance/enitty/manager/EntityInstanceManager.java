@@ -7,7 +7,7 @@ import execution.instance.property.PropertyInstance;
 
 import java.util.List;
 
-public interface    EntityInstanceManager {
+public interface EntityInstanceManager {
 
     EntityInstance createEntityInstance(EntityDefinition entityDefinition);
     List<EntityInstance> getInstances();
@@ -18,7 +18,7 @@ public interface    EntityInstanceManager {
     public void clearKillList();
     public void setKillList(List<Integer> killList);
     public void executeKill(int id);
-    public EntityInstance getEntityInstanceByName(String entityName);
+    //public EntityInstance getEntityInstanceByName(String entityName);
     void addEntityInstance(EntityInstance entityInstanceToAdd);
     PropertyInstance createPropertyInstance(PropertyDefinition propertyDefinition);
 }

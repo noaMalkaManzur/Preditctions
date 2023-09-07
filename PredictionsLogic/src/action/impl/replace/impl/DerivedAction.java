@@ -21,11 +21,13 @@ public class DerivedAction extends ReplaceAction {
 
     @Override
     public EntityInstance createEntityInstance(Context context) {
-
-        EntityInstance entityInstanceToKill = context.getEntityManager().getEntityInstanceByName(entityNameToKill);
+        //todo: need to handle sending the entity to kill and entity to create
+        //EntityInstance entityInstanceToKill = context.getEntityManager().getEntityInstanceByName(entityNameToKill);
+        EntityInstance entityInstanceToKill = context.getPrimaryEntityInstance();
         EntityDefinition entityDefinitionToKill = entityInstanceToKill.getEntityDef();
 
-        EntityInstance entityInstanceToCreate = context.getEntityManager().getEntityInstanceByName(entityNameToCreate);
+        //EntityInstance entityInstanceToCreate = context.getEntityManager().getEntityInstanceByName(entityNameToCreate);
+        EntityInstance entityInstanceToCreate = context.getSecondaryEntityInstance();
         EntityDefinition entityDefinitionToCreate = entityInstanceToCreate.getEntityDef();
 
         EntityDefinition entityDefinitionRes = new EntityDefinitionImpl(entityNameToCreate,entityDefinitionToKill.getPopulation());
