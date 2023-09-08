@@ -125,7 +125,9 @@ public class EngineImpl implements Engine {
         }
     }
     private Grid getGridFromFile(PRDWorld prdWorld) {
-        return new Grid(prdWorld.getPRDGrid().getRows(),prdWorld.getPRDGrid().getColumns());
+        rows = prdWorld.getPRDGrid().getRows();
+        columns = prdWorld.getPRDGrid().getColumns();
+        return new Grid(rows,columns);
     }
 
     //region Environment
@@ -483,12 +485,16 @@ public class EngineImpl implements Engine {
                 secondaryEntityDTO = action.getPRDSecondaryEntity().getEntity();
             }
         }
+        else{
+            secondaryEntity = new SecondaryEntityDefinitionImpl(action.getPRDBetween().getTargetEntity(), null, null);
+            secondaryEntityDTO = action.getPRDBetween().getTargetEntity();
+        }
         //ToDO: w8 for answer from behema
         if(!actionDTOFlag)
             actionDTOS.add(new ProximityDTO(ActionTypeDTO.PROXIMITY,action.getPRDBetween().getSourceEntity(),
                 secondaryEntityDTO,action.getPRDBetween().getSourceEntity(),action.getPRDBetween().getTargetEntity()
                 ,action.getPRDEnvDepth().getOf(),proximityActionList.size()));
-        return new ProximityAction(entityDefinition, expressionList,proximityActionList, secondaryEntity);
+        return new ProximityAction(entityDefinition, expressionList,proximityActionList, secondaryEntity, action.getPRDBetween().getTargetEntity());
     }
 
     private List<Action> proximitiyActionList(PRDAction action) {
@@ -736,7 +742,7 @@ public class EngineImpl implements Engine {
             // in the action proximity there is no entity name, that why i did the if else
             else {
                 if (world.getEntities().containsKey(propName)) {
-                    myExpression.add(new GeneralExpression(PropertyType.FLOAT, expressionVal));
+                    myExpression.add(new GeneralExpression(PropertyType.DECIMAL, expressionVal));
                 }
                 else{
                     myExpression.add(new GeneralExpression(world.getEntities().get(entityName).getProps().get(propName).getType(), expressionVal));
@@ -969,14 +975,11 @@ public class EngineImpl implements Engine {
 
             moveEntities();
             activeAction = getActiveAction(finalTicks);
-            context.getEntityManager().getInstances().forEach(entityInstance ->
-            {
-                context.setPrimaryInstance(entityInstance.getId());
 
-            });
             List<Action> finalActiveAction = activeAction;
 
             context.getEntityManager().getInstances().forEach(entityInstance -> {
+                context.setPrimaryInstance(entityInstance.getId());
                 finalActiveAction.forEach(action -> {
                     if (action.getContextEntity().getName().equals(entityInstance.getEntityDef().getName())) {
                         if (action.hasSecondaryEntity()) {
@@ -984,7 +987,6 @@ public class EngineImpl implements Engine {
                             String secondaryEntityName = action.getSecondaryEntityDefinition().getName();
                             List<EntityInstance> entityInstancesFiltered = context.getEntityManager().getInstances().stream()
                                     .filter(entityInstance1 -> entityInstance1.getEntityDef().getName().equals(secondaryEntityName)).collect(Collectors.toList());
-                            //context.setEntitySecondaryList(handleSecondaryEntityList(action, entityInstancesFiltered, context));
                             afterConditionInstances  = handleSecondaryEntityList(action, entityInstancesFiltered, context);
                             afterConditionInstances.forEach(secondEntity -> {
                                 context.setSecondEntity(secondEntity);
@@ -1087,7 +1089,6 @@ public class EngineImpl implements Engine {
                 });
         primaryEntityInstance = entityInstanceManager.getInstances().get(0);
         primaryEntStartPop = primaryEntityInstance.getEntityDef().getPopulation();
-        //todo: give the values to rows and columns
         context = new ContextImpl(primaryEntityInstance,entityInstanceManager,activeEnvironment, null, rows, columns);
 
     }

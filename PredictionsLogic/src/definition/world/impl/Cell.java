@@ -19,4 +19,5 @@ public class Cell {
     public Coordinate getCoordinate(){
         return  coordinate;
     }
+    public EntityInstance getEntityInstance(){return entityInstance;}
 }

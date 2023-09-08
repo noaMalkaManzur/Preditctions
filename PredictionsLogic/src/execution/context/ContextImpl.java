@@ -1,5 +1,6 @@
 package execution.context;
 
+import definition.world.impl.Grid;
 import execution.instance.enitty.EntityInstance;
 import execution.instance.enitty.manager.EntityInstanceManager;
 import execution.instance.environment.api.ActiveEnvironment;
@@ -19,6 +20,7 @@ public class ContextImpl implements Context {
     private int rows;
     private int columns;
     private List<EntityInstance> entitySecondaryInstances = new ArrayList<>();
+    Grid grid;
 
 
     public ContextImpl(EntityInstance primaryEntityInstance, EntityInstanceManager entityInstanceManager,
@@ -30,6 +32,7 @@ public class ContextImpl implements Context {
         this.secondaryEntityInstance = secondaryEntityInstance;
         this.rows= rows;
         this.columns = columns;
+        this.grid = new Grid(rows, columns);
     }
 
     @Override
@@ -94,6 +97,10 @@ public class ContextImpl implements Context {
     @Override
     public void setSecondEntity(EntityInstance secondaryEntityInstance) {
         this.secondaryEntityInstance =  secondaryEntityInstance;
+    }
+    @Override
+    public Grid getGrid(){
+        return  grid;
     }
 
 }

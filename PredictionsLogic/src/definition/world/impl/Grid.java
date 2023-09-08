@@ -1,5 +1,6 @@
 package definition.world.impl;
 
+import execution.context.Context;
 import execution.instance.enitty.EntityInstance;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ public class Grid {
     }
 
     boolean checkIfValidCoordinate(Coordinate coordinate) {
-        return coordinate.getX() >= 0 && coordinate.getX() <= rows && coordinate.getY() >= 0 && coordinate.getY() <= cols;
+        return coordinate.getX() >= 0 && coordinate.getX() < rows && coordinate.getY() >= 0 && coordinate.getY() < cols;
     }
     public Coordinate getRandomCoordinateInit(EntityInstance entityInstance) {
         Random random = new Random();
@@ -108,22 +109,23 @@ public class Grid {
         int dy = Math.abs(source.getY() - y);
         return Math.max(dx, dy);
     }
-    public Collection<Coordinate> findEnvironmentCells(Coordinate source, int rank) {
-        List<Coordinate> environmentCells = new ArrayList<>();
-        if(checkIfValidCoordinate(source)) {
+    public Collection<Cell> findEnvironmentCells(Coordinate source, int rank, Context context) {
+
+        if (!checkIfValidCoordinate(source)) {
+            throw new IllegalArgumentException("Source coordinate is out of boundaries");
+        }
+        List<Cell> environmentCells = new ArrayList<>();
+
+        context.getEntityManager().getInstances().forEach(entityInstance -> {
             for (int i = source.getX() - rank; i <= source.getX() + rank; i++) {
                 for (int j = source.getY() - rank; j <= source.getY() + rank; j++) {
-                    if (checkIfValidCoordinate(new Coordinate(i, j)) && distance(source, i, j) <= rank) {
-                        environmentCells.add(new Coordinate(i, j));
+                    Coordinate currentCoordinate = new Coordinate(i, j);
+                    if (checkIfValidCoordinate(currentCoordinate) && distance(source, i, j) <= rank) {
+                        environmentCells.add(new Cell(currentCoordinate,true,entityInstance ));
                     }
                 }
             }
-        }
-        else{
-            throw new IllegalArgumentException("Source coordinate is out of boundaries");
-        }
-
+        });
         return environmentCells;
     }
-
 }

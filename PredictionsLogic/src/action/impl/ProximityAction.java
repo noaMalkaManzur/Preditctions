@@ -6,8 +6,7 @@ import action.api.Action;
 import definition.entity.EntityDefinition;
 import definition.property.api.PropertyType;
 import definition.secondaryEntity.api.SecondaryEntityDefinition;
-import definition.world.impl.Coordinate;
-import definition.world.impl.Grid;
+import definition.world.impl.Cell;
 import execution.context.Context;
 import execution.instance.enitty.EntityInstance;
 import expression.api.Expression;
@@ -17,11 +16,12 @@ import java.util.List;
 
 public class ProximityAction  extends AbstractAction {
     List<Action> actionList;
+    String targetName;
 
-    public ProximityAction(EntityDefinition entityDefinition, List<Expression> expressionList,List<Action> actionList, SecondaryEntityDefinition secondaryEntityDef ) {
+    public ProximityAction(EntityDefinition entityDefinition, List<Expression> expressionList,List<Action> actionList, SecondaryEntityDefinition secondaryEntityDef, String targetName ) {
         super(ActionTypeDTO.PROXIMITY, entityDefinition, expressionList, secondaryEntityDef);
         this.actionList = actionList;
-
+        this.targetName = targetName;
     }
     @Override
     public void invoke(Context context, int currTickToChangeValue) {
@@ -32,24 +32,16 @@ public class ProximityAction  extends AbstractAction {
     }
 
     private boolean checkProximity(Context context){
-        EntityInstance primaryEntityInstance = context.getPrimaryEntityInstance();
-        EntityInstance secondaryEntityInstance = context.getSecondaryEntityInstance();
 
-        Coordinate primaryEntityCoordinate = primaryEntityInstance.getCoordinate();
-        Coordinate secondaryEntityCoordinate = secondaryEntityInstance.getCoordinate();
-        //todo: check if it is ok to use decimal because the rank need to be int!!
         int rank = PropertyType.DECIMAL.convert(getExpressionVal(getExpressionList().get(0), context));
-        Grid grid = new Grid(context.getRows(), context.getColumns());
-        Collection<Coordinate> coordinateCollection =  grid.findEnvironmentCells(primaryEntityCoordinate, rank);
-        return checkIfCoordinateInCollection(coordinateCollection, secondaryEntityCoordinate);
-    }
-    private boolean checkIfCoordinateInCollection(Collection<Coordinate> coordinateCollection, Coordinate secondaryEntityCoordinate) {
-        for (Coordinate coordinate : coordinateCollection) {
-            if (coordinate.getX() == secondaryEntityCoordinate.getX() && coordinate.getY() == secondaryEntityCoordinate.getY()) {
+        EntityInstance primaryEntityInstance = context.getPrimaryEntityInstance();
+        Collection<Cell> coordinateCollection  = context.getGrid().findEnvironmentCells(primaryEntityInstance.getCoordinate(), rank, context);
+
+        for (Cell cell : coordinateCollection) {
+            if (cell.getEntityInstance() != null && cell.getEntityInstance().getEntityDef().getName().equals(targetName)) {
                 return true;
             }
         }
         return false;
     }
-
 }
