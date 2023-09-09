@@ -24,7 +24,8 @@ public class ScratchAction extends ReplaceAction {
         //EntityInstance entityInstanceToCreate = context.getEntityManager().getEntityInstanceByName(entityNameToCreate);
         EntityInstance entityInstanceToCreate = context.getSecondaryEntityInstance();
         EntityDefinition entityDefinitionToCreate = entityInstanceToCreate.getEntityDef();
-        EntityDefinition entityDefinitionRes = new EntityDefinitionImpl(entityNameToCreate,entityDefinitionToCreate.getPopulation());
+        EntityDefinition entityDefinitionRes = new EntityDefinitionImpl(entityNameToCreate);
+        entityDefinitionRes.setPopulation(entityDefinitionToCreate.getPopulation());
 
         EntityInstance resEntityInstance = new EntityInstanceImpl(entityDefinitionRes,entityInstanceToKill.getId());
 

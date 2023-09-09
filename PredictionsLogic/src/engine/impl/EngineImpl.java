@@ -180,7 +180,7 @@ public class EngineImpl implements Engine {
 
         for (PRDEntity entity : entities.getPRDEntity()) {
             //todo: we get the population from the user
-            EntityDefinition entityDefinition = new EntityDefinitionImpl(entity.getName(), 5);
+            EntityDefinition entityDefinition = new EntityDefinitionImpl(entity.getName());
             for (PRDProperty prdProperty : entity.getPRDProperties().getPRDProperty())
                 if (entityDefinition.getProps().containsKey(prdProperty.getPRDName()))
                     throw new PropertyAlreadyExsitException("Entity:" + entity.getName() + " already have a property name:" + prdProperty.getPRDName());
