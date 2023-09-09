@@ -1,5 +1,6 @@
 package execution.context;
 
+import definition.world.impl.Grid;
 import execution.instance.enitty.EntityInstance;
 import execution.instance.enitty.manager.EntityInstanceManager;
 import execution.instance.property.PropertyInstance;
@@ -20,5 +21,5 @@ public interface Context {
     void setEntitySecondaryList(List<EntityInstance> entitySecondaryList);
     List<EntityInstance> getEntitySecondaryList();
     void setSecondEntity(EntityInstance secondaryEntityInstance);
-
+    Grid getGrid();
 }
