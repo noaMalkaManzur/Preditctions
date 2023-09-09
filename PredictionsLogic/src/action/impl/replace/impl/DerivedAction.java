@@ -30,7 +30,8 @@ public class DerivedAction extends ReplaceAction {
         EntityInstance entityInstanceToCreate = context.getSecondaryEntityInstance();
         EntityDefinition entityDefinitionToCreate = entityInstanceToCreate.getEntityDef();
 
-        EntityDefinition entityDefinitionRes = new EntityDefinitionImpl(entityNameToCreate,entityDefinitionToKill.getPopulation());
+        EntityDefinition entityDefinitionRes = new EntityDefinitionImpl(entityNameToCreate);
+        entityDefinitionRes.setPopulation(entityDefinitionToKill.getPopulation());
         EntityInstance resEntityInstance = new EntityInstanceImpl(entityDefinitionRes, entityInstanceToKill.getId());
 
         entityDefinitionToCreate.getProps().forEach((propertyName, propertyDefinition)->{

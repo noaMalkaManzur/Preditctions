@@ -11,9 +11,8 @@ public class EntityDefinitionImpl implements EntityDefinition {
     private int population;
     private final Map<String,PropertyDefinition> properties;
 
-    public EntityDefinitionImpl(String name, int population) {
+    public EntityDefinitionImpl(String name) {
         this.name = name;
-        this.population = population;
         properties = new HashMap<>();
     }
 

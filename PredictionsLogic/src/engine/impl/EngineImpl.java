@@ -180,7 +180,7 @@ public class EngineImpl implements Engine {
 
         for (PRDEntity entity : entities.getPRDEntity()) {
             //todo: we get the population from the user
-            EntityDefinition entityDefinition = new EntityDefinitionImpl(entity.getName(), 5);
+            EntityDefinition entityDefinition = new EntityDefinitionImpl(entity.getName());
             for (PRDProperty prdProperty : entity.getPRDProperties().getPRDProperty())
                 if (entityDefinition.getProps().containsKey(prdProperty.getPRDName()))
                     throw new PropertyAlreadyExsitException("Entity:" + entity.getName() + " already have a property name:" + prdProperty.getPRDName());
@@ -1022,10 +1022,12 @@ public class EngineImpl implements Engine {
                             List<EntityInstance> entityInstancesFiltered = context.getEntityManager().getInstances().stream()
                                     .filter(entityInstance1 -> entityInstance1.getEntityDef().getName().equals(secondaryEntityName)).collect(Collectors.toList());
                             afterConditionInstances  = handleSecondaryEntityList(action, entityInstancesFiltered, context);
-                            afterConditionInstances.forEach(secondEntity -> {
-                                context.setSecondEntity(secondEntity);
-                                action.invoke(context, finalTicks);
-                            });
+                            if (afterConditionInstances != null) {
+                                afterConditionInstances.forEach(secondEntity -> {
+                                    context.setSecondEntity(secondEntity);
+                                    action.invoke(context, finalTicks);
+                                });
+                            }
                         }
                         else{
                             action.invoke(context, finalTicks);
@@ -1047,6 +1049,8 @@ public class EngineImpl implements Engine {
 
     private List<EntityInstance> handleSecondaryEntityList(Action action, List<EntityInstance> entityInstancesFiltered, Context context) {
         String count = action.getSecondaryEntityDefinition().getCount();
+        if(count == null)
+            return null;
         List<EntityInstance> afterFilterSelection = new ArrayList<>();
 
         for (EntityInstance entityInstance : entityInstancesFiltered) {

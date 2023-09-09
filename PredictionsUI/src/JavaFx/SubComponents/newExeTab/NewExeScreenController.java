@@ -8,6 +8,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class NewExeScreenController {
     private BodyController bodyController;
@@ -44,6 +46,10 @@ public class NewExeScreenController {
 
     @FXML
     private Button startBtn;
+
+    Map<String,Integer> entValMap = new HashMap<>();
+    Map<String,String> envValMap = new HashMap<>();
+
 
     public void setBodyController(BodyController bodyController) {
         this.bodyController = bodyController;
@@ -83,6 +89,7 @@ public class NewExeScreenController {
         String selectedItem = entList.getSelectionModel().getSelectedItem();
         validateAndSetValue(popSpinner.getValueFactory(),selectedItem);
         bodyController.setEntPop(selectedItem,popSpinner.getValue());
+        entValMap.put(selectedItem, popSpinner.getValue());
         bodyController.showAlert(selectedItem + ": Population is Set to:" + popSpinner.getValue(), Alert.AlertType.INFORMATION,"Success");
 
     }
@@ -90,14 +97,21 @@ public class NewExeScreenController {
     public void initEntList() {
         Collection<String> EntitiesDTO = bodyController.getEntityDTO().keySet();
         entList.getItems().addAll(EntitiesDTO);
+        EntitiesDTO.forEach(entName ->{
+            entValMap.put(entName,0);
+        });
     }
 
     public void initEnvList() {
         Collection<String> EnvDTO = bodyController.getEnvDTO().getEnvProps().keySet();
         envList.getItems().addAll(EnvDTO);
+        EnvDTO.forEach(envName ->{
+            envValMap.put(envName,"");
+        });
     }
 
     public void initNewExeScreen() {
+        clearNewExeScreen();
         initEntList();
         initEnvList();
         initSpinner();
@@ -106,14 +120,13 @@ public class NewExeScreenController {
     public void clearNewExeScreen() {
         entList.getItems().clear();
         envList.getItems().clear();
-        popSpinner.getValueFactory().setValue(0);
     }
 
     public void selectedEnt() {
         String selectedItem = entList.getSelectionModel().getSelectedItem();
         entLabel.setText(selectedItem);
         popSpinner.setDisable(false);
-        popSpinner.getValueFactory().setValue(0);
+        popSpinner.getValueFactory().setValue(entValMap.get(selectedItem));
     }
 
     public void selectedEnv() {
@@ -126,7 +139,7 @@ public class NewExeScreenController {
         else
             rangeLabel.setText("No Range To Display");
         envValue.setDisable(false);
-        envValue.setText("");
+        envValue.setText(envValMap.get(selectedItem));
 
     }
     public void onSaveEnvVarClicked()
@@ -142,6 +155,7 @@ public class NewExeScreenController {
                 {
                     userValue = PropertyType.DECIMAL.parse(userEnvInput);
                     bodyController.addEnvVarToActiveEnv(userValue,envVarDTO.getName());
+                    envValMap.put(selectedItem,userEnvInput);
                     bodyController.showAlert(selectedItem + "is Set!\nValue is:" + userEnvInput, Alert.AlertType.INFORMATION,"Success");
                 }
                 else
@@ -154,6 +168,7 @@ public class NewExeScreenController {
                 {
                     userValue = PropertyType.FLOAT.parse(userEnvInput);
                     bodyController.addEnvVarToActiveEnv(userValue,envVarDTO.getName());
+                    envValMap.put(selectedItem,userEnvInput);
                     bodyController.showAlert(selectedItem + "is Set!\nValue is:" + userEnvInput, Alert.AlertType.INFORMATION,"Success");
                 }
                 else
@@ -166,6 +181,7 @@ public class NewExeScreenController {
                 {
                     userValue = PropertyType.BOOLEAN.parse(userEnvInput);
                     bodyController.addEnvVarToActiveEnv(userValue,envVarDTO.getName());
+                    envValMap.put(selectedItem,userEnvInput);
                     bodyController.showAlert(selectedItem + "is Set!\nValue is:" + userEnvInput, Alert.AlertType.INFORMATION,"Success");
                 }
                 else
@@ -177,6 +193,7 @@ public class NewExeScreenController {
                 if(bodyController.isValidInput(envVarDTO,userEnvInput))
                 {
                     bodyController.addEnvVarToActiveEnv(userEnvInput,envVarDTO.getName());
+                    envValMap.put(selectedItem,userEnvInput);
                     bodyController.showAlert(selectedItem + "is Set!\nValue is:" + userEnvInput, Alert.AlertType.INFORMATION,"Success");
                 }
                 else
@@ -194,6 +211,19 @@ public class NewExeScreenController {
             bodyController.initRandomEnvVars(envName);
         bodyController.runSimulation();
     }
-
+    public void onClearBtnClicked()
+    {
+        entList.getSelectionModel().clearSelection();
+        envList.getSelectionModel().clearSelection();
+        popSpinner.setDisable(true);
+        envValue.setDisable(true);
+        popSpinner.getValueFactory().setValue(0);
+        entLabel.clear();
+        envLabel.clear();
+        envValue.clear();
+        typeLabel.clear();
+        rangeLabel.clear();
+        initNewExeScreen();
+    }
 }
 
