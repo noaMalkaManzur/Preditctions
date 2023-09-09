@@ -96,6 +96,7 @@ public class EngineImpl implements Engine {
     List<ActionDTO> actionDTOS;
     ActivationDTO activationDTO;
     ValidationEngine validationEngine = new ValidationEngineImpl();
+    private Integer maxPopulation;
 
     //region Command number 1
 
@@ -125,9 +126,9 @@ public class EngineImpl implements Engine {
         }
     }
     private Grid getGridFromFile(PRDWorld prdWorld) {
-        rows = prdWorld.getPRDGrid().getRows();
-        columns = prdWorld.getPRDGrid().getColumns();
-        return new Grid(rows,columns);
+
+        maxPopulation = prdWorld.getPRDGrid().getRows() * prdWorld.getPRDGrid().getColumns();
+        return new Grid(prdWorld.getPRDGrid().getRows(),prdWorld.getPRDGrid().getColumns());
     }
 
     //region Environment
@@ -264,7 +265,7 @@ public class EngineImpl implements Engine {
         if (prop.getPRDValue().isRandomInitialize())
             MyValGen = new RandomBooleanGenerator();
         else {
-            if (validationEngine.isBoolean(prop.getPRDValue().getInit())) {
+            if (validationEngine.isValidBooleanVar(prop.getPRDValue().getInit())) {
                 MyValGen = new FixedValueGenerator(Boolean.parseBoolean(prop.getPRDValue().getInit()));
                 isRandomInit = false;
             } else {
@@ -889,12 +890,45 @@ public class EngineImpl implements Engine {
         return new GridDTO(world.getGrid().getRows(),world.getGrid().getCols());
     }
 
+    @Override
+    public Integer getMaxPop() {
+        return world.getGrid().getCols() * world.getGrid().getRows();
+    }
+
+    @Override
+    public void setEntPop(String entName, Integer value) {
+        maxPopulation = getMaxPop();
+        world.getEntities().get(entName).setPopulation(value);
+        world.getEntities().values().forEach(entityDefinition -> {
+            maxPopulation -= entityDefinition.getPopulation();
+        });
+    }
+    @Override
+    public Integer getSpaceLeft(String selectedItem)
+    {
+        int currPop = world.getEntities().get(selectedItem).getPopulation();
+        return maxPopulation + currPop ;
+    }
+    @Override
+    public boolean checkPopulation(Integer intValue, String entName) {
+        int currPop = world.getEntities().get(entName).getPopulation();
+        return (maxPopulation + currPop) - intValue >= 0;
+    }
+    @Override
+    public void initEnvVar(Object userInput,String selectedEnv)
+    {
+        addEnvVarToActiveEnv(userInput,selectedEnv);
+    }
+
+    @Override
+    public ValidationEngine getValidation() {
+        return validationEngine;
+    }
+
     public TerminitionDTO getTerminationDTO(){
         return new TerminitionDTO(world.getTerminationTerm().getBySeconds(), world.getTerminationTerm().getByTicks(),world.getTerminationTerm().getByUser());
     }
     public SimulationInfoDTO getSimulationInfo(){
-//        SimulationInfoDTO simulationInfoDTO = new SimulationInfoDTO(getEntitiesDTO(),getRulesDTO(),getTerminationDTO());
-//        return simulationInfoDTO;
         return null;
     }
 

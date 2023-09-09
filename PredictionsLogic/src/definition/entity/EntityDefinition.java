@@ -9,5 +9,5 @@ public interface EntityDefinition {
     int getPopulation();
     Map<String,PropertyDefinition> getProps();
     void addPropertyDefinition(PropertyDefinition propertyDefinition);
-
-    }
+    void setPopulation(Integer population);
+}
