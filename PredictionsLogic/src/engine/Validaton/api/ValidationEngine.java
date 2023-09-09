@@ -1,5 +1,6 @@
 package engine.Validaton.api;
 
+import Defenitions.EnvPropertyDefinitionDTO;
 import Generated.PRDEnvProperty;
 import definition.environment.api.EnvVariablesManager;
 import definition.property.api.Range;
@@ -16,7 +17,7 @@ public interface ValidationEngine {
     boolean isFileExist(String fileName) throws FileNotFoundException;
     boolean isXMLFile(String fileName) throws BadFileSuffixException;
     boolean isValidEnvProp(PRDEnvProperty prdEnvProperty, EnvVariablesManager envManager) throws EnvironemtVariableAlreadyExist;
-    boolean isBoolean(String value);
+    boolean isValidBooleanVar(String value);
     boolean checkEntityExist(String entityName, WorldDefinition world);
     boolean checkIfEntityHasProp(String Property,String Entity, WorldDefinition world);
     boolean checkArgsAreNumeric(List<Expression> myExpression, String entity,String type, WorldDefinition world);
@@ -25,4 +26,6 @@ public interface ValidationEngine {
     boolean isValidDoubleVar(String userInput, Range range);
     boolean isValidStringVar(String userInput);
     boolean simulationEnded(int ticks, Instant simulationStart, WorldDefinition world);
-    }
+
+    boolean isValidUserInput(EnvPropertyDefinitionDTO envPropertyDefinitionDTO, String userEnvInput);
+}

@@ -94,9 +94,6 @@ public class DetailsTabController{
     @FXML
     private TerminationScreenController terminationScreenComponentController;
 
-
-
-
     @FXML
     public void initialize() {
         if(entPropScreenComponentController != null && envPropScreenComponentController != null

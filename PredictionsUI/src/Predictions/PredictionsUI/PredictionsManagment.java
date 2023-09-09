@@ -246,7 +246,7 @@ public class PredictionsManagment {
                                 }
                                 break;
                             case BOOLEAN:
-                                isValidInput = validation.isBoolean(userInput);
+                                isValidInput = validation.isValidBooleanVar(userInput);
                                 if (isValidInput) {
                                     userValue = PropertyType.BOOLEAN.parse(userInput);
                                 } else {

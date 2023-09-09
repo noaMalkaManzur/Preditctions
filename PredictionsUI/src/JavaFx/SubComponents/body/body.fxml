@@ -3,7 +3,6 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
-<?import javafx.scene.layout.AnchorPane?>
 
 <ScrollPane fitToHeight="true" fitToWidth="true" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="JavaFx.SubComponents.body.BodyController">
    <content>
@@ -14,12 +13,12 @@
                   <fx:include fx:id="detailsTabComponent" source="../detailsTab/detailsTab.fxml" />
                </content>
           </Tab>
-          <Tab text="New Execution" />
-            <Tab text="Results">
-               <content>
-                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-               </content>
-            </Tab>
+          <Tab text="New Execution">
+              <content>
+                  <fx:include fx:id="newExeTabComponent" source="../newExeTab/newExeScreen.fxml"/>
+              </content>
+          </Tab>
+            <Tab text="Results" />
         </tabs>
       </TabPane>
    </content>
