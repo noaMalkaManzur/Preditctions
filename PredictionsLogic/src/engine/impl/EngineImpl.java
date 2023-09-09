@@ -1022,10 +1022,12 @@ public class EngineImpl implements Engine {
                             List<EntityInstance> entityInstancesFiltered = context.getEntityManager().getInstances().stream()
                                     .filter(entityInstance1 -> entityInstance1.getEntityDef().getName().equals(secondaryEntityName)).collect(Collectors.toList());
                             afterConditionInstances  = handleSecondaryEntityList(action, entityInstancesFiltered, context);
-                            afterConditionInstances.forEach(secondEntity -> {
-                                context.setSecondEntity(secondEntity);
-                                action.invoke(context, finalTicks);
-                            });
+                            if (afterConditionInstances != null) {
+                                afterConditionInstances.forEach(secondEntity -> {
+                                    context.setSecondEntity(secondEntity);
+                                    action.invoke(context, finalTicks);
+                                });
+                            }
                         }
                         else{
                             action.invoke(context, finalTicks);
@@ -1047,6 +1049,8 @@ public class EngineImpl implements Engine {
 
     private List<EntityInstance> handleSecondaryEntityList(Action action, List<EntityInstance> entityInstancesFiltered, Context context) {
         String count = action.getSecondaryEntityDefinition().getCount();
+        if(count == null)
+            return null;
         List<EntityInstance> afterFilterSelection = new ArrayList<>();
 
         for (EntityInstance entityInstance : entityInstancesFiltered) {

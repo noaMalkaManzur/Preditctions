@@ -111,6 +111,7 @@ public class BodyController {
     }
 
     public void runSimulation() {
+        tabPaneComponent.getSelectionModel().select(2);
         mainController.runSimulation();
     }
 }
