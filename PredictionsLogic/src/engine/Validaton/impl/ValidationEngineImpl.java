@@ -1,5 +1,6 @@
 package engine.Validaton.impl;
 
+import Defenitions.EnvPropertyDefinitionDTO;
 import Generated.PRDEnvProperty;
 import definition.environment.api.EnvVariablesManager;
 import definition.property.api.PropertyType;
@@ -44,7 +45,7 @@ public class ValidationEngineImpl implements ValidationEngine {
     }
 
     @Override
-    public boolean isBoolean(String value) {
+    public boolean isValidBooleanVar(String value) {
         return value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false");
     }
 
@@ -177,5 +178,20 @@ public boolean checkEntityExist(PRDAction action, WorldDefinition world) {
         return (world.getTerminationTerm().getByTicks() == ticks || diff >= world.getTerminationTerm().getBySeconds());
     }
 
-
+    @Override
+    public boolean isValidUserInput(EnvPropertyDefinitionDTO envPropertyDefinitionDTO, String userEnvInput) {
+        switch (envPropertyDefinitionDTO.getType())
+        {
+            case DECIMAL:
+                return isValidIntegerVar(userEnvInput,envPropertyDefinitionDTO.getRange());
+            case FLOAT:
+                return isValidDoubleVar(userEnvInput,envPropertyDefinitionDTO.getRange());
+            case BOOLEAN:
+                return isValidBooleanVar(userEnvInput);
+            case STRING:
+                return true;
+            default:
+                return false;
+        }
+    }
 }

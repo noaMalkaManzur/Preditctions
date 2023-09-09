@@ -48,22 +48,22 @@ public class PredictionsAppController {
             engine.loadXmlFiles(absolutePath);
             selectedFile.set(absolutePath);
             bodyComponentController.populateTree();
+            bodyComponentController.initNewExeScreen();
             bodyComponentController.enableTabPane();
-            Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
-            successAlert.setTitle("Success");
-            successAlert.setHeaderText(null);
-            successAlert.setContentText("Loaded file succeeded!");
-            successAlert.showAndWait();
+            showAlert("Loaded file succeeded!",Alert.AlertType.INFORMATION,"Success");
         } catch (RuntimeException exception) {
-            // Failure message
-            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
-            errorAlert.setTitle("Error");
-            errorAlert.setHeaderText(null);
-            errorAlert.setContentText("Operation failed: " + exception.getMessage());
-            errorAlert.showAndWait();
+            showAlert("Operation failed: " + exception.getMessage(), Alert.AlertType.ERROR,"Error");
             bodyComponentController.clearTree();
         }
     }
+    public void showAlert(String message, Alert.AlertType alertType, String Title) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(Title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
     public void setEngine(Engine engine)
     {
         this.engine = engine;
@@ -87,5 +87,37 @@ public class PredictionsAppController {
 
     public TerminitionDTO getTerminationDTO() {
         return engine.getTerminationDTO();
+    }
+
+    public Integer getMaxPop() {
+        return engine.getMaxPop();
+    }
+
+    public void setEntPop(String selectedItem, Integer value) {
+        engine.setEntPop(selectedItem,value);
+    }
+
+    public boolean checkPopulation(Integer intValue, String selectedItem) {
+        return engine.checkPopulation(intValue,selectedItem);
+    }
+
+    public Integer getSpaceLeft(String selectedItem) {
+        return engine.getSpaceLeft(selectedItem);
+    }
+
+    public boolean isValidInput(EnvPropertyDefinitionDTO envPropertyDefinitionDTO, String userEnvInput) {
+        return engine.getValidation().isValidUserInput(envPropertyDefinitionDTO,userEnvInput);
+    }
+
+    public void addEnvVarToActiveEnv(Object userValue, String name) {
+        engine.addEnvVarToActiveEnv(userValue,name);
+    }
+
+    public void initRandomEnvVars(String envName) {
+        engine.initRandomEnvVars(envName);
+    }
+
+    public void runSimulation() {
+        engine.runSimulation();
     }
 }

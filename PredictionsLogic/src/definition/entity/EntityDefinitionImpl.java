@@ -8,7 +8,7 @@ import java.util.Map;
 public class EntityDefinitionImpl implements EntityDefinition {
 
     private final String name;
-    private final int population;
+    private int population;
     private final Map<String,PropertyDefinition> properties;
 
     public EntityDefinitionImpl(String name, int population) {
@@ -36,5 +36,8 @@ public class EntityDefinitionImpl implements EntityDefinition {
     public void addPropertyDefinition(PropertyDefinition propertyDefinition) {
         properties.put(propertyDefinition.getName(),propertyDefinition);
     }
-
+    @Override
+    public void setPopulation(Integer population) {
+        this.population = population;
+    }
 }

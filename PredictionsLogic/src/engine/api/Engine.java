@@ -2,6 +2,7 @@ package engine.api;
 
 import Defenitions.*;
 import Instance.ActiveEnvDTO;
+import engine.Validaton.api.ValidationEngine;
 import histogramDTO.HistogramByAmountEntitiesDTO;
 import histogramDTO.HistogramByPropertyEntitiesDTO;
 import histogramDTO.HistoryRunningSimulationDTO;
@@ -42,6 +43,18 @@ public interface Engine
     HistogramByPropertyEntitiesDTO setHistogramPerProperty(String guid, String propName);
 
     GridDTO getGridDTO();
+
+    Integer getMaxPop();
+
+    void setEntPop(String selectedItem, Integer value);
+
+    boolean checkPopulation(Integer intValue,String entName);
+
+    Integer getSpaceLeft(String selectedItem);
+
+    void initEnvVar(Object userInput,String selectedEnv);
+
+    ValidationEngine getValidation();
 
 
     //endregion
