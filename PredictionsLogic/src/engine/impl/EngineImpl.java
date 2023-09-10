@@ -81,6 +81,7 @@ import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class EngineImpl implements Engine {
@@ -1116,15 +1117,16 @@ public class EngineImpl implements Engine {
         EntityInstanceManager entityInstanceManager = new EntityInstanceManagerImpl();
         EntityInstance primaryEntityInstance = null;
 
-        world.getEntities().forEach((key,value)->
-                {
-                    for(int i = 0;i < value.getPopulation();i++)
-                    {
-                        entityInstanceManager.createEntityInstance(value);
-                        entityInstanceManager.getInstances().get(i).setCoordinate(world.getGrid().getRandomCoordinateInit(entityInstanceManager.getInstances().get(i)));
+        AtomicInteger index = new AtomicInteger(0);
 
-                    }
-                });
+        world.getEntities().forEach((key, value) -> {
+            int population = value.getPopulation();
+            for (int i = 0; i < population; i++) {
+                int currentIndex = index.getAndIncrement();
+                entityInstanceManager.createEntityInstance(value);
+                entityInstanceManager.getInstances().get(currentIndex).setCoordinate(world.getGrid().getRandomCoordinateInit(entityInstanceManager.getInstances().get(currentIndex)));
+            }
+        });
         primaryEntityInstance = entityInstanceManager.getInstances().get(0);
         primaryEntStartPop = primaryEntityInstance.getEntityDef().getPopulation();
         context = new ContextImpl(primaryEntityInstance,entityInstanceManager,activeEnvironment, null, rows, columns);
