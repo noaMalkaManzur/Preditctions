@@ -3,10 +3,8 @@ package definition.world.impl;
 import execution.context.Context;
 import execution.instance.enitty.EntityInstance;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
+import java.util.stream.IntStream;
 
 public class Grid {
     private int rows;
@@ -24,10 +22,21 @@ public class Grid {
     public Grid(int rows, int cols) {
         this.rows = rows;
         this.cols = cols;
+        initCells();
     }
 
     boolean checkIfValidCoordinate(Coordinate coordinate) {
         return coordinate.getX() >= 0 && coordinate.getX() < rows && coordinate.getY() >= 0 && coordinate.getY() < cols;
+    }
+    private void initCells()
+    {
+        for(int i=0;i<rows;i++)
+        {
+            for(int j=0;j<cols;j++)
+            {
+                cells.add(new Cell(new Coordinate(i,j),false,null));
+            }
+        }
     }
     public Coordinate getRandomCoordinateInit(EntityInstance entityInstance) {
         Random random = new Random();
@@ -41,68 +50,82 @@ public class Grid {
                     .anyMatch(cell -> cell.getCoordinate().getX() == x && cell.getCoordinate().getY() == y && cell.getIsOccupied());
 
             if (!occupied) {
+                int index = findCoordinateIndex(coordinate);
                 Cell newCell = new Cell(coordinate, true, entityInstance);
-                cells.add(newCell);
+                if(index != -1)
+                    cells.set(index,newCell);
                 return coordinate;
             }
         }
     }
     public Coordinate getNextMove(EntityInstance entityInstance) {
-        Random random = new Random();
         Coordinate resCoordinate = entityInstance.getCoordinate();
         int x = resCoordinate.getX();
         int y = resCoordinate.getY();
+        int index = findCoordinateIndex(resCoordinate);
+        int indexToMove;
 
-        Coordinate leftCoordinate = new Coordinate((x - 1 + rows) % rows, y);
-        Coordinate rightCoordinate = new Coordinate((x + 1) % rows, y);
-        Coordinate upCoordinate = new Coordinate(x, (y + 1 + cols) % cols);
-        Coordinate downCoordinate = new Coordinate(x, (y - 1 + cols) % cols);
+        Coordinate upCoordinate = new Coordinate((x - 1 + rows) % rows, y);
+        Coordinate downCoordinate = new Coordinate((x + 1) % rows, y);
+        Coordinate rightCoordinate = new Coordinate(x, (y + 1 + cols) % cols);
+        Coordinate leftCoordinate = new Coordinate(x, (y - 1 + cols) % cols);
 
         boolean validMoveFound = false;
 
-        while (!validMoveFound) {
-            int randomNum = random.nextInt(4);
-            switch (randomNum) {
+        List<Integer> directions = new ArrayList<>(Arrays.asList(0, 1, 2, 3));
+        Collections.shuffle(directions);
+
+        for (int direction : directions) {
+            switch (direction) {
                 case 0:
                     if (checkIfValidCoordinate(leftCoordinate) && isCoordinateUnoccupied(leftCoordinate, cells)) {
+                        cells.set(index, new Cell(resCoordinate, false, null));
                         resCoordinate = leftCoordinate;
-                        cells.remove(entityInstance.getId() -1);
-                        cells.add(new Cell(resCoordinate,true, entityInstance));
+                        indexToMove = findCoordinateIndex(resCoordinate);
+                        cells.set(indexToMove, new Cell(resCoordinate, true, entityInstance));
                         validMoveFound = true;
                     }
                     break;
                 case 1:
                     if (checkIfValidCoordinate(rightCoordinate) && isCoordinateUnoccupied(rightCoordinate, cells)) {
+                        cells.set(index, new Cell(resCoordinate, false, null));
                         resCoordinate = rightCoordinate;
-                        cells.remove(entityInstance.getId() -1);
-                        cells.add(new Cell(resCoordinate,true, entityInstance));
+                        indexToMove = findCoordinateIndex(resCoordinate);
+                        cells.set(indexToMove, new Cell(resCoordinate, true, entityInstance));
                         validMoveFound = true;
                     }
                     break;
                 case 2:
                     if (checkIfValidCoordinate(upCoordinate) && isCoordinateUnoccupied(upCoordinate, cells)) {
+                        cells.set(index, new Cell(resCoordinate, false, null));
                         resCoordinate = upCoordinate;
-                        cells.remove(entityInstance.getId() -1 );
-                        cells.add(new Cell(resCoordinate,true, entityInstance));
+                        indexToMove = findCoordinateIndex(resCoordinate);
+                        cells.set(indexToMove, new Cell(resCoordinate, true, entityInstance));
                         validMoveFound = true;
                     }
                     break;
                 case 3:
                     if (checkIfValidCoordinate(downCoordinate) && isCoordinateUnoccupied(downCoordinate, cells)) {
+                        cells.set(index, new Cell(resCoordinate, false, null));
                         resCoordinate = downCoordinate;
-                        cells.remove(entityInstance.getId() - 1);
-                        cells.add(new Cell(resCoordinate,true, entityInstance));
+                        indexToMove = findCoordinateIndex(resCoordinate);
+                        cells.set(indexToMove, new Cell(resCoordinate, true, entityInstance));
                         validMoveFound = true;
                     }
                     break;
             }
+
+            if (validMoveFound) {
+                break; // Exit the loop if a valid move is found
+            }
         }
+
         return resCoordinate;
     }
 
     private boolean isCoordinateUnoccupied(Coordinate coordinateToCheck, List<Cell> cells) {
         return cells.stream()
-                .noneMatch(cell -> cell.getCoordinate().getX() == coordinateToCheck.getX() && cell.getCoordinate().getY() == coordinateToCheck.getY());    }
+                .anyMatch(cell -> cell.getCoordinate().getX() == coordinateToCheck.getX() && cell.getCoordinate().getY() == coordinateToCheck.getY() && !cell.getIsOccupied()) ;}
 
     private int distance(Coordinate source, int x, int y) {
         int dx = Math.abs(source.getX() - x);
@@ -127,5 +150,12 @@ public class Grid {
             }
         });
         return environmentCells;
+    }
+    private int findCoordinateIndex(Coordinate cord)
+    {
+        return IntStream.range(0, cells.size())
+                .filter(i -> cells.get(i).getCoordinate().getX() == cord.getX() && cells.get(i).getCoordinate().getY() == cord.getY())
+                .findFirst()
+                .orElse(-1);
     }
 }
