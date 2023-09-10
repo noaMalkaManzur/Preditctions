@@ -24,7 +24,9 @@ public class Grid {
         this.cols = cols;
         initCells();
     }
-
+    public List<Cell> getCells(){
+        return cells;
+    }
     boolean checkIfValidCoordinate(Coordinate coordinate) {
         return coordinate.getX() >= 0 && coordinate.getX() < rows && coordinate.getY() >= 0 && coordinate.getY() < cols;
     }
@@ -132,22 +134,21 @@ public class Grid {
             int dy = Math.abs(source.getY() - y);
             return Math.max(dx, dy);
         }
-        public Collection<Cell> findEnvironmentCells(Coordinate source, int rank, Context context) {
+    public List<Coordinate> findEnvironmentCells(Coordinate source, int rank, Context context) {
+        List<Coordinate> environmentCells = new ArrayList<>();
 
-            List<Cell> environmentCells = new ArrayList<>();
-
-            context.getEntityManager().getInstances().forEach(entityInstance -> {
-                for (int i = source.getX() - rank; i <= source.getX() + rank; i++) {
-                    for (int j = source.getY() - rank; j <= source.getY() + rank; j++) {
-                        Coordinate currentCoordinate = new Coordinate(i, j);
-                        if (checkIfValidCoordinate(currentCoordinate) && distance(source, i, j) <= rank) {
-                            environmentCells.add(new Cell(currentCoordinate,true,entityInstance ));
-                        }
-                    }
+        for (int i = source.getX() - rank; i <= source.getX() + rank; i++) {
+            for (int j = source.getY() - rank; j <= source.getY() + rank; j++) {
+                Coordinate currentCoordinate = new Coordinate(i, j);
+                if (checkIfValidCoordinate(currentCoordinate) && distance(source, i, j) <= rank) {
+                    environmentCells.add(currentCoordinate);
                 }
-            });
-            return environmentCells;
+            }
         }
+        environmentCells.removeIf(coordinate -> coordinate.getX() == source.getX() && coordinate.getY() == source.getY());
+        return environmentCells;
+    }
+
     private int findCoordinateIndex(Coordinate cord)
     {
         return IntStream.range(0, cells.size())

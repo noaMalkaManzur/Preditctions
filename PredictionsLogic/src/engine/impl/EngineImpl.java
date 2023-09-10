@@ -1009,6 +1009,7 @@ public class EngineImpl implements Engine {
             int finalTicks = ticks;
 
             moveEntities();
+            //context.setCells(world.getGrid().getCells());
             activeAction = getActiveAction(finalTicks);
 
             List<Action> finalActiveAction = activeAction;
@@ -1130,7 +1131,7 @@ public class EngineImpl implements Engine {
         });
         primaryEntityInstance = entityInstanceManager.getInstances().get(0);
         primaryEntStartPop = primaryEntityInstance.getEntityDef().getPopulation();
-        context = new ContextImpl(primaryEntityInstance,entityInstanceManager,activeEnvironment, null, rows, columns);
+        context = new ContextImpl(primaryEntityInstance,entityInstanceManager,activeEnvironment, null, world.getGrid());
 
     }
     //endregion

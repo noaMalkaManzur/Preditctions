@@ -1,5 +1,6 @@
 package execution.context;
 
+import definition.world.impl.Cell;
 import definition.world.impl.Grid;
 import execution.instance.enitty.EntityInstance;
 import execution.instance.enitty.manager.EntityInstanceManager;
@@ -17,22 +18,21 @@ public class ContextImpl implements Context {
     private EntityInstanceManager entityInstanceManager;
     private ActiveEnvironment activeEnvironment;
     private int currTick;
-    private int rows;
-    private int columns;
+
     private List<EntityInstance> entitySecondaryInstances = new ArrayList<>();
     Grid grid;
+    List<Cell> cells;
 
 
     public ContextImpl(EntityInstance primaryEntityInstance, EntityInstanceManager entityInstanceManager,
-                       ActiveEnvironment activeEnvironment, EntityInstance secondaryEntityInstance, int rows, int columns) {
+                       ActiveEnvironment activeEnvironment, EntityInstance secondaryEntityInstance, Grid grid) {
 
         this.primaryEntityInstance = primaryEntityInstance;
         this.entityInstanceManager = entityInstanceManager;
         this.activeEnvironment = activeEnvironment;
         this.secondaryEntityInstance = secondaryEntityInstance;
-        this.rows= rows;
-        this.columns = columns;
-        this.grid = new Grid(rows, columns);
+        this.grid = grid;
+        this.cells = grid.getCells();
     }
 
     @Override
@@ -77,16 +77,6 @@ public class ContextImpl implements Context {
     }
 
     @Override
-    public int getColumns() {
-        return columns;
-    }
-
-    @Override
-    public int getRows() {
-        return rows;
-    }
-
-    @Override
     public void setEntitySecondaryList(List<EntityInstance> entitySecondaryList) {
         this.entitySecondaryInstances = entitySecondaryList;
     }
@@ -100,7 +90,17 @@ public class ContextImpl implements Context {
     }
     @Override
     public Grid getGrid(){
-        return  grid;
+        return grid;
+    }
+
+    @Override
+    public List<Cell> getCells() {
+        return grid.getCells();
+    }
+
+    @Override
+    public void setCells(List<Cell> cells) {
+        this.cells = cells;
     }
 
 }
