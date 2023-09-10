@@ -22,11 +22,9 @@ public class DerivedAction extends ReplaceAction {
     @Override
     public EntityInstance createEntityInstance(Context context) {
         //todo: need to handle sending the entity to kill and entity to create
-        //EntityInstance entityInstanceToKill = context.getEntityManager().getEntityInstanceByName(entityNameToKill);
         EntityInstance entityInstanceToKill = context.getPrimaryEntityInstance();
         EntityDefinition entityDefinitionToKill = entityInstanceToKill.getEntityDef();
 
-        //EntityInstance entityInstanceToCreate = context.getEntityManager().getEntityInstanceByName(entityNameToCreate);
         EntityInstance entityInstanceToCreate = context.getSecondaryEntityInstance();
         EntityDefinition entityDefinitionToCreate = entityInstanceToCreate.getEntityDef();
 
@@ -45,7 +43,7 @@ public class DerivedAction extends ReplaceAction {
                 resEntityInstance.addPropertyInstance(context.getEntityManager().createPropertyInstance(propertyDefinition));
             }
         });
-
+        resEntityInstance.setCoordinate(context.getGrid().getRandomCoordinateInit(resEntityInstance));
         return resEntityInstance;
     }
 

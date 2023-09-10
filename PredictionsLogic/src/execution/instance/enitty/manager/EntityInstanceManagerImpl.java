@@ -17,6 +17,8 @@ public class EntityInstanceManagerImpl implements EntityInstanceManager {
     private List<EntityInstance> instances;
     private int currPopulation;
     private List<Integer> killList;
+    private int globalEntityInstanceIdCounter = 0;
+
 
     public EntityInstanceManagerImpl() {
         entitiesCount = 0;
@@ -25,8 +27,9 @@ public class EntityInstanceManagerImpl implements EntityInstanceManager {
     }
     @Override
     public EntityInstance createEntityInstance(EntityDefinition entityDefinition) {
-        entitiesCount++;
-        EntityInstance newEntityInstance = new EntityInstanceImpl(entityDefinition, entitiesCount);
+        //entitiesCount++;
+        globalEntityInstanceIdCounter++;
+        EntityInstance newEntityInstance = new EntityInstanceImpl(entityDefinition, globalEntityInstanceIdCounter);
         instances.add(newEntityInstance);
 
         for (Map.Entry<String, PropertyDefinition> propertyDefinition : entityDefinition.getProps().entrySet()) {

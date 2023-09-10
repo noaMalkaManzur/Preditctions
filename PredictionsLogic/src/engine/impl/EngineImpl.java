@@ -1009,6 +1009,7 @@ public class EngineImpl implements Engine {
             int finalTicks = ticks;
 
             moveEntities();
+            //context.setCells(world.getGrid().getCells());
             activeAction = getActiveAction(finalTicks);
 
             List<Action> finalActiveAction = activeAction;
@@ -1040,7 +1041,7 @@ public class EngineImpl implements Engine {
             ticks++;
             context.setCurrTick(ticks);
             activateKillAction();
-            if(validationEngine.simulationEnded(ticks,simulationStart, world))
+            if(ticks==10/*validationEngine.simulationEnded(ticks,simulationStart, world)*/)
                 isTerminated = true;
         }
         String endReason = getTerminationReason(ticks,simulationStart);
@@ -1050,9 +1051,10 @@ public class EngineImpl implements Engine {
 
     private List<EntityInstance> handleSecondaryEntityList(Action action, List<EntityInstance> entityInstancesFiltered, Context context) {
         String count = action.getSecondaryEntityDefinition().getCount();
-        if(count == null)
-            return null;
         List<EntityInstance> afterFilterSelection = new ArrayList<>();
+        if(action.getSecondaryEntityDefinition().getConditionAction() ==null && action.getSecondaryEntityDefinition().getCount() ==null){
+            return entityInstancesFiltered.subList(0, 1);
+        }
 
         for (EntityInstance entityInstance : entityInstancesFiltered) {
             if (action.getSecondaryEntityDefinition().getConditionAction().checkCondition(context)) {
@@ -1129,7 +1131,7 @@ public class EngineImpl implements Engine {
         });
         primaryEntityInstance = entityInstanceManager.getInstances().get(0);
         primaryEntStartPop = primaryEntityInstance.getEntityDef().getPopulation();
-        context = new ContextImpl(primaryEntityInstance,entityInstanceManager,activeEnvironment, null, rows, columns);
+        context = new ContextImpl(primaryEntityInstance,entityInstanceManager,activeEnvironment, null, world.getGrid());
 
     }
     //endregion

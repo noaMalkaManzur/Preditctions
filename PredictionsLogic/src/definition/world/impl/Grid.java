@@ -24,7 +24,9 @@ public class Grid {
         this.cols = cols;
         initCells();
     }
-
+    public List<Cell> getCells(){
+        return cells;
+    }
     boolean checkIfValidCoordinate(Coordinate coordinate) {
         return coordinate.getX() >= 0 && coordinate.getX() < rows && coordinate.getY() >= 0 && coordinate.getY() < cols;
     }
@@ -123,34 +125,30 @@ public class Grid {
         return resCoordinate;
     }
 
-    private boolean isCoordinateUnoccupied(Coordinate coordinateToCheck, List<Cell> cells) {
-        return cells.stream()
-                .anyMatch(cell -> cell.getCoordinate().getX() == coordinateToCheck.getX() && cell.getCoordinate().getY() == coordinateToCheck.getY() && !cell.getIsOccupied()) ;}
+        private boolean isCoordinateUnoccupied(Coordinate coordinateToCheck, List<Cell> cells) {
+            return cells.stream()
+                    .anyMatch(cell -> cell.getCoordinate().getX() == coordinateToCheck.getX() && cell.getCoordinate().getY() == coordinateToCheck.getY() && !cell.getIsOccupied()) ;}
 
-    private int distance(Coordinate source, int x, int y) {
-        int dx = Math.abs(source.getX() - x);
-        int dy = Math.abs(source.getY() - y);
-        return Math.max(dx, dy);
-    }
-    public Collection<Cell> findEnvironmentCells(Coordinate source, int rank, Context context) {
-
-        if (!checkIfValidCoordinate(source)) {
-            throw new IllegalArgumentException("Source coordinate is out of boundaries");
+        private int distance(Coordinate source, int x, int y) {
+            int dx = Math.abs(source.getX() - x);
+            int dy = Math.abs(source.getY() - y);
+            return Math.max(dx, dy);
         }
-        List<Cell> environmentCells = new ArrayList<>();
+    public List<Coordinate> findEnvironmentCells(Coordinate source, int rank, Context context) {
+        List<Coordinate> environmentCells = new ArrayList<>();
 
-        context.getEntityManager().getInstances().forEach(entityInstance -> {
-            for (int i = source.getX() - rank; i <= source.getX() + rank; i++) {
-                for (int j = source.getY() - rank; j <= source.getY() + rank; j++) {
-                    Coordinate currentCoordinate = new Coordinate(i, j);
-                    if (checkIfValidCoordinate(currentCoordinate) && distance(source, i, j) <= rank) {
-                        environmentCells.add(new Cell(currentCoordinate,true,entityInstance ));
-                    }
+        for (int i = source.getX() - rank; i <= source.getX() + rank; i++) {
+            for (int j = source.getY() - rank; j <= source.getY() + rank; j++) {
+                Coordinate currentCoordinate = new Coordinate(i, j);
+                if (checkIfValidCoordinate(currentCoordinate) && distance(source, i, j) <= rank) {
+                    environmentCells.add(currentCoordinate);
                 }
             }
-        });
+        }
+        environmentCells.removeIf(coordinate -> coordinate.getX() == source.getX() && coordinate.getY() == source.getY());
         return environmentCells;
     }
+
     private int findCoordinateIndex(Coordinate cord)
     {
         return IntStream.range(0, cells.size())
