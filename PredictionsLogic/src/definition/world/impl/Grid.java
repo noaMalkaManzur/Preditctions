@@ -123,34 +123,31 @@ public class Grid {
         return resCoordinate;
     }
 
-    private boolean isCoordinateUnoccupied(Coordinate coordinateToCheck, List<Cell> cells) {
-        return cells.stream()
-                .anyMatch(cell -> cell.getCoordinate().getX() == coordinateToCheck.getX() && cell.getCoordinate().getY() == coordinateToCheck.getY() && !cell.getIsOccupied()) ;}
+        private boolean isCoordinateUnoccupied(Coordinate coordinateToCheck, List<Cell> cells) {
+            return cells.stream()
+                    .anyMatch(cell -> cell.getCoordinate().getX() == coordinateToCheck.getX() && cell.getCoordinate().getY() == coordinateToCheck.getY() && !cell.getIsOccupied()) ;}
 
-    private int distance(Coordinate source, int x, int y) {
-        int dx = Math.abs(source.getX() - x);
-        int dy = Math.abs(source.getY() - y);
-        return Math.max(dx, dy);
-    }
-    public Collection<Cell> findEnvironmentCells(Coordinate source, int rank, Context context) {
-
-        if (!checkIfValidCoordinate(source)) {
-            throw new IllegalArgumentException("Source coordinate is out of boundaries");
+        private int distance(Coordinate source, int x, int y) {
+            int dx = Math.abs(source.getX() - x);
+            int dy = Math.abs(source.getY() - y);
+            return Math.max(dx, dy);
         }
-        List<Cell> environmentCells = new ArrayList<>();
+        public Collection<Cell> findEnvironmentCells(Coordinate source, int rank, Context context) {
 
-        context.getEntityManager().getInstances().forEach(entityInstance -> {
-            for (int i = source.getX() - rank; i <= source.getX() + rank; i++) {
-                for (int j = source.getY() - rank; j <= source.getY() + rank; j++) {
-                    Coordinate currentCoordinate = new Coordinate(i, j);
-                    if (checkIfValidCoordinate(currentCoordinate) && distance(source, i, j) <= rank) {
-                        environmentCells.add(new Cell(currentCoordinate,true,entityInstance ));
+            List<Cell> environmentCells = new ArrayList<>();
+
+            context.getEntityManager().getInstances().forEach(entityInstance -> {
+                for (int i = source.getX() - rank; i <= source.getX() + rank; i++) {
+                    for (int j = source.getY() - rank; j <= source.getY() + rank; j++) {
+                        Coordinate currentCoordinate = new Coordinate(i, j);
+                        if (checkIfValidCoordinate(currentCoordinate) && distance(source, i, j) <= rank) {
+                            environmentCells.add(new Cell(currentCoordinate,true,entityInstance ));
+                        }
                     }
                 }
-            }
-        });
-        return environmentCells;
-    }
+            });
+            return environmentCells;
+        }
     private int findCoordinateIndex(Coordinate cord)
     {
         return IntStream.range(0, cells.size())

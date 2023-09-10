@@ -20,4 +20,14 @@ public class Cell {
         return  coordinate;
     }
     public EntityInstance getEntityInstance(){return entityInstance;}
+
+    public void setIsOccupied(boolean isOccupied) {
+        this.isOccupied= isOccupied;
+    }
+    public void setEntityInstance(EntityInstance entityInstance) {
+        this.entityInstance = entityInstance;
+    }
+    public void setCoordinate(Coordinate coordinate) {
+        this.coordinate= coordinate;
+    }
 }

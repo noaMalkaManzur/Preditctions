@@ -40,11 +40,14 @@ public enum PropertyType {
         }
     }, FLOAT {
 
-        public Double convert(Object value) {
-            if (!(value instanceof Double)) {
-                throw new IllegalArgumentException("value " + value + " is not of a FLOAT type (expected Double class)");
+        public Number convert(Object value) {
+            if (value instanceof Double) {
+                return (Double) value;
+            } else if (value instanceof Integer) {
+                return ((Integer) value).doubleValue();
+            } else {
+                throw new IllegalArgumentException("value " + value + " is not of a numeric type (expected Double or Integer)");
             }
-            return (Double) value;
         }
         public Double parse(String value)
         {

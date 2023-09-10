@@ -4,7 +4,6 @@ import Enums.ActionTypeDTO;
 import action.api.AbstractAction;
 import action.api.Action;
 import definition.entity.EntityDefinition;
-import definition.property.api.PropertyType;
 import definition.secondaryEntity.api.SecondaryEntityDefinition;
 import definition.world.impl.Cell;
 import execution.context.Context;
@@ -33,7 +32,8 @@ public class ProximityAction  extends AbstractAction {
 
     private boolean checkProximity(Context context){
 
-        int rank = PropertyType.DECIMAL.convert(getExpressionVal(getExpressionList().get(0), context));
+        //int rank = PropertyType.DECIMAL.convert(getExpressionVal(getExpressionList().get(0), context));
+        int rank = 1000;
         EntityInstance primaryEntityInstance = context.getPrimaryEntityInstance();
         Collection<Cell> coordinateCollection  = context.getGrid().findEnvironmentCells(primaryEntityInstance.getCoordinate(), rank, context);
 
