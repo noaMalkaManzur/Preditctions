@@ -17,19 +17,19 @@ public class EntityInstanceManagerImpl implements EntityInstanceManager {
     private List<EntityInstance> instances;
     private int currPopulation;
     private List<Integer> killList;
-    private int globalEntityInstanceIdCounter = 0;
-
+    private List<EntityInstance> replaceEntityList;
 
     public EntityInstanceManagerImpl() {
+
         entitiesCount = 0;
         instances = new ArrayList<>();
         killList = new ArrayList<>();
+        replaceEntityList = new ArrayList<>();
     }
     @Override
     public EntityInstance createEntityInstance(EntityDefinition entityDefinition) {
-        //entitiesCount++;
-        globalEntityInstanceIdCounter++;
-        EntityInstance newEntityInstance = new EntityInstanceImpl(entityDefinition, globalEntityInstanceIdCounter);
+        entitiesCount++;
+        EntityInstance newEntityInstance = new EntityInstanceImpl(entityDefinition, entitiesCount);
         instances.add(newEntityInstance);
 
         for (Map.Entry<String, PropertyDefinition> propertyDefinition : entityDefinition.getProps().entrySet()) {
@@ -41,7 +41,6 @@ public class EntityInstanceManagerImpl implements EntityInstanceManager {
         return newEntityInstance;
     }
 
-
     @Override
     public List<EntityInstance> getInstances() {
         return instances;
@@ -52,25 +51,17 @@ public class EntityInstanceManagerImpl implements EntityInstanceManager {
         if(!killList.contains(id))
             killList.add(id);
     }
+
+    @Override
+    public void addReplaceEntityList(EntityInstance replaceEntity) {
+        replaceEntityList.add(replaceEntity);
+    }
+
     @Override
     public void executeKill(int id) {
         instances.removeIf(item -> item.getId() == id);
         setCurrPopulation(instances.size());
     }
-
-/*    @Override
-    public EntityInstance getEntityInstanceByName(String entityName) {
-        if (!instances.stream().anyMatch(entity -> entity.getEntityDef().getName().equals(entityName))) {
-            throw new IllegalArgumentException("Entity name was not found");
-        }
-
-        EntityInstance foundEntity = instances.stream()
-                .filter(entityInstance -> entityInstance.getEntityDef().getName().equals(entityName))
-                .findFirst()
-                .orElse(null);
-
-        return foundEntity;
-    }*/
 
     @Override
     public void addEntityInstance(EntityInstance entityInstanceToAdd) {
@@ -99,11 +90,24 @@ public class EntityInstanceManagerImpl implements EntityInstanceManager {
     public List<Integer> getKillList() {
         return killList;
     }
+
+    @Override
+    public List<EntityInstance> getReplaceEntityList() {
+        return replaceEntityList;
+    }
+
     @Override
     public void clearKillList()
     {
         killList.clear();
     }
+
+    @Override
+    public void ClearReplaceList() {
+        replaceEntityList.clear();
+    }
+
+
     @Override
     public void setKillList(List<Integer> killList) {
         this.killList = killList;

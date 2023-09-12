@@ -115,6 +115,7 @@ public class EngineImpl implements Engine {
                     world = new WorldImpl();
                     activeEnvironment = new ActiveEnvironmentImpl();
                     setEnvVariablesFromXML(envManager, prdWorld.getPRDEnvironment().getPRDEnvProperty());
+                    world.setThreadCount(prdWorld.getPRDThreadCount());
                     world.setEnvVariables(envManager);
                     world.setGrid(getGridFromFile(prdWorld));
                     world.setEntities(getEntitiesFromXML(prdWorld.getPRDEntities()));
@@ -1002,14 +1003,14 @@ public class EngineImpl implements Engine {
         createContext();
         int ticks = 0;
         boolean isTerminated = false;
-        List<Action> activeAction = new ArrayList<>();
+
         List<EntityInstance> afterConditionList = new ArrayList<>();
         while (!isTerminated)
         {
             int finalTicks = ticks;
+            List<Action> activeAction = new ArrayList<>();
 
             moveEntities();
-            //context.setCells(world.getGrid().getCells());
             activeAction = getActiveAction(finalTicks);
 
             List<Action> finalActiveAction = activeAction;
@@ -1041,12 +1042,20 @@ public class EngineImpl implements Engine {
             ticks++;
             context.setCurrTick(ticks);
             activateKillAction();
-            if(ticks==10/*validationEngine.simulationEnded(ticks,simulationStart, world)*/)
+            replaceActionList();
+            if(ticks==840/*validationEngine.simulationEnded(ticks,simulationStart, world)*/)
                 isTerminated = true;
         }
-        String endReason = getTerminationReason(ticks,simulationStart);
+        String endReason ="steam" /*getTerminationReason(ticks,simulationStart)*/;
         createHistogram(Guid);
         return Guid+ "\n" + endReason;
+    }
+
+    private void replaceActionList() {
+        context.getEntityManager().getReplaceEntityList().forEach(entityInstance -> {
+            context.getEntityManager().addEntityInstance(entityInstance);
+        });
+        context.getEntityManager().ClearReplaceList();
     }
 
     private List<EntityInstance> handleSecondaryEntityList(Action action, List<EntityInstance> entityInstancesFiltered, Context context) {
