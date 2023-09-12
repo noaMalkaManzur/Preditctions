@@ -29,6 +29,6 @@ public abstract class ReplaceAction extends AbstractAction {
         killAction.invoke(context, currTickToChangeValue);
         EntityInstance entityInstance = createEntityInstance(context);
         entityInstance.setCoordinate(context.getGrid().getRandomCoordinateInit(entityInstance));
-        context.getEntityManager().addEntityInstance(entityInstance);
+        context.getEntityManager().addReplaceEntityList(entityInstance);
     }
 }

@@ -12,13 +12,15 @@ public interface EntityInstanceManager {
     EntityInstance createEntityInstance(EntityDefinition entityDefinition);
     List<EntityInstance> getInstances();
     void killEntity(int id);
+    void addReplaceEntityList(EntityInstance replaceEntity);
     public int getCurrPopulation();
     public void setCurrPopulation(int currPopulation);
     public List<Integer> getKillList();
+    public List<EntityInstance> getReplaceEntityList();
     public void clearKillList();
+    public void ClearReplaceList();
     public void setKillList(List<Integer> killList);
     public void executeKill(int id);
-    //public EntityInstance getEntityInstanceByName(String entityName);
     void addEntityInstance(EntityInstance entityInstanceToAdd);
     PropertyInstance createPropertyInstance(PropertyDefinition propertyDefinition);
 }
