@@ -17,5 +17,4 @@ public class EnvironmentFunction extends FunctionExpression {
         return "environment(" + args[0] +")";
     }
 
-
 }

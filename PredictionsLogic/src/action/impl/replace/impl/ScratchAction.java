@@ -28,8 +28,7 @@ public class ScratchAction extends ReplaceAction {
         EntityInstance resEntityInstance = new EntityInstanceImpl(entityDefinitionRes,entityInstanceToKill.getId());
 
         entityDefinitionToCreate.getProps().forEach((propertyName, propertyDefinition)->{
-            resEntityInstance.addPropertyInstance(context.getEntityManager().createPropertyInstance(propertyDefinition));
-
+            resEntityInstance.getEntityDef().addPropertyDefinition(propertyDefinition);
         });
 
         return resEntityInstance;
