@@ -81,7 +81,6 @@ public class EntityInstanceManagerImpl implements EntityInstanceManager {
     public int getCurrPopulation() {
         return currPopulation;
     }
-
     @Override
     public void setCurrPopulation(int currPopulation) {
         this.currPopulation = currPopulation;
@@ -106,8 +105,6 @@ public class EntityInstanceManagerImpl implements EntityInstanceManager {
     public void ClearReplaceList() {
         replaceEntityList.clear();
     }
-
-
     @Override
     public void setKillList(List<Integer> killList) {
         this.killList = killList;

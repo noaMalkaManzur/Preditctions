@@ -23,11 +23,10 @@ public class SetAction extends AbstractAction
 
     @Override
     public void invoke(Context context, int currTickToChangeValue) {
+
         PropertyInstance propertyInstance = context.getPrimaryEntityInstance().getPropertyByName(property);
-        if (!verifyNumericPropertyType(propertyInstance)) {
-            throw new IllegalArgumentException("increase action can't operate on a none number property [" + property + "]");
-        }
         Object expVal = getExpressionVal(getExpressionList().get(0), context);
+
         if(expVal instanceof Double || expVal instanceof Integer)
         {
             Number numVal = (Number)expVal;
@@ -45,6 +44,5 @@ public class SetAction extends AbstractAction
             propertyInstance.setCurrTickForValueChanged(currTickToChangeValue);
         }
     }
-
 
 }

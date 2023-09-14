@@ -156,4 +156,18 @@ public class Grid {
                 .findFirst()
                 .orElse(-1);
     }
+    public void clearCell(int idToRemove) {
+
+        for (Cell cell : cells) {
+            if (cell.getIsOccupied() && cell.getEntityInstance().getId() == idToRemove) {
+                cell.setIsOccupied(false);
+                cell.setEntityInstance(null);
+            }
+        }
+    }
+    public void setNewCell(EntityInstance entityInstance){
+        int index = findCoordinateIndex(entityInstance.getCoordinate());
+        cells.set(index, new Cell(entityInstance.getCoordinate(), true, entityInstance));
+    }
+
 }
