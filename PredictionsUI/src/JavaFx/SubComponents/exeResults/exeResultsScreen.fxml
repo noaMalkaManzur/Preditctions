@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.StackPane?>
+
+<ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <content>
+      <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab text="Quantities Over Time Graph">
+              <content>
+                  <fx:include fx:id="graphScreenComponent" source="../QuantitiesGraph/graphScreen.fxml" />
+              </content>
+          </Tab>
+          <Tab text="Statistical Analysis">
+               <content>
+                  <StackPane prefHeight="150.0" prefWidth="200.0">
+                      <children>
+                          <fx:include fx:id="histogramScreenComponent" source="../histogram/histogramScreen.fxml" />
+                      </children>
+                  </StackPane>
+               </content>
+          </Tab>
+        </tabs>
+      </TabPane>
+   </content>
+</ScrollPane>
