@@ -7,6 +7,8 @@ import definition.secondaryEntity.api.SecondaryEntityDefinition;
 import execution.context.Context;
 import execution.instance.enitty.EntityInstance;
 import execution.instance.enitty.EntityInstanceImpl;
+import execution.instance.property.PropertyInstance;
+import execution.instance.property.PropertyInstanceImpl;
 import expression.api.Expression;
 
 import java.util.List;
@@ -21,18 +23,19 @@ public class ScratchAction extends ReplaceAction {
 
         EntityInstance entityInstanceToKill = context.getPrimaryEntityInstance();
         EntityInstance entityInstanceToCreate = context.getSecondaryEntityInstance();
+
         EntityDefinition entityDefinitionToCreate = entityInstanceToCreate.getEntityDef();
         EntityDefinition entityDefinitionRes = new EntityDefinitionImpl(entityNameToCreate);
         entityDefinitionRes.setPopulation(entityDefinitionToCreate.getPopulation());
 
         EntityInstance resEntityInstance = new EntityInstanceImpl(entityDefinitionRes,entityInstanceToKill.getId());
 
-        entityDefinitionToCreate.getProps().forEach((propertyName, propertyDefinition)->{
-            resEntityInstance.addPropertyInstance(context.getEntityManager().createPropertyInstance(propertyDefinition));
-
+        entityInstanceToCreate.getEntityDef().getProps().forEach((propertyName, propertyDefinition)->{
+            resEntityInstance.getEntityDef().addPropertyDefinition(propertyDefinition);
+            Object value = propertyDefinition.generateValue();
+            PropertyInstance newPropertyInstance = new PropertyInstanceImpl(propertyDefinition, value);
+            resEntityInstance.addPropertyInstance(newPropertyInstance);
         });
-
         return resEntityInstance;
     }
-
 }

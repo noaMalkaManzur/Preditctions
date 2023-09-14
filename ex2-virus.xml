@@ -6,7 +6,7 @@
 			<PRD-name>infection-proximity</PRD-name>			
 		</PRD-env-property>
 	</PRD-environment>
-	<PRD-grid rows="50" columns="30"/>
+	<PRD-grid rows="10" columns="10"/>
 	<PRD-entities>
 		<PRD-entity name="Healthy">
 			<PRD-properties>

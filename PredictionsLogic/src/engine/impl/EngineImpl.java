@@ -115,6 +115,7 @@ public class EngineImpl implements Engine {
                     world = new WorldImpl();
                     activeEnvironment = new ActiveEnvironmentImpl();
                     setEnvVariablesFromXML(envManager, prdWorld.getPRDEnvironment().getPRDEnvProperty());
+                    world.setThreadCount(prdWorld.getPRDThreadCount());
                     world.setEnvVariables(envManager);
                     world.setGrid(getGridFromFile(prdWorld));
                     world.setEntities(getEntitiesFromXML(prdWorld.getPRDEntities()));
@@ -449,6 +450,10 @@ public class EngineImpl implements Engine {
                         secondaryEntityDTO = action.getPRDSecondaryEntity().getEntity();
                     }
                 }
+                else{
+                    secondaryEntity = new SecondaryEntityDefinitionImpl(action.getCreate(), null, null);
+                    secondaryEntityDTO = action.getCreate();
+                }
                 if(!actionDTOFlag)
                     actionDTOS.add(new ReplaceDTO(ActionTypeDTO.REPLACE,action.getEntity(),secondaryEntityDTO,action.getKill(),action.getCreate(), ModesDTO.SCRATCH));
                 return new ScratchAction(null, null,entityNameToKill,entityNameToCreate, secondaryEntity);
@@ -460,6 +465,9 @@ public class EngineImpl implements Engine {
                         secondaryEntity = new SecondaryEntityDefinitionImpl(action.getPRDSecondaryEntity().getEntity(), action.getPRDSecondaryEntity().getPRDSelection().getCount(), conditionAction);
                         secondaryEntityDTO = action.getPRDSecondaryEntity().getEntity();
                     }
+                } else{
+                    secondaryEntity = new SecondaryEntityDefinitionImpl(action.getCreate(), null, null);
+                    secondaryEntityDTO = action.getCreate();
                 }
                 if(!actionDTOFlag)
                     actionDTOS.add(new ReplaceDTO(ActionTypeDTO.REPLACE,action.getEntity(),secondaryEntityDTO,action.getKill(),action.getCreate(), ModesDTO.DERIVED));
@@ -477,7 +485,6 @@ public class EngineImpl implements Engine {
         String secondaryEntityDTO = null;
         List<Action> proximityActionList = proximitiyActionList(action);
         EntityDefinition entityDefinition = world.getEntities().get(action.getPRDBetween().getSourceEntity());
-        //todo: check if the value of in a numeric
         List<Expression> expressionList  = getExpression(action.getPRDBetween().getSourceEntity(),action.getPRDBetween().getTargetEntity(), action.getPRDEnvDepth().getOf());
 
         if (action.getPRDSecondaryEntity() != null) {
@@ -564,7 +571,7 @@ public class EngineImpl implements Engine {
                     if (validationEngine.checkIfEntityHasProp(getPropertyNameByExpression(propertyName), prdCondition.getEntity(), world)) {
                         List<Expression> expressionList = new ArrayList<>();
                         expressionList.add(getExpression(action.getEntity(),null,propertyName).get(0));
-                        expressionList.add(getExpression(action.getEntity(),getPropertyNameByExpression(propertyName),prdCondition.getValue()).get(0));
+                        expressionList.add(getExpression(action.getEntity(),propertyName,prdCondition.getValue()).get(0));
                         conditionActionList.add(new SingleAction(world.getEntities().get(prdCondition.getEntity()),
                                expressionList, null, null,prdCondition.getOperator(), secondaryEntity));
                     }
@@ -736,18 +743,18 @@ public class EngineImpl implements Engine {
                 handleRandomFunctionExpression(expressionVal, myExpression);
             }else if (expressionVal.toLowerCase().contains("ticks")) {
                 handleTicksFunctionExpression(expressionVal, myExpression);
-                //todo: change the propertyNAME By CHECKING PROP ACCORDING TO SECONDARY ENTITY NAME OR PRIMARY ENTITY NAME
+//todo: change the propertyNAME By CHECKING PROP ACCORDING TO SECONDARY ENTITY NAME OR PRIMARY ENTITY NAME
             } else if (world.getEntities().get(entityName).getProps().containsKey(expressionVal)) {
                 myExpression.add(new PropertyExpression(expressionVal));
             }
-            //todo: this is for the proximity action that we have to get a float number only
-            // in the action proximity there is no entity name, that why i did the if else
+//todo: this is for the proximity action that we have to get a float number only
+// in the action proximity there is no entity name, that why i did the if else
             else {
                 if (world.getEntities().containsKey(propName)) {
                     myExpression.add(new GeneralExpression(PropertyType.DECIMAL, expressionVal));
                 }
                 else{
-                    myExpression.add(new GeneralExpression(world.getEntities().get(entityName).getProps().get(propName).getType(), expressionVal));
+                    myExpression.add(createGeneralExpression(entityName,propName,expressionVal));
                 }
             }
 
@@ -755,6 +762,16 @@ public class EngineImpl implements Engine {
         return myExpression;
     }
 
+    private Expression createGeneralExpression(String entityName, String propName, String expressionVal) {
+        if(propName.contains("percent"))
+            return new GeneralExpression(PropertyType.FLOAT,expressionVal);
+        else if(propName.contains("random")|| propName.contains("ticks") )
+            return new GeneralExpression(PropertyType.DECIMAL,expressionVal);
+        else if(propName.contains("evaluate") || propName.contains("environment"))
+            return new GeneralExpression(world.getEntities().get(entityName).getProps().get(getPropertyNameByExpression(propName)).getType(),expressionVal);
+        else
+            return new GeneralExpression(world.getEntities().get(entityName).getProps().get(propName).getType(),expressionVal);
+    }
     private void handleTicksFunctionExpression(String expressionVal, List<Expression> myExpression) {
         int startIndex = expressionVal.indexOf('(') + 1;
         int endIndex = expressionVal.indexOf(')');
@@ -1002,16 +1019,15 @@ public class EngineImpl implements Engine {
         createContext();
         int ticks = 0;
         boolean isTerminated = false;
-        List<Action> activeAction = new ArrayList<>();
+
         List<EntityInstance> afterConditionList = new ArrayList<>();
         while (!isTerminated)
         {
             int finalTicks = ticks;
+            List<Action> activeAction = new ArrayList<>();
 
             moveEntities();
-            //context.setCells(world.getGrid().getCells());
             activeAction = getActiveAction(finalTicks);
-
             List<Action> finalActiveAction = activeAction;
 
             context.getEntityManager().getInstances().forEach(entityInstance -> {
@@ -1041,19 +1057,33 @@ public class EngineImpl implements Engine {
             ticks++;
             context.setCurrTick(ticks);
             activateKillAction();
-            if(ticks==10/*validationEngine.simulationEnded(ticks,simulationStart, world)*/)
+            replaceActionList();
+            if(ticks==840/*validationEngine.simulationEnded(ticks,simulationStart, world)*/)
                 isTerminated = true;
         }
-        String endReason = getTerminationReason(ticks,simulationStart);
+        String endReason ="steam" /*getTerminationReason(ticks,simulationStart)*/;
         createHistogram(Guid);
         return Guid+ "\n" + endReason;
+    }
+
+    private void replaceActionList() {
+        context.getEntityManager().getReplaceEntityList().forEach(entityInstance -> {
+            context.getEntityManager().addEntityInstance(entityInstance);
+            context.getGrid().setNewCell(entityInstance);
+        });
+        context.getEntityManager().ClearReplaceList();
     }
 
     private List<EntityInstance> handleSecondaryEntityList(Action action, List<EntityInstance> entityInstancesFiltered, Context context) {
         String count = action.getSecondaryEntityDefinition().getCount();
         List<EntityInstance> afterFilterSelection = new ArrayList<>();
-        if(action.getSecondaryEntityDefinition().getConditionAction() ==null && action.getSecondaryEntityDefinition().getCount() ==null){
-            return entityInstancesFiltered.subList(0, 1);
+
+        if (entityInstancesFiltered.isEmpty()) {
+            return Collections.emptyList();
+        }
+        //todo:change it
+        if (action.getSecondaryEntityDefinition().getConditionAction() == null && action.getSecondaryEntityDefinition().getCount() == null) {
+            return entityInstancesFiltered.subList(0, Math.min(1, entityInstancesFiltered.size()));
         }
 
         for (EntityInstance entityInstance : entityInstancesFiltered) {
@@ -1077,6 +1107,7 @@ public class EngineImpl implements Engine {
             }
         }
     }
+
 
 
     private List<Action> getActiveAction(int finalTicks) {
@@ -1111,6 +1142,7 @@ public class EngineImpl implements Engine {
         context.getEntityManager().getKillList().forEach(idToKill ->
         {
             context.getEntityManager().executeKill(idToKill);
+            context.getGrid().clearCell(idToKill);
         });
         context.getEntityManager().clearKillList();
     }

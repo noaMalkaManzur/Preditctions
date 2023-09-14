@@ -38,9 +38,10 @@ public class ProximityAction  extends AbstractAction {
         if(coordinateList != null) {
             for (Coordinate coordinate : coordinateList) {
                 for (Cell cell : context.getCells()) {
-                    if (coordinate.getY() == cell.getCoordinate().getY() &&
+                    if (cell.getIsOccupied() && coordinate.getY() == cell.getCoordinate().getY() &&
                             coordinate.getX() == cell.getCoordinate().getX() &&
-                            cell.getEntityInstance().getEntityDef().getName().equals(targetName) && cell.getIsOccupied()) {
+                            cell.getEntityInstance().getEntityDef().getName().equals(targetName)) {
+                        context.setSecondEntity(cell.getEntityInstance());
                         return true;
                     }
                 }
