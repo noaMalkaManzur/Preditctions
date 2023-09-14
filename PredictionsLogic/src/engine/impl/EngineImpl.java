@@ -84,7 +84,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-public class EngineImpl implements Engine {
+public class EngineImpl implements Engine ,Runnable{
     private WorldDefinition world;
     private Context context;
     Map<String, Histogram> histogramMap = new HashMap<>();
@@ -1010,7 +1010,7 @@ public class EngineImpl implements Engine {
     }
 
     @Override
-    public String runSimulation()
+    public void run()
     {
         //region HistogramCreation
         String Guid = UUID.randomUUID().toString();
@@ -1063,7 +1063,7 @@ public class EngineImpl implements Engine {
         }
         String endReason ="steam" /*getTerminationReason(ticks,simulationStart)*/;
         createHistogram(Guid);
-        return Guid+ "\n" + endReason;
+        //return Guid+ "\n" + endReason;
     }
 
     private void replaceActionList() {
