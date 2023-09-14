@@ -4,7 +4,6 @@ import Enums.ActionTypeDTO;
 import action.api.AbstractAction;
 import action.api.Action;
 import definition.entity.EntityDefinition;
-import definition.property.api.PropertyType;
 import definition.secondaryEntity.api.SecondaryEntityDefinition;
 import definition.world.impl.Cell;
 import definition.world.impl.Coordinate;
@@ -32,9 +31,10 @@ public class ProximityAction  extends AbstractAction {
     }
 
     private boolean checkProximity(Context context) {
-        int rank = PropertyType.DECIMAL.convert(getExpressionVal(getExpressionList().get(0), context));
+        int rank= getRank(getExpressionVal(getExpressionList().get(0), context));
         EntityInstance primaryEntityInstance = context.getPrimaryEntityInstance();
         List<Coordinate> coordinateList = context.getGrid().findEnvironmentCells(primaryEntityInstance.getCoordinate(), rank, context);
+
         if(coordinateList != null) {
             for (Coordinate coordinate : coordinateList) {
                 for (Cell cell : context.getCells()) {
@@ -49,5 +49,15 @@ public class ProximityAction  extends AbstractAction {
         }
 
         return false;
+    }
+
+    private int getRank(Object expressionVal) {
+        try{
+            Number rank = (Number)expressionVal;
+            return rank.intValue();
+        }
+        catch (Exception exception){
+            throw new IllegalArgumentException("arg not a number");
+        }
     }
 }
