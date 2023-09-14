@@ -41,6 +41,7 @@ public class ProximityAction  extends AbstractAction {
                     if (cell.getIsOccupied() && coordinate.getY() == cell.getCoordinate().getY() &&
                             coordinate.getX() == cell.getCoordinate().getX() &&
                             cell.getEntityInstance().getEntityDef().getName().equals(targetName)) {
+                        context.setSecondEntity(cell.getEntityInstance());
                         return true;
                     }
                 }

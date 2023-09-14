@@ -1028,7 +1028,6 @@ public class EngineImpl implements Engine {
 
             moveEntities();
             activeAction = getActiveAction(finalTicks);
-
             List<Action> finalActiveAction = activeAction;
 
             context.getEntityManager().getInstances().forEach(entityInstance -> {
@@ -1041,7 +1040,6 @@ public class EngineImpl implements Engine {
                             List<EntityInstance> entityInstancesFiltered = context.getEntityManager().getInstances().stream()
                                     .filter(entityInstance1 -> entityInstance1.getEntityDef().getName().equals(secondaryEntityName)).collect(Collectors.toList());
                             afterConditionInstances  = handleSecondaryEntityList(action, entityInstancesFiltered, context);
-                            context.setEntitySecondaryList(afterConditionList);
                             if (afterConditionInstances != null) {
                                 afterConditionInstances.forEach(secondEntity -> {
                                     context.setSecondEntity(secondEntity);
@@ -1060,7 +1058,7 @@ public class EngineImpl implements Engine {
             context.setCurrTick(ticks);
             activateKillAction();
             replaceActionList();
-            if(ticks==10/*validationEngine.simulationEnded(ticks,simulationStart, world)*/)
+            if(ticks==840/*validationEngine.simulationEnded(ticks,simulationStart, world)*/)
                 isTerminated = true;
         }
         String endReason ="steam" /*getTerminationReason(ticks,simulationStart)*/;
@@ -1083,7 +1081,7 @@ public class EngineImpl implements Engine {
         if (entityInstancesFiltered.isEmpty()) {
             return Collections.emptyList();
         }
-
+        //todo:change it
         if (action.getSecondaryEntityDefinition().getConditionAction() == null && action.getSecondaryEntityDefinition().getCount() == null) {
             return entityInstancesFiltered.subList(0, Math.min(1, entityInstancesFiltered.size()));
         }
