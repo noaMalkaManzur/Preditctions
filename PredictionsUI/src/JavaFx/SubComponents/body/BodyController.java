@@ -4,6 +4,7 @@ import Defenitions.*;
 import JavaFx.App.PredictionsAppController;
 import JavaFx.SubComponents.detailsTab.DetailsTabController;
 import JavaFx.SubComponents.newExeTab.NewExeScreenController;
+import JavaFx.SubComponents.resultTab.ResultTabController;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ScrollPane;
@@ -29,17 +30,25 @@ public class BodyController {
     @FXML
     private NewExeScreenController newExeTabComponentController;
 
-    public void setMainController(PredictionsAppController mainController) {
-        this.mainController = mainController;
-    }
+    @FXML
+    private ScrollPane resultTabComponent;
+
+    @FXML
+    private ResultTabController resultTabComponentController;
+
     @FXML
     public void initialize()
     {
-        if(detailsTabComponentController != null && newExeTabComponentController != null)
+        if(detailsTabComponentController != null && newExeTabComponentController != null
+            && resultTabComponentController != null)
         {
             detailsTabComponentController.setBodyController(this);
             newExeTabComponentController.setBodyController(this);
+            resultTabComponentController.setBodyController(this);
         }
+    }
+    public void setMainController(PredictionsAppController mainController) {
+        this.mainController = mainController;
     }
     public Map<String, EntityDefinitionDTO> getEntityDTO()
     {

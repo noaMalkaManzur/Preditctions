@@ -32,5 +32,8 @@ public class PredictionsApp extends Application {
         primaryStage.show();
 
     }
+    public static void main(String[] args) {
+        Application.launch(PredictionsApp.class);
+    }
 
 }

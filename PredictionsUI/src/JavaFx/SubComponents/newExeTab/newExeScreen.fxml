@@ -34,14 +34,14 @@
                         </HBox>
                         <SplitPane dividerPositions="0.5" VBox.vgrow="ALWAYS">
                            <items>
-                              <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="137.0">
+                              <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                  <children>
-                                    <ListView fx:id="entList" onContextMenuRequested="#selectedEnt" onMouseClicked="#selectedEnt" prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                                    <ListView fx:id="entList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onContextMenuRequested="#selectedEnt" onMouseClicked="#selectedEnt" HBox.hgrow="ALWAYS" />
                                  </children>
                               </HBox>
                               <VBox prefHeight="200.0" prefWidth="235.0">
                                  <children>
-                                    <GridPane alignment="TOP_CENTER" VBox.vgrow="ALWAYS">
+                                    <GridPane alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                                       <columnConstraints>
                                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -91,7 +91,7 @@
                            <items>
                               <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="137.0">
                                  <children>
-                                    <ListView fx:id="envList" onContextMenuRequested="#selectedEnv" onMouseClicked="#selectedEnv" prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                                    <ListView fx:id="envList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onContextMenuRequested="#selectedEnv" onMouseClicked="#selectedEnv" HBox.hgrow="ALWAYS" />
                                  </children>
                               </HBox>
                               <VBox prefHeight="200.0" prefWidth="235.0">

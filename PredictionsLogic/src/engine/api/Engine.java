@@ -2,6 +2,7 @@ package engine.api;
 
 import Defenitions.*;
 import Instance.ActiveEnvDTO;
+import ThreadManager.ThreadManager;
 import engine.Validaton.api.ValidationEngine;
 import histogramDTO.HistogramByAmountEntitiesDTO;
 import histogramDTO.HistogramByPropertyEntitiesDTO;
@@ -55,6 +56,8 @@ public interface Engine
     void initEnvVar(Object userInput,String selectedEnv);
 
     ValidationEngine getValidation();
+
+    ThreadManager getThreadManager();
 
 
     //endregion

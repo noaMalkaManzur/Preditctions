@@ -10,6 +10,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ScrollPane;
 
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class PredictionsAppController {
     private Engine engine;
@@ -23,9 +25,10 @@ public class PredictionsAppController {
     private BodyController bodyComponentController;
     @FXML
     private ScrollPane predictionsAppScrollPane;
-
-    private SimpleBooleanProperty isFileSelected;
     private SimpleStringProperty selectedFile;
+    private SimpleStringProperty queueSizeLabel;
+    private SimpleStringProperty runningSimLabel;
+    private SimpleStringProperty finishedSimLabel;
 
 
     @FXML
@@ -33,15 +36,26 @@ public class PredictionsAppController {
         if (headerComponentController != null && bodyComponentController != null) {
             headerComponentController.setMainController(this);
             bodyComponentController.setMainController(this);
+            headerComponentController.bindHeaderToFullApp();
+
         }
         selectedFile = new SimpleStringProperty();
-        isFileSelected = new SimpleBooleanProperty(false);
-        headerComponentController.bindHeaderToFullApp();
     }
-
     public SimpleStringProperty selectedFileProperty() {
         return selectedFile;
     }
+    public SimpleIntegerProperty getQueueSizeLabel() {
+        ExecutorService myService = engine.getThreadManager().getThreadExecutor();
+        SimpleIntegerProperty QueueSize = new SimpleIntegerProperty(((ThreadPoolExecutor)myService).getQueue().size());
+        return QueueSize;
+    }
+    public SimpleStringProperty getRunningSimLabel() {
+        return runningSimLabel;
+    }
+    public SimpleStringProperty getFinishedSimLabel() {
+        return finishedSimLabel;
+    }
+
 
     public void readWorldData(String absolutePath) {
         try {
@@ -53,7 +67,6 @@ public class PredictionsAppController {
             showAlert("Loaded file succeeded!",Alert.AlertType.INFORMATION,"Success");
         } catch (RuntimeException exception) {
             showAlert("Operation failed: " + exception.getMessage(), Alert.AlertType.ERROR,"Error");
-            bodyComponentController.clearTree();
         }
     }
     public void showAlert(String message, Alert.AlertType alertType, String Title) {
@@ -120,4 +133,5 @@ public class PredictionsAppController {
     public void runSimulation() {
         engine.runSimulation();
     }
+
 }
