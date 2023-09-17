@@ -1,5 +1,6 @@
 package execution.context;
 
+import definition.world.api.WorldDefinition;
 import definition.world.impl.Cell;
 import definition.world.impl.Grid;
 import execution.instance.enitty.EntityInstance;
@@ -11,6 +12,8 @@ import java.util.List;
 public interface Context {
     EntityInstance getPrimaryEntityInstance();
     EntityInstance getSecondaryEntityInstance();
+
+    //WorldDefinition getWorld();
     void removeEntity(EntityInstance entityInstance);
     PropertyInstance getEnvironmentVariable(String name);
     void setPrimaryInstance(int idEntityInstance);
@@ -23,5 +26,4 @@ public interface Context {
     void setSecondEntity(EntityInstance secondaryEntityInstance);
     Grid getGrid();
     List<Cell> getCells();
-    void setCells(List<Cell> cells);
 }

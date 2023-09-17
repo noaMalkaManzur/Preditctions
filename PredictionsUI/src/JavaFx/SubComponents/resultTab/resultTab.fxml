@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="JavaFx.SubComponents.resultTab.ResultTabController">
    <content>
       <SplitPane dividerPositions="0.2">
         <items>
@@ -30,7 +30,7 @@
                               <Font size="24.0" />
                            </font>
                         </Label>
-                        <ListView maxHeight="1.7976931348623157E308" GridPane.hgrow="NEVER" GridPane.rowIndex="1" />
+                        <ListView fx:id="executionsLstComponent" maxHeight="1.7976931348623157E308" GridPane.hgrow="NEVER" GridPane.rowIndex="1" />
                      </children>
                   </GridPane>
                </children>

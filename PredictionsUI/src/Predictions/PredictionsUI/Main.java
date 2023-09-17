@@ -1,8 +1,6 @@
 package Predictions.PredictionsUI;
 
 
-import JavaFx.run.AppMain;
-
 public class Main {
    /* public static void main(String[] args) {
         //properties Entity 1:
@@ -88,12 +86,12 @@ public class Main {
         }
     }*/
 
-    public static void main(String[] args)
-    {
-        //PredictionsManagment predictionsManagment = new PredictionsManagment();
-        //predictionsManagment.run();
-        //launch(PredictionsApp.class);
-        AppMain.main(args);
-    }
+//    public static void main(String[] args)
+//    {
+//        //PredictionsManagment predictionsManagment = new PredictionsManagment();
+//        //predictionsManagment.run();
+//        //launch(PredictionsApp.class);
+//        //AppMain.main(args);
+//    }
 }
 

@@ -39,7 +39,7 @@
                   <Insets left="10.0" />
                </GridPane.margin>
             </Label>
-            <Label fx:id="RuningSimLbl" text="Running Simulations:" GridPane.columnIndex="5" GridPane.halignment="LEFT" GridPane.rowIndex="2">
+            <Label fx:id="RunningSimLbl" text="Running Simulations:" GridPane.columnIndex="5" GridPane.halignment="LEFT" GridPane.rowIndex="2">
                <font>
                   <Font size="15.0" />
                </font>

@@ -1,13 +1,14 @@
 package Instance;
 
 import java.util.List;
+import java.util.Map;
 
 public class EntityMangerDTO
 {
     private final int count;
-    private List<EntityInstanceDTO> instances;
+    private Map<String,EntityInstanceDTO> instances;
 
-    public EntityMangerDTO(int count, List<EntityInstanceDTO> instances) {
+    public EntityMangerDTO(int count, Map<String,EntityInstanceDTO> instances) {
         this.count = count;
         this.instances = instances;
     }
@@ -16,7 +17,7 @@ public class EntityMangerDTO
         return count;
     }
 
-    public List<EntityInstanceDTO> getInstances() {
+    public Map<String,EntityInstanceDTO> getInstances() {
         return instances;
     }
 }
