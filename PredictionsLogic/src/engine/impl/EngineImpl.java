@@ -100,8 +100,6 @@ public class EngineImpl implements Engine {
     private Integer maxPopulation;
 
     //region Command number 1
-
-
     @Override
     public void loadXmlFiles(String fileName) {
         try {
@@ -112,15 +110,16 @@ public class EngineImpl implements Engine {
                     Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
                     PRDWorld prdWorld = (PRDWorld) jaxbUnmarshaller.unmarshal(file);
                     EnvVariablesManager envManager = new EnvVariableManagerImpl();
-                    world = new WorldImpl();
+                    WorldDefinition MyWorld = new WorldImpl();
                     activeEnvironment = new ActiveEnvironmentImpl();
                     setEnvVariablesFromXML(envManager, prdWorld.getPRDEnvironment().getPRDEnvProperty());
-                    world.setThreadCount(prdWorld.getPRDThreadCount());
-                    world.setEnvVariables(envManager);
-                    world.setGrid(getGridFromFile(prdWorld));
-                    world.setEntities(getEntitiesFromXML(prdWorld.getPRDEntities()));
-                    world.setRules(getRulesFromXML(prdWorld.getPRDRules()));
-                    world.setTerminationTerm(getTerminationTermFromXML(prdWorld.getPRDTermination()));
+                    MyWorld.setThreadCount(prdWorld.getPRDThreadCount());
+                    MyWorld.setEnvVariables(envManager);
+                    MyWorld.setGrid(getGridFromFile(prdWorld));
+                    MyWorld.setEntities(getEntitiesFromXML(prdWorld.getPRDEntities()));
+                    MyWorld.setRules(getRulesFromXML(prdWorld.getPRDRules(),MyWorld));
+                    MyWorld.setTerminationTerm(getTerminationTermFromXML(prdWorld.getPRDTermination()));
+                    this.world = MyWorld;
                 }
             }
         } catch (JAXBException | FileNotFoundException | BadFileSuffixException e) {
@@ -291,24 +290,24 @@ public class EngineImpl implements Engine {
 
     //endregion
     //region Rules
-    private Map<String, Rule> getRulesFromXML(PRDRules prdRules) {
+    private Map<String, Rule> getRulesFromXML(PRDRules prdRules,WorldDefinition world) {
         Map<String, Rule> convertedRules = new HashMap<>();
         List<RuleDTO> ruleDTO = new ArrayList<>();
         for (PRDRule rule : prdRules.getPRDRule()) {
             actionDTOS = new ArrayList<>();
-            convertedRules.put(rule.getName(), convertRule(rule));
+            convertedRules.put(rule.getName(), convertRule(rule,world));
             ruleDTO.add(new RuleDTO(rule.getName(),activationDTO,actionDTOS));
         }
         rulesDTO = new RulesDTO(ruleDTO);
         return convertedRules;
     }
 
-    private Rule convertRule(PRDRule rule) {
+    private Rule convertRule(PRDRule rule,WorldDefinition world) {
         ActivationImpl activation = convertActivationFromXML(rule);
         activationDTO = new ActivationDTO(activation.getProbability(),activation.getTicks());
         Rule newRule = new RuleImpl(rule.getName(), activation);
         for (PRDAction action : rule.getPRDActions().getPRDAction())
-            newRule.addAction(convertActionFromXML(action));
+            newRule.addAction(convertActionFromXML(action,world));
         return newRule;
     }
 
@@ -328,18 +327,18 @@ public class EngineImpl implements Engine {
         return activation;
     }
 
-    private Action convertActionFromXML(PRDAction action) {
+    private Action convertActionFromXML(PRDAction action,WorldDefinition world) {
         SecondaryEntityDefinition secondaryEntity = null;
         String secondaryEntityDTO = null;
             switch (action.getType().toUpperCase()) {
                 case "INCREASE":
                     if (validationEngine.checkEntityExist(action.getEntity(), world)) {
                         if (validationEngine.checkIfEntityHasProp(action.getProperty(), action.getEntity(), world)) {
-                            List<Expression> expressionList = getExpression(action.getEntity(), action.getProperty(), action.getBy());
+                            List<Expression> expressionList = getExpression(action.getEntity(), action.getProperty(), action.getBy(),world);
                             if (validationEngine.checkArgsAreNumeric(expressionList, action.getEntity(), action.getType(), world)){
                                 if (action.getPRDSecondaryEntity() != null) {
                                     if(validationEngine.checkEntityExist(action.getPRDSecondaryEntity().getEntity(), world)) {
-                                        ConditionAction conditionAction = convertConditionActionSecondEntity(action);
+                                        ConditionAction conditionAction = convertConditionActionSecondEntity(action,world);
                                         secondaryEntity = new SecondaryEntityDefinitionImpl(action.getPRDSecondaryEntity().getEntity(), action.getPRDSecondaryEntity().getPRDSelection().getCount(), conditionAction);
                                         secondaryEntityDTO = action.getPRDSecondaryEntity().getEntity();
                                     }
@@ -354,11 +353,11 @@ public class EngineImpl implements Engine {
                 case "DECREASE":
                     if (validationEngine.checkEntityExist(action.getEntity(), world)) {
                         if (validationEngine.checkIfEntityHasProp(action.getProperty(), action.getEntity(), world)) {
-                            List<Expression> expressionList = getExpression(action.getEntity(), action.getProperty(), action.getBy());
+                            List<Expression> expressionList = getExpression(action.getEntity(), action.getProperty(), action.getBy(),world);
                             if (validationEngine.checkArgsAreNumeric(expressionList, action.getEntity(), action.getType(), world)) {
                                 if (action.getPRDSecondaryEntity() != null) {
                                     if(validationEngine.checkEntityExist(action.getPRDSecondaryEntity().getEntity(), world)) {
-                                        ConditionAction conditionAction = convertConditionActionSecondEntity(action);
+                                        ConditionAction conditionAction = convertConditionActionSecondEntity(action,world);
                                         secondaryEntity = new SecondaryEntityDefinitionImpl(action.getPRDSecondaryEntity().getEntity(), action.getPRDSecondaryEntity().getPRDSelection().getCount(), conditionAction);
                                         secondaryEntityDTO = action.getPRDSecondaryEntity().getEntity();
                                     }
@@ -373,32 +372,32 @@ public class EngineImpl implements Engine {
                 case "CALCULATION":
                     if(validationEngine.checkEntityExist(action.getEntity(), world)){
                         if (validationEngine.checkIfEntityHasProp(action.getResultProp(), action.getEntity(), world))
-                            return calculateAccordingToMultiOrDivide(action);
+                            return calculateAccordingToMultiOrDivide(action,world);
                     }
                     break;
                 case "CONDITION":
                     if(validationEngine.checkEntityExist(action.getEntity(), world))
-                        return ConditionActionBySingleOrByMulti(action);
+                        return ConditionActionBySingleOrByMulti(action,world);
                 case "SET":
                     if(validationEngine.checkEntityExist(action.getEntity(), world)) {
                         if (validationEngine.checkIfEntityHasProp(action.getProperty(), action.getEntity(), world))
                             if (action.getPRDSecondaryEntity() != null) {
                                 if(validationEngine.checkEntityExist(action.getPRDSecondaryEntity().getEntity(), world)) {
-                                    ConditionAction conditionAction = convertConditionActionSecondEntity(action);
+                                    ConditionAction conditionAction = convertConditionActionSecondEntity(action,world);
                                     secondaryEntity = new SecondaryEntityDefinitionImpl(action.getPRDSecondaryEntity().getEntity(), action.getPRDSecondaryEntity().getPRDSelection().getCount(), conditionAction);
                                     secondaryEntityDTO = action.getPRDSecondaryEntity().getEntity();
                                 }
                             }
                         if(!actionDTOFlag)
                             actionDTOS.add(new SetDTO(ActionTypeDTO.SET,action.getEntity(),secondaryEntityDTO,action.getProperty(),action.getValue()));
-                        return new SetAction(world.getEntities().get(action.getEntity()), getExpression(action.getEntity(), action.getProperty(), action.getValue()), action.getProperty(), secondaryEntity);
+                        return new SetAction(world.getEntities().get(action.getEntity()), getExpression(action.getEntity(), action.getProperty(), action.getValue(),world), action.getProperty(), secondaryEntity);
                     }
                     break;
                 case "KILL":
                     if(validationEngine.checkEntityExist(action.getEntity(), world)) {
                         if (action.getPRDSecondaryEntity() != null) {
                             if(validationEngine.checkEntityExist(action.getPRDSecondaryEntity().getEntity(), world)) {
-                                ConditionAction conditionAction = convertConditionActionSecondEntity(action);
+                                ConditionAction conditionAction = convertConditionActionSecondEntity(action,world);
                                 secondaryEntity = new SecondaryEntityDefinitionImpl(action.getPRDSecondaryEntity().getEntity(), action.getPRDSecondaryEntity().getPRDSelection().getCount(), conditionAction);
                                 secondaryEntityDTO = action.getPRDSecondaryEntity().getEntity();
                             }
@@ -409,34 +408,34 @@ public class EngineImpl implements Engine {
                     }
                 case "PROXIMITY":
                     if(validationEngine.checkEntityExist(action.getPRDBetween().getSourceEntity(), world) && validationEngine.checkEntityExist(action.getPRDBetween().getTargetEntity(), world))
-                        return proximitiyAction(action);
+                        return proximitiyAction(action,world);
                 case "REPLACE":
                     if(validationEngine.checkEntityExist(action.getCreate(), world) && validationEngine.checkEntityExist(action.getKill(), world) )
-                        return replaceAction(action);
+                        return replaceAction(action,world);
 
 
         }
         return null;
     }
 
-    private ConditionAction convertConditionActionSecondEntity(PRDAction action) {
+    private ConditionAction convertConditionActionSecondEntity(PRDAction action,WorldDefinition world) {
         PRDCondition prdCondition = action.getPRDSecondaryEntity().getPRDSelection().getPRDCondition();
         String singularity = prdCondition.getSingularity();
-        List<ConditionAction> conditionActionList = createConditionList(action.getPRDSecondaryEntity().getPRDSelection().getPRDCondition(), action);
+        List<ConditionAction> conditionActionList = createConditionList(action.getPRDSecondaryEntity().getPRDSelection().getPRDCondition(), action,world);
         List<Expression> expressionList = new ArrayList<>();
         if(singularity.equalsIgnoreCase("single")) {
-            expressionList.add(getExpression(prdCondition.getEntity(),prdCondition.getProperty(), prdCondition.getProperty()).get(0));
-            expressionList.add(getExpression(prdCondition.getEntity(),prdCondition.getProperty(), prdCondition.getValue()).get(0));
+            expressionList.add(getExpression(prdCondition.getEntity(),prdCondition.getProperty(), prdCondition.getProperty(),world).get(0));
+            expressionList.add(getExpression(prdCondition.getEntity(),prdCondition.getProperty(), prdCondition.getValue(),world).get(0));
             return new SingleAction(world.getEntities().get(prdCondition.getEntity()), expressionList, null, null, prdCondition.getOperator(), null);
         }
         else if(singularity.equalsIgnoreCase("multiple")){
             return new MultipleAction(world.getEntities().get(prdCondition.getEntity()), getExpression(prdCondition.getEntity(),
-                    prdCondition.getProperty(), prdCondition.getValue()), null, null, prdCondition.getProperty(), conditionActionList, prdCondition.getLogical(), null);
+                    prdCondition.getProperty(), prdCondition.getValue(),world), null, null, prdCondition.getProperty(), conditionActionList, prdCondition.getLogical(), null);
         }
         return null;
     }
 
-    private Action replaceAction(PRDAction action) {
+    private Action replaceAction(PRDAction action,WorldDefinition world) {
         SecondaryEntityDefinition secondaryEntity = null;
         String secondaryEntityDTO = null;
         if (action.getMode() != null && action.getKill() != null && action.getCreate() != null) {
@@ -445,7 +444,7 @@ public class EngineImpl implements Engine {
             if (action.getMode().equals("scratch")) {
                 if (action.getPRDSecondaryEntity() != null) {
                     if(validationEngine.checkEntityExist(action.getPRDSecondaryEntity().getEntity(), world)) {
-                        ConditionAction conditionAction = convertConditionActionSecondEntity(action);
+                        ConditionAction conditionAction = convertConditionActionSecondEntity(action,world);
                         secondaryEntity = new SecondaryEntityDefinitionImpl(action.getPRDSecondaryEntity().getEntity(), action.getPRDSecondaryEntity().getPRDSelection().getCount(), conditionAction);
                         secondaryEntityDTO = action.getPRDSecondaryEntity().getEntity();
                     }
@@ -461,7 +460,7 @@ public class EngineImpl implements Engine {
             else if (action.getMode().equals("derived")) {
                 if (action.getPRDSecondaryEntity() != null) {
                     if(validationEngine.checkEntityExist(action.getPRDSecondaryEntity().getEntity(), world)) {
-                        ConditionAction conditionAction = convertConditionActionSecondEntity(action);
+                        ConditionAction conditionAction = convertConditionActionSecondEntity(action,world);
                         secondaryEntity = new SecondaryEntityDefinitionImpl(action.getPRDSecondaryEntity().getEntity(), action.getPRDSecondaryEntity().getPRDSelection().getCount(), conditionAction);
                         secondaryEntityDTO = action.getPRDSecondaryEntity().getEntity();
                     }
@@ -480,16 +479,16 @@ public class EngineImpl implements Engine {
         }
     }
 
-    private Action proximitiyAction(PRDAction action) {
+    private Action proximitiyAction(PRDAction action,WorldDefinition world) {
         SecondaryEntityDefinition secondaryEntity = null;
         String secondaryEntityDTO = null;
-        List<Action> proximityActionList = proximitiyActionList(action);
+        List<Action> proximityActionList = proximitiyActionList(action,world);
         EntityDefinition entityDefinition = world.getEntities().get(action.getPRDBetween().getSourceEntity());
-        List<Expression> expressionList  = getExpression(action.getPRDBetween().getSourceEntity(),action.getPRDBetween().getTargetEntity(), action.getPRDEnvDepth().getOf());
+        List<Expression> expressionList  = getExpression(action.getPRDBetween().getSourceEntity(),action.getPRDBetween().getTargetEntity(), action.getPRDEnvDepth().getOf(),world);
 
         if (action.getPRDSecondaryEntity() != null) {
             if(validationEngine.checkEntityExist(action.getPRDSecondaryEntity().getEntity(), world)) {
-                ConditionAction conditionAction = convertConditionActionSecondEntity(action);
+                ConditionAction conditionAction = convertConditionActionSecondEntity(action,world);
                 secondaryEntity = new SecondaryEntityDefinitionImpl(action.getPRDSecondaryEntity().getEntity(), action.getPRDSecondaryEntity().getPRDSelection().getCount(), conditionAction);
                 secondaryEntityDTO = action.getPRDSecondaryEntity().getEntity();
             }
@@ -506,12 +505,12 @@ public class EngineImpl implements Engine {
         return new ProximityAction(entityDefinition, expressionList,proximityActionList, secondaryEntity, action.getPRDBetween().getTargetEntity());
     }
 
-    private List<Action> proximitiyActionList(PRDAction action) {
+    private List<Action> proximitiyActionList(PRDAction action,WorldDefinition world) {
         List<Action> proximityActionList = new ArrayList<>();
         actionDTOFlag = true;
         if (action.getPRDActions().getPRDAction() != null) {
             for (PRDAction indexAction : action.getPRDActions().getPRDAction()) {
-                proximityActionList.add(convertActionFromXML(indexAction));
+                proximityActionList.add(convertActionFromXML(indexAction,world));
             }
         } else {
             throw new IllegalArgumentException("Argument Action was null");
@@ -521,13 +520,13 @@ public class EngineImpl implements Engine {
 
     }
 
-    private Action ConditionActionBySingleOrByMulti(PRDAction action) {
+    private Action ConditionActionBySingleOrByMulti(PRDAction action,WorldDefinition world) {
 
         if (action.getPRDCondition() != null) {
             if (action.getPRDCondition().getSingularity().equals("single")) {
-                return SingleConditionCal(action);
+                return SingleConditionCal(action,world);
             } else if (action.getPRDCondition().getSingularity().equals("multiple")) {
-                return MultipleCondition(action);
+                return MultipleCondition(action,world);
             } else {
                 throw new IllegalArgumentException("Not valid argument for condition");
             }
@@ -536,18 +535,18 @@ public class EngineImpl implements Engine {
         }
     }
 
-    private Action MultipleCondition(PRDAction action) {
+    private Action MultipleCondition(PRDAction action,WorldDefinition world) {
         SecondaryEntityDefinition secondaryEntity = null;
         String secondaryEntityDTO = null;
-        List<ConditionAction> conditionActionList = createConditionList(action.getPRDCondition(), action);
+        List<ConditionAction> conditionActionList = createConditionList(action.getPRDCondition(), action,world);
         String logic = action.getPRDCondition().getLogical();
         //todo: check with noam if need this propname
         //String propName = action.getPRDCondition().getProperty();
-        List<Action> thenActionList = createThenActionList(action);
-        List<Action> elseActionList = createElseActionList(action);
+        List<Action> thenActionList = createThenActionList(action,world);
+        List<Action> elseActionList = createElseActionList(action,world);
         if (action.getPRDSecondaryEntity() != null) {
             if(validationEngine.checkEntityExist(action.getPRDSecondaryEntity().getEntity(), world)) {
-                ConditionAction conditionAction = convertConditionActionSecondEntity(action);
+                ConditionAction conditionAction = convertConditionActionSecondEntity(action,world);
                 secondaryEntity = new SecondaryEntityDefinitionImpl(action.getPRDSecondaryEntity().getEntity(), action.getPRDSecondaryEntity().getPRDSelection().getCount(), conditionAction);
                 secondaryEntityDTO = action.getPRDSecondaryEntity().getEntity();
             }
@@ -557,7 +556,7 @@ public class EngineImpl implements Engine {
         return new MultipleAction(world.getEntities().get(action.getEntity()), null, thenActionList, elseActionList, null, conditionActionList, logic, secondaryEntity);
     }
 
-    private List<ConditionAction> createConditionList(PRDCondition condition, PRDAction action) {
+    private List<ConditionAction> createConditionList(PRDCondition condition, PRDAction action,WorldDefinition world) {
         List<ConditionAction> conditionActionList = new ArrayList<>();
         SecondaryEntityDefinition secondaryEntity = null;
 
@@ -570,13 +569,13 @@ public class EngineImpl implements Engine {
                     //propertyName = getPropertyNameByExpression(propertyName);
                     if (validationEngine.checkIfEntityHasProp(getPropertyNameByExpression(propertyName), prdCondition.getEntity(), world)) {
                         List<Expression> expressionList = new ArrayList<>();
-                        expressionList.add(getExpression(action.getEntity(),null,propertyName).get(0));
-                        expressionList.add(getExpression(action.getEntity(),propertyName,prdCondition.getValue()).get(0));
+                        expressionList.add(getExpression(action.getEntity(),null,propertyName,world).get(0));
+                        expressionList.add(getExpression(action.getEntity(),propertyName,prdCondition.getValue(),world).get(0));
                         conditionActionList.add(new SingleAction(world.getEntities().get(prdCondition.getEntity()),
                                expressionList, null, null,prdCondition.getOperator(), secondaryEntity));
                     }
                 } else if (prdCondition.getSingularity().equals("multiple")) {
-                    List<ConditionAction> multiCondList = createConditionList(prdCondition, action);
+                    List<ConditionAction> multiCondList = createConditionList(prdCondition, action,world);
                     conditionActionList.add(new MultipleAction(world.getEntities().get(prdCondition.getEntity()),
                             null, null, null, condition.getProperty(), multiCondList, prdCondition.getLogical(), secondaryEntity));
                 }
@@ -635,23 +634,23 @@ public class EngineImpl implements Engine {
         }
     }
 
-    private Action SingleConditionCal(PRDAction action) {
+    private Action SingleConditionCal(PRDAction action,WorldDefinition world) {
 
         SecondaryEntityDefinition secondaryEntity = null;
         String secondaryEntityDTO = null;
-        List<Action> thenActionList = createThenActionList(action);
-        List<Action> elseActionList = createElseActionList(action);
+        List<Action> thenActionList = createThenActionList(action,world);
+        List<Action> elseActionList = createElseActionList(action,world);
         String propName = action.getPRDCondition().getProperty();
         String operator = action.getPRDCondition().getOperator();
         String value = action.getPRDCondition().getValue();
         List<Expression> expressionList = new ArrayList<>();
-        expressionList.add(getExpression(action.getEntity(),action.getProperty(),action.getProperty()).get(0));
-        expressionList.add(getExpression(action.getEntity(),action.getProperty(),action.getPRDCondition().getValue()).get(0));
+        expressionList.add(getExpression(action.getEntity(),action.getProperty(),action.getProperty(),world).get(0));
+        expressionList.add(getExpression(action.getEntity(),action.getProperty(),action.getPRDCondition().getValue(),world).get(0));
 
         if (validationEngine.checkIfEntityHasProp(propName, action.getEntity(), world)) {
             if (action.getPRDSecondaryEntity() != null) {
                 if(validationEngine.checkEntityExist(action.getPRDSecondaryEntity().getEntity(), world)) {
-                    ConditionAction conditionAction = convertConditionActionSecondEntity(action);
+                    ConditionAction conditionAction = convertConditionActionSecondEntity(action,world);
                     secondaryEntity = new SecondaryEntityDefinitionImpl(action.getPRDSecondaryEntity().getEntity(), action.getPRDSecondaryEntity().getPRDSelection().getCount(), conditionAction);
                     secondaryEntityDTO = action.getPRDSecondaryEntity().getEntity();
                 }
@@ -664,12 +663,12 @@ public class EngineImpl implements Engine {
         return null;
     }
 
-    private List<Action> createThenActionList(PRDAction action) {
+    private List<Action> createThenActionList(PRDAction action,WorldDefinition world) {
         List<Action> actionListSingle = new ArrayList<>();
         actionDTOFlag = true;
         if (action.getPRDThen().getPRDAction() != null) {
             for (PRDAction indexAction : action.getPRDThen().getPRDAction()) {
-                actionListSingle.add(convertActionFromXML(indexAction));
+                actionListSingle.add(convertActionFromXML(indexAction,world));
             }
         } else {
             throw new IllegalArgumentException("Argument THEN was null");
@@ -678,30 +677,30 @@ public class EngineImpl implements Engine {
         return actionListSingle;
     }
 
-    private List<Action> createElseActionList(PRDAction action) {
+    private List<Action> createElseActionList(PRDAction action,WorldDefinition world) {
         List<Action> actionListSingle = new ArrayList<>();
         actionDTOFlag = true;
         if (action.getPRDElse() != null) {
             for (PRDAction indexAction : action.getPRDElse().getPRDAction()) {
-                actionListSingle.add(convertActionFromXML(indexAction));
+                actionListSingle.add(convertActionFromXML(indexAction,world));
             }
         }
         actionDTOFlag = false;
         return actionListSingle;
     }
 
-    private Action calculateAccordingToMultiOrDivide(PRDAction action) {
+    private Action calculateAccordingToMultiOrDivide(PRDAction action,WorldDefinition world) {
         SecondaryEntityDefinition secondaryEntity = null;
         String secondaryEntityDTO = null;
         List<Expression> myExpression = new ArrayList<>();
 
         if (action.getPRDDivide() != null) {
-            myExpression.add(getExpression(action.getEntity(), action.getResultProp(), action.getPRDDivide().getArg1()).get(0));
-            myExpression.add(getExpression(action.getEntity(), action.getResultProp(), action.getPRDDivide().getArg2()).get(0));
+            myExpression.add(getExpression(action.getEntity(), action.getResultProp(), action.getPRDDivide().getArg1(),world).get(0));
+            myExpression.add(getExpression(action.getEntity(), action.getResultProp(), action.getPRDDivide().getArg2(),world).get(0));
             if (validationEngine.checkArgsAreNumeric(myExpression, action.getEntity(), action.getType(), world)) {
                 if (action.getPRDSecondaryEntity() != null) {
                     if(validationEngine.checkEntityExist(action.getPRDSecondaryEntity().getEntity(), world)) {
-                        ConditionAction conditionAction = convertConditionActionSecondEntity(action);
+                        ConditionAction conditionAction = convertConditionActionSecondEntity(action,world);
                         secondaryEntity = new SecondaryEntityDefinitionImpl(action.getPRDSecondaryEntity().getEntity(), action.getPRDSecondaryEntity().getPRDSelection().getCount(), conditionAction);                        secondaryEntityDTO = action.getPRDSecondaryEntity().getEntity();
                     }
                 }
@@ -711,12 +710,12 @@ public class EngineImpl implements Engine {
                 return new DivideAction(ActionTypeDTO.CALCULATION, world.getEntities().get(action.getEntity()), myExpression, action.getResultProp(),secondaryEntity);
             }
         } else if (action.getPRDMultiply() != null) {
-            myExpression.add(getExpression(action.getEntity(), action.getResultProp(), action.getPRDMultiply().getArg1()).get(0));
-            myExpression.add(getExpression(action.getEntity(), action.getResultProp(), action.getPRDMultiply().getArg2()).get(0));
+            myExpression.add(getExpression(action.getEntity(), action.getResultProp(), action.getPRDMultiply().getArg1(),world).get(0));
+            myExpression.add(getExpression(action.getEntity(), action.getResultProp(), action.getPRDMultiply().getArg2(),world).get(0));
             if (validationEngine.checkArgsAreNumeric(myExpression, action.getEntity(), action.getType(), world)) {
                 if (action.getPRDSecondaryEntity() != null) {
                     if(validationEngine.checkEntityExist(action.getPRDSecondaryEntity().getEntity(), world)) {
-                        ConditionAction conditionAction = convertConditionActionSecondEntity(action);
+                        ConditionAction conditionAction = convertConditionActionSecondEntity(action,world);
                         secondaryEntity = new SecondaryEntityDefinitionImpl(action.getPRDSecondaryEntity().getEntity(), action.getPRDSecondaryEntity().getPRDSelection().getCount(), conditionAction);                        secondaryEntityDTO = action.getPRDSecondaryEntity().getEntity();
                     }
                 }
@@ -730,17 +729,17 @@ public class EngineImpl implements Engine {
         throw new IllegalArgumentException("Input doesn't match the expected format");
     }
 
-    List<Expression> getExpression(String entityName, String propName, String expressionVal) {
+    List<Expression> getExpression(String entityName, String propName, String expressionVal,WorldDefinition world) {
         List<Expression> myExpression = new ArrayList<>();
         if (expressionVal != null) {
             if (expressionVal.toLowerCase().contains("percent")) {
-                handlePercentFunctionExpression(expressionVal, myExpression);
+                handlePercentFunctionExpression(expressionVal, myExpression,world);
             } else if (expressionVal.toLowerCase().contains("evaluate")) {
-                handleEvaluateExpression(expressionVal, myExpression);
+                handleEvaluateExpression(expressionVal, myExpression,world);
             } else if (expressionVal.toLowerCase().contains("environment")) {
-                handleEnvironmentFunctionExpression(expressionVal, myExpression);
+                handleEnvironmentFunctionExpression(expressionVal, myExpression,world);
             } else if (expressionVal.toLowerCase().contains("random")) {
-                handleRandomFunctionExpression(expressionVal, myExpression);
+                handleRandomFunctionExpression(expressionVal, myExpression,world);
             }else if (expressionVal.toLowerCase().contains("ticks")) {
                 handleTicksFunctionExpression(expressionVal, myExpression);
 //todo: change the propertyNAME By CHECKING PROP ACCORDING TO SECONDARY ENTITY NAME OR PRIMARY ENTITY NAME
@@ -754,7 +753,7 @@ public class EngineImpl implements Engine {
                     myExpression.add(new GeneralExpression(PropertyType.DECIMAL, expressionVal));
                 }
                 else{
-                    myExpression.add(createGeneralExpression(entityName,propName,expressionVal));
+                    myExpression.add(createGeneralExpression(entityName,propName,expressionVal,world));
                 }
             }
 
@@ -762,7 +761,7 @@ public class EngineImpl implements Engine {
         return myExpression;
     }
 
-    private Expression createGeneralExpression(String entityName, String propName, String expressionVal) {
+    private Expression createGeneralExpression(String entityName, String propName, String expressionVal,WorldDefinition world) {
         if(propName.contains("percent"))
             return new GeneralExpression(PropertyType.FLOAT,expressionVal);
         else if(propName.contains("random")|| propName.contains("ticks") )
@@ -792,7 +791,7 @@ public class EngineImpl implements Engine {
         }
     }
 
-    private void handleEvaluateExpression(String expressionVal, List<Expression> myExpression) {
+    private void handleEvaluateExpression(String expressionVal, List<Expression> myExpression,WorldDefinition world) {
         int startIndex = expressionVal.indexOf('(') + 1;
         int endIndex = expressionVal.indexOf(')');
 
@@ -810,7 +809,7 @@ public class EngineImpl implements Engine {
         }
     }
 
-    private void handlePercentFunctionExpression(String expressionVal, List<Expression> myExpression) {
+    private void handlePercentFunctionExpression(String expressionVal, List<Expression> myExpression,WorldDefinition world) {
         int openingIndex = expressionVal.indexOf('(');
         int closingIndex = expressionVal.lastIndexOf(')');
         List<String> args = new ArrayList<>();
@@ -820,12 +819,12 @@ public class EngineImpl implements Engine {
             String[] arguments = argsString.split(",", 2);
             args.addAll(Arrays.asList(arguments));
         }
-        Expression expression1 = getExpression(null, null, args.get(0)).get(0);
-        Expression expression2 = getExpression(null, null, args.get(1)).get(0);
+        Expression expression1 = getExpression(null, null, args.get(0),world).get(0);
+        Expression expression2 = getExpression(null, null, args.get(1),world).get(0);
         myExpression.add(new PercentExpression(expression1,expression2));
     }
 
-    void handleRandomFunctionExpression(String ExpressionVal, List<Expression> myExpression) {
+    void handleRandomFunctionExpression(String ExpressionVal, List<Expression> myExpression,WorldDefinition world) {
 
         int startIndex = ExpressionVal.indexOf('(') + 1;
         int endIndex = ExpressionVal.indexOf(')');
@@ -841,7 +840,7 @@ public class EngineImpl implements Engine {
             throw new IllegalArgumentException("Input doesn't match the expected format");
         }
     }
-    void handleEnvironmentFunctionExpression(String ExpressionVal, List<Expression> myExpression) {
+    void handleEnvironmentFunctionExpression(String ExpressionVal, List<Expression> myExpression,WorldDefinition world) {
 
         int startIndex = ExpressionVal.indexOf('(') + 1;
         int endIndex = ExpressionVal.indexOf(')');
@@ -1128,7 +1127,6 @@ public class EngineImpl implements Engine {
                 entityInstance.setCoordinate(world.getGrid().getNextMove(entityInstance)));
     }
 
-    //todo: ask noam if i can delete this arg: simulationStart
     private String getTerminationReason(int ticks, Instant simulationStart) {
         String ticksMsg = "The simulation has ended because " + ticks +" ticks has passed";
         String secondsMsg = "The simulation has ended because more then " + world.getTerminationTerm().getBySeconds() +" seconds has passed";
