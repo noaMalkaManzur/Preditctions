@@ -12,7 +12,6 @@ public class ThreadManager {
     public ExecutorService getThreadExecutor() {
         return threadExecutor;
     }
-
     public ThreadManager(Integer threadCount) {
         this.threadExecutor = Executors.newFixedThreadPool(threadCount);
     }
