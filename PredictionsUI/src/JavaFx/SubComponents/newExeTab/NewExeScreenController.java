@@ -7,9 +7,13 @@ import definition.property.api.PropertyType;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.concurrent.ExecutorService;
 
 public class NewExeScreenController {
     private BodyController bodyController;
@@ -212,8 +216,8 @@ public class NewExeScreenController {
             bodyController.initRandomEnvVars(envName);
         //endregion
         bodyController.runSimulation();
-
     }
+
     public void onClearBtnClicked()
     {
         entList.getSelectionModel().clearSelection();

@@ -100,7 +100,7 @@ public class EngineImpl implements Engine {
     ActivationDTO activationDTO;
     ValidationEngine validationEngine = new ValidationEngineImpl();
     private Integer maxPopulation;
-    private ThreadManager threadManager = new ThreadManager(0);
+    private ThreadManager threadManager = new ThreadManager(1);
 
     //region Command number 1
     @Override

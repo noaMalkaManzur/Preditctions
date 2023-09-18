@@ -11,15 +11,8 @@ public class ThreadManager {
     public ExecutorService getThreadExecutor() {
         return threadExecutor;
     }
- /*   public ThreadManager(Integer threadCount) {
+     public ThreadManager(Integer threadCount) {
         this.threadExecutor = Executors.newFixedThreadPool(threadCount);
-    }*/
-    public ThreadManager(Integer threadCount) {
-        if (threadCount <= 0) {
-            this.threadExecutor = Executors.newCachedThreadPool();
-        } else {
-            this.threadExecutor = Executors.newFixedThreadPool(threadCount);
-        }
     }
     public void executeSimulation(SimulationManager simulation){
         threadExecutor.execute(simulation);
