@@ -33,21 +33,24 @@ public class PredictionsAppController {
 
     @FXML
     public void initialize() {
+        selectedFile = new SimpleStringProperty();
         if (headerComponentController != null && bodyComponentController != null) {
             headerComponentController.setMainController(this);
             bodyComponentController.setMainController(this);
             headerComponentController.bindHeaderToFullApp();
-
         }
-        selectedFile = new SimpleStringProperty();
     }
     public SimpleStringProperty selectedFileProperty() {
         return selectedFile;
     }
     public SimpleIntegerProperty getQueueSizeLabel() {
         ExecutorService myService = engine.getThreadManager().getThreadExecutor();
-        SimpleIntegerProperty QueueSize = new SimpleIntegerProperty(((ThreadPoolExecutor)myService).getQueue().size());
-        return QueueSize;
+        if(myService != null) {
+            SimpleIntegerProperty QueueSize = new SimpleIntegerProperty(((ThreadPoolExecutor) myService).getQueue().size());
+            return QueueSize;
+            //impleIntegerProperty Running = new SimpleIntegerProperty(((ThreadPoolExecutor) myService).getActiveCount());
+        }
+        return new SimpleIntegerProperty(0);
     }
     public SimpleStringProperty getRunningSimLabel() {
         return runningSimLabel;

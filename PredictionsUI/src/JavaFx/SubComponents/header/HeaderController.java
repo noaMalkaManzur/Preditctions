@@ -44,7 +44,7 @@ public class HeaderController {
     }
     public void bindHeaderToFullApp(){
         xmlPathTextField.textProperty().bind(mainController.selectedFileProperty());
-        //QueueSizeLbl.textProperty().bind(Bindings.format("%d",mainController.getQueueSizeLabel()));
+        //QueueSizeLbl.textProperty().bind(Bindings.format("%s",mainController.getQueueSizeLabel()));
     }
 }
 

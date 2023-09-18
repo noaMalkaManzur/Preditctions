@@ -55,7 +55,7 @@
                   <Insets left="10.0" />
                </GridPane.margin>
             </Label>
-            <Label text="0" GridPane.columnIndex="6" GridPane.rowIndex="1" />
+            <Label GridPane.columnIndex="6" GridPane.rowIndex="1" />
             <Label text="0" GridPane.columnIndex="6" GridPane.rowIndex="2" />
             <Label text="0" GridPane.columnIndex="6" GridPane.rowIndex="3" />
             <Label text="Predictions" underline="true" GridPane.columnIndex="2" GridPane.columnSpan="3" GridPane.halignment="CENTER">
