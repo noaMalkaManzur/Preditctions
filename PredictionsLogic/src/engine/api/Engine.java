@@ -30,7 +30,7 @@ public interface Engine
 
     ActiveEnvDTO ShowUserEnvVariables();
 
-    String runSimulation();
+    //String runSimulation();
 
     public void initRandomEnvVars(String name);
 
