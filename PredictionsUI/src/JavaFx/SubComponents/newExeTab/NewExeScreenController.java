@@ -212,6 +212,7 @@ public class NewExeScreenController {
             bodyController.initRandomEnvVars(envName);
         //endregion
         bodyController.runSimulation();
+
     }
     public void onClearBtnClicked()
     {

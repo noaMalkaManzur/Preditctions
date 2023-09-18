@@ -155,8 +155,8 @@ public class SimulationManagerImpl implements SimulationManager {
                 entityInstanceManager.getInstances().get(currentIndex).setCoordinate(worldDefinition.getGrid().getRandomCoordinateInit(entityInstanceManager.getInstances().get(currentIndex)));
             }
         });
-        primaryEntityInstance = entityInstanceManager.getInstances().get(0);
-        context = new ContextImpl(primaryEntityInstance,entityInstanceManager,simEnvironment, null, worldDefinition.getGrid());
+        //todo:ask noam if it is ok to put null at the beginning
+        context = new ContextImpl(null,entityInstanceManager,simEnvironment, null, worldDefinition.getGrid());
     }
     private void moveEntities() {
         context.getEntityManager().getInstances().forEach(entityInstance ->

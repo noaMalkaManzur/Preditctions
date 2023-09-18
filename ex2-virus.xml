@@ -4,7 +4,7 @@
 	<PRD-environment>
 		<PRD-env-property type="float">
 			<PRD-name>infection-proximity</PRD-name>			
-		</PRD-env-property>
+L		</PRD-env-property>
 	</PRD-environment>
 	<PRD-grid rows="30" columns="50"/>
 	<PRD-entities>

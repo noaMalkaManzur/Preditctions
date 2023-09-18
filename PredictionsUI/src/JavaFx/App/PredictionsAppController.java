@@ -4,7 +4,8 @@ import Defenitions.*;
 import JavaFx.SubComponents.body.BodyController;
 import JavaFx.SubComponents.header.HeaderController;
 import engine.api.Engine;
-import javafx.beans.property.*;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ScrollPane;
@@ -38,17 +39,23 @@ public class PredictionsAppController {
             headerComponentController.setMainController(this);
             bodyComponentController.setMainController(this);
             headerComponentController.bindHeaderToFullApp();
+
         }
     }
     public SimpleStringProperty selectedFileProperty() {
         return selectedFile;
     }
-    public SimpleIntegerProperty getQueueSizeLabel() {
-        ExecutorService myService = engine.getThreadManager().getThreadExecutor();
-        if(myService != null) {
-            SimpleIntegerProperty QueueSize = new SimpleIntegerProperty(((ThreadPoolExecutor) myService).getQueue().size());
-            return QueueSize;
-            //impleIntegerProperty Running = new SimpleIntegerProperty(((ThreadPoolExecutor) myService).getActiveCount());
+    public SimpleIntegerProperty getQueueSize() {
+
+        try{
+            ExecutorService myService = engine.getThreadManager().getThreadExecutor();
+            if(myService != null) {
+                return new SimpleIntegerProperty(((ThreadPoolExecutor) myService).getQueue().size());
+                //IntegerProperty Running = new SimpleIntegerProperty(((ThreadPoolExecutor) myService).getActiveCount());
+            }
+        }
+        catch (Exception exception){
+            return new SimpleIntegerProperty(0);
         }
         return new SimpleIntegerProperty(0);
     }
@@ -58,7 +65,6 @@ public class PredictionsAppController {
     public SimpleStringProperty getFinishedSimLabel() {
         return finishedSimLabel;
     }
-
 
     public void readWorldData(String absolutePath) {
         try {

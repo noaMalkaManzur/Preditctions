@@ -16,9 +16,9 @@ public class PredictionsApp extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         engine = new EngineImpl();
-
         primaryStage.setTitle("Live Example");
         FXMLLoader fxmlLoader = new FXMLLoader();
+
         URL url = getClass().getResource("../App/predictionsApp.fxml");
         fxmlLoader.setLocation(url);
         Parent load = fxmlLoader.load(url.openStream());
