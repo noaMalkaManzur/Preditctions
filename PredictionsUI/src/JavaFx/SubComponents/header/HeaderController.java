@@ -18,13 +18,11 @@ public class HeaderController {
     @FXML
     private TextField xmlPathTextField;
     @FXML
-    private Label QueueSizeLbl;
+        private Label QueueSizeLbl;
     @FXML
     private Label RunningSimLbl;
     @FXML
     private Label FinishedSimLbl;
-
-
 
     @FXML
     void loadXmlFileButtonPressedHandler(ActionEvent event) {
@@ -44,7 +42,7 @@ public class HeaderController {
     }
     public void bindHeaderToFullApp(){
         xmlPathTextField.textProperty().bind(mainController.selectedFileProperty());
-        //QueueSizeLbl.textProperty().bind(Bindings.format("%s",mainController.getQueueSizeLabel()));
+        QueueSizeLbl.textProperty().bind(Bindings.format("Queue Size: %s",mainController.getQueueSize()));
     }
 }
 

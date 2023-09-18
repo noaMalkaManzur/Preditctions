@@ -30,8 +30,6 @@ public interface Engine
 
     ActiveEnvDTO ShowUserEnvVariables();
 
-    //String runSimulation();
-
     public void initRandomEnvVars(String name);
 
     void clearActiveEnv();
@@ -40,6 +38,8 @@ public interface Engine
     HistoryRunningSimulationDTO createHistoryRunningSimulationDTO();
   
     HistogramByAmountEntitiesDTO createHistogramByAmountEntitiesDTO(String guid,String name);
+
+    String runSimulation();
 
     HistogramByPropertyEntitiesDTO setHistogramPerProperty(String guid, String propName);
 
