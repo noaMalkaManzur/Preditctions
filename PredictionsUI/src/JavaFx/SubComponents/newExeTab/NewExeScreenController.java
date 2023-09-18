@@ -207,8 +207,10 @@ public class NewExeScreenController {
     public void onStartBtnClicked()
     {
         EnvironmentDefinitionDTO myEnvDef = bodyController.getEnvDTO();
+        //region Initializing random env vars
         for(String envName: myEnvDef.getEnvProps().keySet())
             bodyController.initRandomEnvVars(envName);
+        //endregion
         bodyController.runSimulation();
     }
     public void onClearBtnClicked()

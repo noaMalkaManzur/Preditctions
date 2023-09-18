@@ -28,5 +28,5 @@ public interface WorldDefinition
     void setGrid(Grid grid);
 
     Grid getGrid();
-    void setThreadCount(int prdThreadCount);
+    void setThreadCount(Integer prdThreadCount);
 }

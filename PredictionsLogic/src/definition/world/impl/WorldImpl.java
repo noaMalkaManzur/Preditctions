@@ -15,7 +15,7 @@ public class WorldImpl implements WorldDefinition
     private Map<String,Rule> rules;
     private Termination terminationTerm;
     private Grid grid;
-    int threadCount;
+    private Integer threadCount;
 
     public Map<String, EntityDefinition> getEntities() {
         return entities;
@@ -52,7 +52,7 @@ public class WorldImpl implements WorldDefinition
     public Grid getGrid() {return grid;}
 
     @Override
-    public void setThreadCount(int prdThreadCount) {
+    public void setThreadCount(Integer prdThreadCount) {
         this.threadCount = prdThreadCount;
     }
 

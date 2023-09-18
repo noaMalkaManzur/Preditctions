@@ -39,7 +39,7 @@
                   <Insets left="10.0" />
                </GridPane.margin>
             </Label>
-            <Label fx:id="RuningSimLbl" text="Running Simulations:" GridPane.columnIndex="5" GridPane.halignment="LEFT" GridPane.rowIndex="2">
+            <Label fx:id="RunningSimLbl" text="Running Simulations:" GridPane.columnIndex="5" GridPane.halignment="LEFT" GridPane.rowIndex="2">
                <font>
                   <Font size="15.0" />
                </font>
@@ -55,7 +55,7 @@
                   <Insets left="10.0" />
                </GridPane.margin>
             </Label>
-            <Label text="0" GridPane.columnIndex="6" GridPane.rowIndex="1" />
+            <Label GridPane.columnIndex="6" GridPane.rowIndex="1" />
             <Label text="0" GridPane.columnIndex="6" GridPane.rowIndex="2" />
             <Label text="0" GridPane.columnIndex="6" GridPane.rowIndex="3" />
             <Label text="Predictions" underline="true" GridPane.columnIndex="2" GridPane.columnSpan="3" GridPane.halignment="CENTER">

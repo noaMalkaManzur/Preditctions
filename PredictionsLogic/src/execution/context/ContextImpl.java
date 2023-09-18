@@ -1,5 +1,6 @@
 package execution.context;
 
+import definition.world.api.WorldDefinition;
 import definition.world.impl.Cell;
 import definition.world.impl.Grid;
 import execution.instance.enitty.EntityInstance;
@@ -18,10 +19,9 @@ public class ContextImpl implements Context {
     private EntityInstanceManager entityInstanceManager;
     private ActiveEnvironment activeEnvironment;
     private int currTick;
-
     private List<EntityInstance> entitySecondaryInstances = new ArrayList<>();
-    Grid grid;
-    List<Cell> cells;
+    //private final WorldDefinition world;
+    private Grid grid;
 
 
     public ContextImpl(EntityInstance primaryEntityInstance, EntityInstanceManager entityInstanceManager,
@@ -32,7 +32,6 @@ public class ContextImpl implements Context {
         this.activeEnvironment = activeEnvironment;
         this.secondaryEntityInstance = secondaryEntityInstance;
         this.grid = grid;
-        this.cells = grid.getCells();
     }
 
     @Override
@@ -44,6 +43,11 @@ public class ContextImpl implements Context {
     public EntityInstance getSecondaryEntityInstance() {
         return secondaryEntityInstance;
     }
+
+//    @Override
+//    public WorldDefinition getWorld() {
+//        return world;
+//    }
 
     @Override
     public void removeEntity(EntityInstance entityInstance) {
@@ -97,10 +101,4 @@ public class ContextImpl implements Context {
     public List<Cell> getCells() {
         return grid.getCells();
     }
-
-    @Override
-    public void setCells(List<Cell> cells) {
-        this.cells = cells;
-    }
-
 }
