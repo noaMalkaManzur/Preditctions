@@ -1,5 +1,6 @@
 package simulation.Impl;
 
+import Defenitions.ProgressSimulationDTO;
 import action.api.Action;
 import definition.world.api.WorldDefinition;
 import execution.context.Context;
@@ -12,10 +13,7 @@ import simulation.api.SimulationManager;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -82,64 +80,71 @@ public class SimulationManagerImpl implements SimulationManager {
 
     @Override
     public void run() {
+        try {
+            createContext();
+            int ticks = 0;
+            boolean isTerminated = false;
+            Map<String, Integer> entitiesUpdateData = new HashMap<>();
+            Map<String, Map<Integer, Integer>> entityPopulationOverTicks = new HashMap<>();
+            List<EntityInstance> afterConditionList = new ArrayList<>();
+            while (!isTerminated) {
+                int finalTicks = ticks;
+                List<Action> activeAction = new ArrayList<>();
 
-        createContext();
-        int ticks = 0;
-        boolean isTerminated = false;
+                moveEntities();
+                activeAction = getActiveAction(finalTicks);
+                List<Action> finalActiveAction = activeAction;
 
-        List<EntityInstance> afterConditionList = new ArrayList<>();
-        while (!isTerminated)
-        {
-            int finalTicks = ticks;
-            List<Action> activeAction = new ArrayList<>();
-
-            moveEntities();
-            activeAction = getActiveAction(finalTicks);
-            List<Action> finalActiveAction = activeAction;
-
-            context.getEntityManager().getInstances().forEach(entityInstance -> {
-                context.setPrimaryInstance(entityInstance.getId());
-                finalActiveAction.forEach(action -> {
-                    if (action.getContextEntity().getName().equals(entityInstance.getEntityDef().getName())) {
-                        if (action.hasSecondaryEntity()) {
-                            List<EntityInstance> afterConditionInstances = new ArrayList<>();
-                            String secondaryEntityName = action.getSecondaryEntityDefinition().getName();
-                            List<EntityInstance> entityInstancesFiltered = context.getEntityManager().getInstances().stream()
-                                    .filter(entityInstance1 -> entityInstance1.getEntityDef().getName().equals(secondaryEntityName)).collect(Collectors.toList());
-                            afterConditionInstances  = handleSecondaryEntityList(action, entityInstancesFiltered, context);
-                            if (afterConditionInstances != null) {
-                                afterConditionInstances.forEach(secondEntity -> {
-                                    context.setSecondEntity(secondEntity);
-                                    action.invoke(context, finalTicks);
-                                });
+                context.getEntityManager().getInstances().forEach(entityInstance -> {
+                    context.setPrimaryInstance(entityInstance.getId());
+                    finalActiveAction.forEach(action -> {
+                        if (action.getContextEntity().getName().equals(entityInstance.getEntityDef().getName())) {
+                            if (action.hasSecondaryEntity()) {
+                                List<EntityInstance> afterConditionInstances = new ArrayList<>();
+                                String secondaryEntityName = action.getSecondaryEntityDefinition().getName();
+                                List<EntityInstance> entityInstancesFiltered = context.getEntityManager().getInstances().stream()
+                                        .filter(entityInstance1 -> entityInstance1.getEntityDef().getName().equals(secondaryEntityName)).collect(Collectors.toList());
+                                afterConditionInstances = handleSecondaryEntityList(action, entityInstancesFiltered, context);
+                                if (afterConditionInstances != null) {
+                                    afterConditionInstances.forEach(secondEntity -> {
+                                        context.setSecondEntity(secondEntity);
+                                        action.invoke(context, finalTicks);
+                                    });
+                                }
+                            } else {
+                                action.invoke(context, finalTicks);
                             }
                         }
-                        else{
-                            action.invoke(context, finalTicks);
-                        }
-                    }
+                    });
+                    //entitiesUpdateData.put(entityInstance.getEntityDef().getName(), entityInstance.getEntityDef().getPopulation());
+                    entityPopulationOverTicks.computeIfAbsent(entityInstance.getEntityDef().getName(), k -> new HashMap<>())
+                            .put(finalTicks, entityInstance.getEntityDef().getPopulation());
                 });
-            });
 
-            ticks++;
-            context.setCurrTick(ticks);
-            activateKillAction();
-            replaceActionList();
+                ticks++;
+                context.setCurrTick(ticks);
+                activateKillAction();
+                replaceActionList();
+                long milliseconds = Duration.between(getStartTime(), Instant.now()).toMillis();
+                long seconds = milliseconds / 1000;
+                ProgressSimulationDTO progressDTO = new ProgressSimulationDTO(seconds, finalTicks, entitiesUpdateData);
 
-            while(isPause)
-            {
-                try {
-                    sleep(100);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                while (isPause) {
+                    try {
+                        sleep(100);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
-            }
 
-            if(Duration.between(getStartTime(), Instant.now()).toMillis()/ 1000 > 15/*validationEngine.simulationEnded(ticks,simulationStart, world)*/)
-                isTerminated = true;
+                if (seconds > 90/*validationEngine.simulationEnded(ticks,simulationStart, world)*/)
+                    isTerminated = true;
+            }
+            String endReason = "steam" /*getTerminationReason(ticks,simulationStart)*/;
+            //createHistogram(Guid);
+        } catch (Exception e) {
+            System.out.println(e);
         }
-        String endReason ="steam" /*getTerminationReason(ticks,simulationStart)*/;
-        //createHistogram(Guid);
     }
     private void createContext() {
         EntityInstanceManager entityInstanceManager = new EntityInstanceManagerImpl();

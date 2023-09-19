@@ -18,7 +18,7 @@ public interface Engine
     //endregion
     //region Command 2
     RulesDTO getRulesDTO();
-    TerminitionDTO getTerminationDTO();
+    TerminationDTO getTerminationDTO();
     Map<String, EntityDefinitionDTO> getEntitiesDTO();
     SimulationInfoDTO getSimulationInfo();
     WorldDefinitionDTO getWorldDefinitionDTO();
@@ -58,7 +58,7 @@ public interface Engine
     ValidationEngine getValidation();
 
     ThreadManager getThreadManager();
-
+    ProgressSimulationDTO getProgressDTO();
 
     //endregion
 }

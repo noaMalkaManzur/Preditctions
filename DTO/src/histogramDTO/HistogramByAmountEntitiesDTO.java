@@ -1,10 +1,6 @@
 package histogramDTO;
 
-import execution.instance.enitty.EntityInstance;
-
-import java.util.Map;
-
-public class HistogramByAmountEntitiesDTO {
+public class    HistogramByAmountEntitiesDTO {
     String name;
     int populationBeforeSimulation;
     int populationAfterSimulation;

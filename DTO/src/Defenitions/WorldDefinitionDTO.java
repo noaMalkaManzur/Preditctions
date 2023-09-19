@@ -7,10 +7,10 @@ public class WorldDefinitionDTO
     private final Map<String,EntityDefinitionDTO> entities;
     private final EnvironmentDefinitionDTO environmentVars;
     private final Map<String, RuleDTO> rules;
-    private final TerminitionDTO terms;
+    private final TerminationDTO terms;
     private final GridDTO grid;
 
-    public WorldDefinitionDTO(Map<String, EntityDefinitionDTO> entities, EnvironmentDefinitionDTO environmentVars, Map<String, RuleDTO> rules, TerminitionDTO terms, GridDTO grid) {
+    public WorldDefinitionDTO(Map<String, EntityDefinitionDTO> entities, EnvironmentDefinitionDTO environmentVars, Map<String, RuleDTO> rules, TerminationDTO terms, GridDTO grid) {
         this.entities = entities;
         this.environmentVars = environmentVars;
         this.rules = rules;
@@ -32,7 +32,7 @@ public class WorldDefinitionDTO
         return rules;
     }
 
-    public TerminitionDTO getTerms() {
+    public TerminationDTO getTerms() {
         return terms;
     }
 }

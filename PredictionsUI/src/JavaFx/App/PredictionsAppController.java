@@ -10,12 +10,8 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ScrollPane;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
 import java.util.Map;
-import java.util.Timer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -117,7 +113,7 @@ public class PredictionsAppController {
         return engine.getGridDTO();
     }
 
-    public TerminitionDTO getTerminationDTO() {
+    public TerminationDTO getTerminationDTO() {
         return engine.getTerminationDTO();
     }
 

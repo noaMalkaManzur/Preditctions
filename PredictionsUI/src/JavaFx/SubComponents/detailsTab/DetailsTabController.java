@@ -242,7 +242,7 @@ public class DetailsTabController{
             if(selectedItem.getValue().equals("Termination"))
             {
                 terminationScreenComponent.setVisible(true);
-                TerminitionDTO terminationDTO = bodyController.getTerminationDTO();
+                TerminationDTO terminationDTO = bodyController.getTerminationDTO();
                 terminationScreenComponentController.updateTableView(terminationDTO);
             }
         }

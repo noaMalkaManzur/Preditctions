@@ -45,14 +45,12 @@ public class DecreaseAction extends AbstractAction {
         {
             if (updatedVal.doubleValue() >= propertyInstance.getPropertyDefinition().getRange().getRangeFrom()) {
 
-                propertyInstance.updateValue(updatedVal);
-                propertyInstance.setCurrTickForValueChanged(currTickToChangeValue);
+                propertyInstance.updateValue(updatedVal, currTickToChangeValue);
             }
         }
         else
         {
-            propertyInstance.updateValue(updatedVal);
-            propertyInstance.setCurrTickForValueChanged(currTickToChangeValue);
+            propertyInstance.updateValue(updatedVal, currTickToChangeValue);
         }
     }
 

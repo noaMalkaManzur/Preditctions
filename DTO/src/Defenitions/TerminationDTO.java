@@ -1,12 +1,12 @@
 package Defenitions;
 
-public class TerminitionDTO
+public class TerminationDTO
 {
     private final Integer bySeconds;
     private final Integer byTicks;
     private final Boolean byUser;
 
-    public TerminitionDTO(Integer bySeconds, Integer byTicks, Boolean byUser) {
+    public TerminationDTO(Integer bySeconds, Integer byTicks, Boolean byUser) {
         this.bySeconds = bySeconds;
         this.byTicks = byTicks;
         this.byUser = byUser;

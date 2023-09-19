@@ -141,6 +141,12 @@ public class EngineImpl implements Engine {
     {
         return threadManager;
     }
+
+    @Override
+    public ProgressSimulationDTO getProgressDTO() {
+        return null;
+    }
+
     private Grid getGridFromFile(PRDWorld prdWorld) {
 
         maxPopulation = prdWorld.getPRDGrid().getRows() * prdWorld.getPRDGrid().getColumns();
@@ -957,8 +963,8 @@ public class EngineImpl implements Engine {
         return validationEngine;
     }
 
-    public TerminitionDTO getTerminationDTO(){
-        return new TerminitionDTO(world.getTerminationTerm().getBySeconds(), world.getTerminationTerm().getByTicks(),world.getTerminationTerm().getByUser());
+    public TerminationDTO getTerminationDTO(){
+        return new TerminationDTO(world.getTerminationTerm().getBySeconds(), world.getTerminationTerm().getByTicks(),world.getTerminationTerm().getByUser());
     }
     public SimulationInfoDTO getSimulationInfo(){
         return null;

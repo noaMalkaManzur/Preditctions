@@ -44,14 +44,12 @@ public class IncreaseAction extends AbstractAction {
         if(propertyInstance.getPropertyDefinition().getRange() != null)
         {
             if (updatedVal.doubleValue() <= propertyInstance.getPropertyDefinition().getRange().getRangeTo()) {
-                propertyInstance.updateValue(updatedVal);
-                propertyInstance.setCurrTickForValueChanged(currTickToChangeValue);
+                propertyInstance.updateValue(updatedVal, currTickToChangeValue);
             }
         }
         else
         {
-            propertyInstance.updateValue(updatedVal);
-            propertyInstance.setCurrTickForValueChanged(currTickToChangeValue);
+            propertyInstance.updateValue(updatedVal, currTickToChangeValue);
         }
     }
 

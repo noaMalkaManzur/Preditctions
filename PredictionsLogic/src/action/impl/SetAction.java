@@ -20,7 +20,6 @@ public class SetAction extends AbstractAction
         this.property = property;
     }
 
-
     @Override
     public void invoke(Context context, int currTickToChangeValue) {
 
@@ -34,14 +33,12 @@ public class SetAction extends AbstractAction
                 if((propertyInstance.getPropertyDefinition().getRange().getRangeTo()>= numVal.doubleValue())
                 ||propertyInstance.getPropertyDefinition().getRange().getRangeFrom()<= numVal.doubleValue())
                 {
-                    propertyInstance.updateValue(expVal);
-                    propertyInstance.setCurrTickForValueChanged(currTickToChangeValue);
+                    propertyInstance.updateValue(expVal, currTickToChangeValue);
                 }
         }
         else
         {
-            propertyInstance.updateValue(expVal);
-            propertyInstance.setCurrTickForValueChanged(currTickToChangeValue);
+            propertyInstance.updateValue(expVal, currTickToChangeValue);
         }
     }
 
