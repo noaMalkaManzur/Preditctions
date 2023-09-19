@@ -3,6 +3,7 @@ package JavaFx.App;
 import Defenitions.*;
 import JavaFx.SubComponents.body.BodyController;
 import JavaFx.SubComponents.header.HeaderController;
+import ThreadManager.ThreadManager;
 import engine.api.Engine;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -160,4 +161,7 @@ public class PredictionsAppController {
         }
     }
 
+    public ThreadManager getThreadManager() {
+        return engine.getThreadManager();
+    }
 }

@@ -135,7 +135,7 @@ public class SimulationManagerImpl implements SimulationManager {
                 }
             }
 
-            if(ticks==840/*validationEngine.simulationEnded(ticks,simulationStart, world)*/)
+            if(Duration.between(getStartTime(), Instant.now()).toMillis()/ 1000 > 15/*validationEngine.simulationEnded(ticks,simulationStart, world)*/)
                 isTerminated = true;
         }
         String endReason ="steam" /*getTerminationReason(ticks,simulationStart)*/;
