@@ -2,11 +2,13 @@ package JavaFx.SubComponents.exeDetails;
 
 import Instance.EntityMangerDTO;
 import JavaFx.SubComponents.resultTab.ResultTabController;
-import execution.instance.enitty.EntityInstance;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 
 public class ExeDetailsController {
     private ResultTabController resultTabController;
@@ -36,8 +38,6 @@ public class ExeDetailsController {
 
     @FXML
     private TableView<EntityMangerDTO> tableViewComponent;
-
-
 
     public void setResultTabController(ResultTabController resultTabController) {
         this.resultTabController = resultTabController;

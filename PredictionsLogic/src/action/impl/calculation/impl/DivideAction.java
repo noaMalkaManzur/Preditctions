@@ -43,13 +43,12 @@ public class DivideAction extends CalculationAction {
         if (propertyInstance.getPropertyDefinition().getRange() != null) {
             if (divRes.doubleValue() >= propertyInstance.getPropertyDefinition().getRange().getRangeFrom()) {
                 if (propertyInstance.getPropertyDefinition().getType() == PropertyType.DECIMAL) {
-                    propertyInstance.updateValue(divRes);
-                    propertyInstance.setCurrTickForValueChanged(currTickToChangeValue);
+                    propertyInstance.updateValue(divRes, currTickToChangeValue);
                 }
             }
         } else {
-            propertyInstance.updateValue(divRes);
-            propertyInstance.setCurrTickForValueChanged(currTickToChangeValue);
+            propertyInstance.updateValue(divRes, currTickToChangeValue);
+
         }
 
     }

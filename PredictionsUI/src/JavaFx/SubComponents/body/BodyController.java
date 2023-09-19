@@ -67,7 +67,7 @@ public class BodyController {
         return mainController.getGridDTO();
     }
 
-    public TerminitionDTO getTerminationDTO() {
+    public TerminationDTO getTerminationDTO() {
         return mainController.getTerminationDTO();
     }
 

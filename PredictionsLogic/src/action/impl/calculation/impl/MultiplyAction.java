@@ -39,13 +39,11 @@ public class MultiplyAction extends CalculationAction {
         if (propertyInstance.getPropertyDefinition().getRange() != null) {
             if (mulRes.doubleValue() <= propertyInstance.getPropertyDefinition().getRange().getRangeTo()) {
                 if (propertyInstance.getPropertyDefinition().getType() == PropertyType.DECIMAL) {
-                    propertyInstance.updateValue(mulRes);
-                    propertyInstance.setCurrTickForValueChanged(currTickToChangeValue);
+                    propertyInstance.updateValue(mulRes, currTickToChangeValue);
                 }
             }
         } else {
-            propertyInstance.updateValue(mulRes);
-            propertyInstance.setCurrTickForValueChanged(currTickToChangeValue);
+            propertyInstance.updateValue(mulRes, currTickToChangeValue);
         }
     }
 
