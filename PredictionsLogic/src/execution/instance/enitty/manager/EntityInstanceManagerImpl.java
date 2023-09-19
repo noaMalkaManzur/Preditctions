@@ -55,7 +55,6 @@ public class EntityInstanceManagerImpl implements EntityInstanceManager {
     @Override
     public void addReplaceEntityList(EntityInstance replaceEntity) {
         replaceEntityList.add(replaceEntity);
-        setCurrPopulation(instances.size());
     }
 
     @Override
