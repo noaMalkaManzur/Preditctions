@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
+import org.omg.CosNaming.BindingIterator;
 
 import java.io.File;
 
@@ -23,8 +24,6 @@ public class HeaderController {
     private Label RunningSimLbl;
     @FXML
     private Label FinishedSimLbl;
-
-
 
     @FXML
     void loadXmlFileButtonPressedHandler(ActionEvent event) {
@@ -44,7 +43,9 @@ public class HeaderController {
     }
     public void bindHeaderToFullApp(){
         xmlPathTextField.textProperty().bind(mainController.selectedFileProperty());
-        //QueueSizeLbl.textProperty().bind(Bindings.format("%s",mainController.getQueueSizeLabel()));
+        QueueSizeLbl.textProperty().bind(Bindings.format("%d",mainController.getQueueSize()));
+        RunningSimLbl.textProperty().bind(Bindings.format("%d",mainController.getRunningSimLabel()));
+        FinishedSimLbl.textProperty().bind(Bindings.format("%d",mainController.getFinishedSimLabel()));
     }
 }
 

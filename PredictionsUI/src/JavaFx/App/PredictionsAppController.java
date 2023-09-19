@@ -4,12 +4,17 @@ import Defenitions.*;
 import JavaFx.SubComponents.body.BodyController;
 import JavaFx.SubComponents.header.HeaderController;
 import engine.api.Engine;
-import javafx.beans.property.*;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ScrollPane;
-
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Map;
+import java.util.Timer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -26,39 +31,49 @@ public class PredictionsAppController {
     @FXML
     private ScrollPane predictionsAppScrollPane;
     private SimpleStringProperty selectedFile;
-    private SimpleStringProperty queueSizeLabel;
-    private SimpleStringProperty runningSimLabel;
-    private SimpleStringProperty finishedSimLabel;
+    private SimpleIntegerProperty queueSizeLabel;
+    private SimpleIntegerProperty runningSimLabel;
+    private SimpleIntegerProperty finishedSimLabel;
 
 
     @FXML
     public void initialize() {
         selectedFile = new SimpleStringProperty();
+        queueSizeLabel = new SimpleIntegerProperty(0);
+        runningSimLabel = new SimpleIntegerProperty(0);
+        finishedSimLabel = new SimpleIntegerProperty(0);
         if (headerComponentController != null && bodyComponentController != null) {
             headerComponentController.setMainController(this);
             bodyComponentController.setMainController(this);
             headerComponentController.bindHeaderToFullApp();
+
         }
     }
     public SimpleStringProperty selectedFileProperty() {
         return selectedFile;
     }
-    public SimpleIntegerProperty getQueueSizeLabel() {
-        ExecutorService myService = engine.getThreadManager().getThreadExecutor();
-        if(myService != null) {
-            SimpleIntegerProperty QueueSize = new SimpleIntegerProperty(((ThreadPoolExecutor) myService).getQueue().size());
-            return QueueSize;
-            //impleIntegerProperty Running = new SimpleIntegerProperty(((ThreadPoolExecutor) myService).getActiveCount());
-        }
-        return new SimpleIntegerProperty(0);
-    }
-    public SimpleStringProperty getRunningSimLabel() {
-        return runningSimLabel;
-    }
-    public SimpleStringProperty getFinishedSimLabel() {
-        return finishedSimLabel;
+    public SimpleIntegerProperty getQueueSize() {
+            return queueSizeLabel;
     }
 
+    public void setQueueSizeLabel(int queueSizeLabel) {
+        this.queueSizeLabel.set(queueSizeLabel);
+    }
+
+    public void setRunningSimLabel(int runningSimLabel) {
+        this.runningSimLabel.set(runningSimLabel);
+    }
+
+    public void setFinishedSimLabel(int finishedSimLabel) {
+        this.finishedSimLabel.set(finishedSimLabel);
+    }
+
+    public SimpleIntegerProperty getRunningSimLabel() {
+        return runningSimLabel;
+    }
+    public SimpleIntegerProperty getFinishedSimLabel() {
+        return finishedSimLabel;
+    }
 
     public void readWorldData(String absolutePath) {
         try {
@@ -135,6 +150,14 @@ public class PredictionsAppController {
 
     public void runSimulation() {
         engine.runSimulation();
+    }
+    private void updateLabels() {
+        ExecutorService myService = engine.getThreadManager().getThreadExecutor();
+        if (myService != null) {
+            setQueueSizeLabel(((ThreadPoolExecutor)myService).getQueue().size());
+            setRunningSimLabel(((ThreadPoolExecutor)myService).getActiveCount());
+            setFinishedSimLabel((int) ((ThreadPoolExecutor)myService).getCompletedTaskCount());
+        }
     }
 
 }

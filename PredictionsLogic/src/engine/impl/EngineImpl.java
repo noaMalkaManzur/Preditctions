@@ -85,7 +85,6 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 public class EngineImpl implements Engine {
     private WorldDefinition world;
@@ -101,7 +100,7 @@ public class EngineImpl implements Engine {
     ActivationDTO activationDTO;
     ValidationEngine validationEngine = new ValidationEngineImpl();
     private Integer maxPopulation;
-    private ThreadManager threadManager;
+    private ThreadManager threadManager = new ThreadManager(1);
 
     //region Command number 1
     @Override

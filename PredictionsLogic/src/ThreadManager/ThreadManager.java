@@ -1,6 +1,5 @@
 package ThreadManager;
 
-import simulation.Impl.SimulationManagerImpl;
 import simulation.api.SimulationManager;
 
 import java.util.concurrent.ExecutorService;
@@ -12,7 +11,7 @@ public class ThreadManager {
     public ExecutorService getThreadExecutor() {
         return threadExecutor;
     }
-    public ThreadManager(Integer threadCount) {
+     public ThreadManager(Integer threadCount) {
         this.threadExecutor = Executors.newFixedThreadPool(threadCount);
     }
     public void executeSimulation(SimulationManager simulation){
