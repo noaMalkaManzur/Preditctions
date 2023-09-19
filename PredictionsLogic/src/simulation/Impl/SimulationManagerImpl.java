@@ -140,12 +140,14 @@ public class SimulationManagerImpl implements SimulationManager {
                 if (seconds > 90/*validationEngine.simulationEnded(ticks,simulationStart, world)*/)
                     isTerminated = true;
             }
+
             String endReason = "steam" /*getTerminationReason(ticks,simulationStart)*/;
             //createHistogram(Guid);
         } catch (Exception e) {
             System.out.println(e);
         }
     }
+
     private void createContext() {
         EntityInstanceManager entityInstanceManager = new EntityInstanceManagerImpl();
         EntityInstance primaryEntityInstance = null;

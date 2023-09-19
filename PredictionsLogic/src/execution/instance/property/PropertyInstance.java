@@ -10,5 +10,6 @@ public interface PropertyInstance {
     void updateValue(Object val, int currTickForValueChanged);
     int getCurrTickForValueChanged();
     List<Object> getValuesList();
-
-    }
+    double averageTickNumbSinceChangeValue(int simulationTicks);
+    double averageValueProperty();
+}
