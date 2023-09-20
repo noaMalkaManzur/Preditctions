@@ -137,19 +137,19 @@ public class SimulationManagerImpl implements SimulationManager {
                     }
                 }
 
-                if (seconds > 90/*validationEngine.simulationEnded(ticks,simulationStart, world)*/)
+                if (seconds > 200/*validationEngine.simulationEnded(ticks,simulationStart, world)*/)
                     isTerminated = true;
             }
+
             String endReason = "steam" /*getTerminationReason(ticks,simulationStart)*/;
             //createHistogram(Guid);
         } catch (Exception e) {
             System.out.println(e);
         }
     }
+
     private void createContext() {
         EntityInstanceManager entityInstanceManager = new EntityInstanceManagerImpl();
-        EntityInstance primaryEntityInstance = null;
-
         AtomicInteger index = new AtomicInteger(0);
 
         worldDefinition.getEntities().forEach((key, value) -> {
@@ -160,7 +160,6 @@ public class SimulationManagerImpl implements SimulationManager {
                 entityInstanceManager.getInstances().get(currentIndex).setCoordinate(worldDefinition.getGrid().getRandomCoordinateInit(entityInstanceManager.getInstances().get(currentIndex)));
             }
         });
-        //todo:ask noam if it is ok to put null at the beginning
         context = new ContextImpl(null,entityInstanceManager,simEnvironment, null, worldDefinition.getGrid());
     }
     private void moveEntities() {

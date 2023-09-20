@@ -136,9 +136,8 @@ public class Grid {
         }
     public List<Coordinate> findEnvironmentCells(Coordinate source, int rank, Context context) {
         List<Coordinate> environmentCells = new ArrayList<>();
-
-        for (int i = source.getX() - rank; i <= source.getX() + rank; i++) {
-            for (int j = source.getY() - rank; j <= source.getY() + rank; j++) {
+        for (int i = source.getX() - rank % rows; i <= source.getX() + rank; i++) {
+            for (int j = source.getY() - rank % cols ; j <= source.getY() + rank; j++) {
                 Coordinate currentCoordinate = new Coordinate(i, j);
                 if (checkIfValidCoordinate(currentCoordinate) && distance(source, i, j) <= rank) {
                     environmentCells.add(currentCoordinate);

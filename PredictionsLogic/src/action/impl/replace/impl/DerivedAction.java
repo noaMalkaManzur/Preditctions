@@ -53,7 +53,7 @@ public class DerivedAction extends ReplaceAction {
         }
 
         EntityDefinition entityDefinitionRes = new EntityDefinitionImpl(entityNameToCreate);
-        entityDefinitionRes.setPopulation(entityDefinitionToKill.getPopulation());
+        entityDefinitionRes.setPopulation(entityDefinitionToCreate.getPopulation() + 1);
         EntityInstance resEntityInstance = new EntityInstanceImpl(entityDefinitionRes, entityInstanceToKill.getId());
 
         EntityInstance finalEntityInstanceToCreate = entityInstanceToCreate;
@@ -68,7 +68,7 @@ public class DerivedAction extends ReplaceAction {
                 }
             });
 
-            if (!finalEntityInstanceToCreate.getEntityDef().getProps().containsKey(propertyNameToCreate)) {
+            if (!resEntityInstance.getEntityDef().getProps().containsKey(propertyNameToCreate)) {
                 entityDefinitionRes.addPropertyDefinition(propertyDefinitionToCreate);
                 Object value = propertyDefinitionToCreate.generateValue();
                 PropertyInstance newPropertyInstance = new PropertyInstanceImpl(propertyDefinitionToCreate, value);

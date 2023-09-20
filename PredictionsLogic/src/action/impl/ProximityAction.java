@@ -31,7 +31,12 @@ public class ProximityAction  extends AbstractAction {
     }
 
     private boolean checkProximity(Context context) {
-        int rank= getRank(getExpressionVal(getExpressionList().get(0), context));
+        int rank = getRank(getExpressionVal(getExpressionList().get(0), context));
+
+        if (rank <= 0) {
+            throw new IllegalArgumentException("Rank must be a positive number.");
+        }
+
         EntityInstance primaryEntityInstance = context.getPrimaryEntityInstance();
         List<Coordinate> coordinateList = context.getGrid().findEnvironmentCells(primaryEntityInstance.getCoordinate(), rank, context);
 
@@ -47,9 +52,9 @@ public class ProximityAction  extends AbstractAction {
                 }
             }
         }
-
         return false;
     }
+
 
     private int getRank(Object expressionVal) {
         try{
