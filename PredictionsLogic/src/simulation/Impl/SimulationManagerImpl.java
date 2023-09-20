@@ -137,7 +137,7 @@ public class SimulationManagerImpl implements SimulationManager {
                     }
                 }
 
-                if (seconds > 200/*validationEngine.simulationEnded(ticks,simulationStart, world)*/)
+                if (seconds > 45 /*validationEngine.simulationEnded(ticks,simulationStart, world)*/)
                     isTerminated = true;
             }
 
