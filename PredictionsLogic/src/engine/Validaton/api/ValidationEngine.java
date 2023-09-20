@@ -28,4 +28,5 @@ public interface ValidationEngine {
     boolean simulationEnded(int ticks, Instant simulationStart, WorldDefinition world);
 
     boolean isValidUserInput(EnvPropertyDefinitionDTO envPropertyDefinitionDTO, String userEnvInput);
+
 }

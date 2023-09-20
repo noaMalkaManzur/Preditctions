@@ -89,11 +89,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class EngineImpl implements Engine {
     private WorldDefinition world;
     private Context context;
-    Map<String, Histogram> histogramMap = new HashMap<>();
+    Map<String, Histogram> histogramMap = new LinkedHashMap<>();
     private ActiveEnvironment activeEnvironment;
     private int primaryEntStartPop;
-    private int rows;
-    private int columns;
+
     private Boolean actionDTOFlag = false;
     RulesDTO rulesDTO;
     List<ActionDTO> actionDTOS;
@@ -117,7 +116,8 @@ public class EngineImpl implements Engine {
                     activeEnvironment = new ActiveEnvironmentImpl();
 
                     setEnvVariablesFromXML(envManager, prdWorld.getPRDEnvironment().getPRDEnvProperty());
-                    MyWorld.setThreadCount(prdWorld.getPRDThreadCount());
+
+                    MyWorld.setThreadCount(convertThreadPoolSize(prdWorld.getPRDThreadCount()));
                     MyWorld.setEnvVariables(envManager);
                     MyWorld.setGrid(getGridFromFile(prdWorld));
                     MyWorld.setEntities(getEntitiesFromXML(prdWorld.getPRDEntities()));
@@ -129,13 +129,20 @@ public class EngineImpl implements Engine {
                         threadManager.shutDownThreads();
 
                     threadManager = new ThreadManager(prdWorld.getPRDThreadCount());
-                    //Todo:Shut down threads if there are threads Running
                 }
             }
         } catch (JAXBException | FileNotFoundException | BadFileSuffixException e) {
             throw new RuntimeException(e);
         }
     }
+
+    private Integer convertThreadPoolSize(int prdThreadCount) {
+        if (prdThreadCount >= 1)
+            return prdThreadCount;
+        else
+            throw new IllegalArgumentException("Thread count cannot be negative");
+    }
+
     @Override
     public ThreadManager getThreadManager()
     {
@@ -148,9 +155,14 @@ public class EngineImpl implements Engine {
     }
 
     private Grid getGridFromFile(PRDWorld prdWorld) {
-
-        maxPopulation = prdWorld.getPRDGrid().getRows() * prdWorld.getPRDGrid().getColumns();
-        return new Grid(prdWorld.getPRDGrid().getRows(),prdWorld.getPRDGrid().getColumns());
+        int rows = prdWorld.getPRDGrid().getRows();
+        int cols = prdWorld.getPRDGrid().getColumns();
+        if(rows<=100 && rows>=10 && cols<=100 && cols>=10) {
+            maxPopulation =rows * cols;
+            return new Grid(rows,cols);
+        }
+        else
+            throw new IllegalArgumentException("The grid rows and columns must be between 10 and 100");
     }
 
     //region Environment
@@ -198,10 +210,9 @@ public class EngineImpl implements Engine {
     //endregion
     //region Entities
     public Map<String, EntityDefinition> getEntitiesFromXML(PRDEntities entities) {
-        Map<String, EntityDefinition> convertedEntities = new HashMap<>();
+        Map<String, EntityDefinition> convertedEntities = new LinkedHashMap<>();
 
         for (PRDEntity entity : entities.getPRDEntity()) {
-            //todo: we get the population from the user
             EntityDefinition entityDefinition = new EntityDefinitionImpl(entity.getName());
             for (PRDProperty prdProperty : entity.getPRDProperties().getPRDProperty())
                 if (entityDefinition.getProps().containsKey(prdProperty.getPRDName()))
@@ -311,17 +322,22 @@ public class EngineImpl implements Engine {
 
     //endregion
     //region Rules
-    private Map<String, Rule> getRulesFromXML(PRDRules prdRules,WorldDefinition world) {
-        Map<String, Rule> convertedRules = new HashMap<>();
-        List<RuleDTO> ruleDTO = new ArrayList<>();
+    private Map<String, Rule> getRulesFromXML(PRDRules prdRules, WorldDefinition world) {
+        Map<String, Rule> convertedRules = new LinkedHashMap<>();
+        List<RuleDTO> ruleDTOs = new ArrayList<>();
+
         for (PRDRule rule : prdRules.getPRDRule()) {
             actionDTOS = new ArrayList<>();
-            convertedRules.put(rule.getName(), convertRule(rule,world));
-            ruleDTO.add(new RuleDTO(rule.getName(),activationDTO,actionDTOS));
+            Rule convertedRule = convertRule(rule, world);
+            convertedRules.put(rule.getName(), convertedRule);
+            ruleDTOs.add(new RuleDTO(rule.getName(), activationDTO, actionDTOS));
         }
-        rulesDTO = new RulesDTO(ruleDTO);
+
+        rulesDTO = new RulesDTO(ruleDTOs);
         return convertedRules;
     }
+
+
 
     private Rule convertRule(PRDRule rule,WorldDefinition world) {
         ActivationImpl activation = convertActivationFromXML(rule);
@@ -881,7 +897,7 @@ public class EngineImpl implements Engine {
     //endregion
     //region Termination
     private Termination getTerminationTermFromXML(PRDTermination prdTermination) {
-        //return new TerminationImpl(120, 300,);
+
         Integer ticksCount = null;
         Integer secondCount = null;
         for (Object obj : prdTermination.getPRDBySecondOrPRDByTicks()) {
@@ -905,9 +921,9 @@ public class EngineImpl implements Engine {
     //endregion
     //region Command number 2
     public Map<String, EntityDefinitionDTO> getEntitiesDTO() {
-        Map<String, EntityDefinitionDTO> entityDTO = new HashMap<>();
+        Map<String, EntityDefinitionDTO> entityDTO = new LinkedHashMap<>();
         for (Map.Entry<String, EntityDefinition> entDef : world.getEntities().entrySet()) {
-            Map<String, EntityPropDefinitionDTO> propsDTO = new HashMap<>();
+            Map<String, EntityPropDefinitionDTO> propsDTO = new LinkedHashMap<>();
             String name = entDef.getKey();
             int pop = entDef.getValue().getPopulation();
             EntityPropDefinitionDTO propertyDefinitionDTO;
@@ -980,7 +996,7 @@ public class EngineImpl implements Engine {
     @Override
     public EnvironmentDefinitionDTO getEnvDTO()
     {
-        Map<String, EnvPropertyDefinitionDTO> envVariables = new HashMap<>();
+        Map<String, EnvPropertyDefinitionDTO> envVariables = new LinkedHashMap<>();
         for(Map.Entry<String,PropertyDefinition> prop :world.getEnvVariables().getEnvVariables().entrySet())
         {
             envVariables.put(prop.getKey(),new EnvPropertyDefinitionDTO(prop.getKey(),
@@ -1019,7 +1035,7 @@ public class EngineImpl implements Engine {
         return activeEnvironment.getProperties().containsKey(name);
     }
     public ActiveEnvDTO ShowUserEnvVariables() {
-        Map<String, EnvPropertyInstanceDTO> envPropertyInstanceDTO = new HashMap<>();
+        Map<String, EnvPropertyInstanceDTO> envPropertyInstanceDTO = new LinkedHashMap<>();
         activeEnvironment.getProperties().forEach((key, value) ->
                 {
                     envPropertyInstanceDTO.put(key,new EnvPropertyInstanceDTO(
@@ -1196,7 +1212,7 @@ public class EngineImpl implements Engine {
 
     void createHistogram(String guid){
         String histogramDate = createHistogramDate();
-        Map<Integer, EntityInstance> instanceMap = new HashMap<>();
+        Map<Integer, EntityInstance> instanceMap = new LinkedHashMap<>();
         context.getEntityManager().getInstances().forEach(instance->{
             instanceMap.put(instance.getId(), instance);
         });
@@ -1211,7 +1227,7 @@ public class EngineImpl implements Engine {
     }
     public HistogramByPropertyEntitiesDTO setHistogramPerProperty(String guid, String propName) {
 
-        Map<Object, Integer> histogramByProperty = new HashMap<>();
+        Map<Object, Integer> histogramByProperty = new LinkedHashMap<>();
         Histogram histogram = histogramMap.get(guid);
         histogram.getEntitiesInstances().forEach((sNameEntityIns, entityInstance) -> {
             Object propValue = entityInstance.getPropertyByName(propName).getValue();
@@ -1231,7 +1247,7 @@ public class EngineImpl implements Engine {
         return new HistogramByAmountEntitiesDTO(name,histogram.getPopBeforeSimulation(),histogram.getPopAfterSimulation());
     }
     public HistoryRunningSimulationDTO createHistoryRunningSimulationDTO() {
-        Map<String, String> history = new HashMap<>();
+        Map<String, String> history = new LinkedHashMap<>();
         for (Map.Entry<String, Histogram> entry : histogramMap.entrySet()) {
             history.put(entry.getKey(), entry.getValue().getSimulationTime());
         }

@@ -1,12 +1,12 @@
 package definition.environment.impl;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import definition.environment.api.EnvVariablesManager;
 import definition.property.api.PropertyDefinition;
 import execution.instance.environment.api.ActiveEnvironment;
 import execution.instance.environment.impl.ActiveEnvironmentImpl;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class EnvVariableManagerImpl implements EnvVariablesManager {
 
@@ -20,7 +20,6 @@ public class EnvVariableManagerImpl implements EnvVariablesManager {
     public void addEnvironmentVariable(PropertyDefinition propertyDefinition) {
         propNameToPropDefinition.put(propertyDefinition.getName(), propertyDefinition);
     }
-
     @Override
     public ActiveEnvironment createActiveEnvironment() {
         return new ActiveEnvironmentImpl();
