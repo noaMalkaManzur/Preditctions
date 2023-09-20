@@ -29,17 +29,17 @@ public class PropertyInstanceImpl implements PropertyInstance {
         return value;
     }
 
-        @Override
-        public void updateValue(Object val, int currTickForValueChanged) {
+    @Override
+    public void updateValue(Object val, int currTickForValueChanged) {
 
-            this.value = val;
-            this.currTickForValueChanged = currTickForValueChanged;
-            if (!isValueChanged) {
-                lastChangedTick = currTickForValueChanged;
-                isValueChanged = true;
-            }
-            valuesList.add(val);
+        this.value = val;
+        this.currTickForValueChanged = currTickForValueChanged;
+        if (!isValueChanged) {
+            lastChangedTick = currTickForValueChanged;
+            isValueChanged = true;
         }
+        valuesList.add(val);
+    }
 
     @Override
     public int getCurrTickForValueChanged() {
