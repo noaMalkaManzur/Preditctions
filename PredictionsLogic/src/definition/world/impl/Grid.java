@@ -1,6 +1,5 @@
 package definition.world.impl;
 
-import execution.context.Context;
 import execution.instance.enitty.EntityInstance;
 
 import java.util.*;
@@ -134,7 +133,7 @@ public class Grid {
             int dy = Math.abs(source.getY() - y);
             return Math.max(dx, dy);
         }
-    public List<Coordinate> findEnvironmentCells(Coordinate source, int rank, Context context) {
+    public List<Coordinate> findEnvironmentCells(Coordinate source, int rank) {
         List<Coordinate> environmentCells = new ArrayList<>();
         for (int i = source.getX() - rank % rows; i <= source.getX() + rank % rows; i++) {
             for (int j = source.getY() - rank % cols ; j <= source.getY() + rank % cols; j++) {

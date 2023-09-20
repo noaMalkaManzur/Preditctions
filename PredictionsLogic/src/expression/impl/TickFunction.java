@@ -16,7 +16,7 @@ public class TickFunction extends FunctionExpression{
     @Override
     public Object calculateExpression(Context context) {
         int currTick = 0;
-        //todo: change the primary entity name
+
         if(Objects.equals(entityName, context.getPrimaryEntityInstance().getEntityDef().getName()))
             currTick = context.getPrimaryEntityInstance().getPropertyByName(args[0]).getCurrTickForValueChanged();
         else{

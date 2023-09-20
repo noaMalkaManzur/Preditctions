@@ -38,7 +38,7 @@ public class ProximityAction  extends AbstractAction {
         }
 
         EntityInstance primaryEntityInstance = context.getPrimaryEntityInstance();
-        List<Coordinate> coordinateList = context.getGrid().findEnvironmentCells(primaryEntityInstance.getCoordinate(), rank, context);
+        List<Coordinate> coordinateList = context.getGrid().findEnvironmentCells(primaryEntityInstance.getCoordinate(), rank);
 
         if(coordinateList != null) {
             for (Coordinate coordinate : coordinateList) {
