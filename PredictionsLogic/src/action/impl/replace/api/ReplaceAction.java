@@ -12,12 +12,12 @@ import expression.api.Expression;
 import java.util.List;
 
 public abstract class ReplaceAction extends AbstractAction {
-    protected String entityNameToKill;
-    protected String entityNameToCreate;
-    public ReplaceAction(EntityDefinition entityDefinition, List<Expression> expressionList, String entityNameToKill, String entityNameToCreate, SecondaryEntityDefinition secondaryEntityDef) {
+    protected EntityDefinition entityToKill;
+    protected EntityDefinition entityToCreate;
+    public ReplaceAction(EntityDefinition entityDefinition, List<Expression> expressionList, EntityDefinition entityToKill, EntityDefinition entityToCreate, SecondaryEntityDefinition secondaryEntityDef) {
         super(ActionTypeDTO.REPLACE, entityDefinition, expressionList, secondaryEntityDef);
-        this.entityNameToKill = entityNameToKill;
-        this.entityNameToCreate = entityNameToCreate;
+        this.entityToKill = entityToKill;
+        this.entityToCreate = entityToCreate;
     }
     public abstract EntityInstance createEntityInstance(Context context);
     @Override

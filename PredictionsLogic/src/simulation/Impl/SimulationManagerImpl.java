@@ -1,6 +1,8 @@
 package simulation.Impl;
 
 import Defenitions.ProgressSimulationDTO;
+import Instance.EntityPopGraphDTO;
+import Instance.InstancesPerTickDTO;
 import action.api.Action;
 import definition.world.api.WorldDefinition;
 import execution.context.Context;
@@ -29,6 +31,8 @@ public class SimulationManagerImpl implements SimulationManager {
     private Boolean isTerminated = false;
     private String terminationReason;
     private Boolean isPause = false;
+
+    EntityPopGraphDTO graphDTO = new EntityPopGraphDTO();
 
     public SimulationManagerImpl(WorldDefinition worldDefinition,ActiveEnvironment simEnvironment) {
         this.worldDefinition = worldDefinition;
@@ -81,12 +85,14 @@ public class SimulationManagerImpl implements SimulationManager {
     @Override
     public void run() {
         try {
+            //region Simulation Create
             createContext();
             int ticks = 0;
             boolean isTerminated = false;
             Map<String, Integer> entitiesUpdateData = new HashMap<>();
-            Map<String, Map<Integer, Integer>> entityPopulationOverTicks = new HashMap<>();
-            List<EntityInstance> afterConditionList = new ArrayList<>();
+            //endregion
+
+            //region Simulation Run
             while (!isTerminated) {
                 int finalTicks = ticks;
                 List<Action> activeAction = new ArrayList<>();
@@ -116,15 +122,27 @@ public class SimulationManagerImpl implements SimulationManager {
                             }
                         }
                     });
-                    //entitiesUpdateData.put(entityInstance.getEntityDef().getName(), entityInstance.getEntityDef().getPopulation());
-                    entityPopulationOverTicks.computeIfAbsent(entityInstance.getEntityDef().getName(), k -> new HashMap<>())
-                            .put(finalTicks, entityInstance.getEntityDef().getPopulation());
                 });
-
+                //region Pop per tick Create
+                Map<String, InstancesPerTickDTO> popPerEntityMap = new HashMap<>();
+                for (EntityInstance entityInstance : context.getEntityManager().getInstances()) {
+                    String name = entityInstance.getEntityDef().getName();
+                    if (popPerEntityMap.containsKey(name)) {
+                        int currAmount = popPerEntityMap.get(name).getAmount();
+                        popPerEntityMap.get(name).setAmount(currAmount + 1);
+                    }
+                    else
+                    {
+                        popPerEntityMap.put(name, new InstancesPerTickDTO(ticks,1));
+                    }
+                }
+                graphDTO.getGraphData().add(popPerEntityMap);
+                //endregion
                 ticks++;
                 context.setCurrTick(ticks);
                 activateKillAction();
                 replaceActionList();
+
                 long milliseconds = Duration.between(getStartTime(), Instant.now()).toMillis();
                 long seconds = milliseconds / 1000;
                 ProgressSimulationDTO progressDTO = new ProgressSimulationDTO(seconds, finalTicks, entitiesUpdateData);
@@ -140,6 +158,8 @@ public class SimulationManagerImpl implements SimulationManager {
                 if (seconds > 45 /*validationEngine.simulationEnded(ticks,simulationStart, world)*/)
                     isTerminated = true;
             }
+            //endregion
+
 
             String endReason = "steam" /*getTerminationReason(ticks,simulationStart)*/;
             //createHistogram(Guid);
@@ -224,4 +244,9 @@ public class SimulationManagerImpl implements SimulationManager {
         });
         context.getEntityManager().ClearReplaceList();
     }
+
+    public EntityPopGraphDTO getGraphDTO() {
+        return graphDTO;
+    }
+
 }

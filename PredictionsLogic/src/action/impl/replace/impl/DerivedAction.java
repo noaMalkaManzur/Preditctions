@@ -18,7 +18,7 @@ import java.util.Optional;
 
 public class DerivedAction extends ReplaceAction {
 
-    public DerivedAction(EntityDefinition entityDefinition, List<Expression> expressionList, String entityNameToKill, String entityNameToCreate, SecondaryEntityDefinition secondaryEntityDef) {
+    public DerivedAction(EntityDefinition entityDefinition, List<Expression> expressionList, EntityDefinition entityNameToKill, EntityDefinition entityNameToCreate, SecondaryEntityDefinition secondaryEntityDef) {
         super(entityDefinition, expressionList, entityNameToKill, entityNameToCreate, secondaryEntityDef);
     }
 
@@ -28,14 +28,14 @@ public class DerivedAction extends ReplaceAction {
         EntityInstance entityInstanceToCreate = context.getSecondaryEntityInstance();
         EntityDefinition entityDefinitionToCreate;
 
-        if (entityInstanceToCreate.getEntityDef().getName().equals(entityNameToCreate)) {
+        if (entityInstanceToCreate.getEntityDef().getName().equals(entityToCreate)) {
             entityDefinitionToCreate = entityInstanceToCreate.getEntityDef();
         } else {
             Optional<EntityDefinition> optionalEntityDefinition = context.getEntityManager()
                     .getInstances()
                     .stream()
                     .map(EntityInstance::getEntityDef)
-                    .filter(entityDef -> entityDef.getName().equals(entityNameToCreate))
+                    .filter(entityDef -> entityDef.getName().equals(entityToCreate))
                     .findFirst();
 
             entityDefinitionToCreate = optionalEntityDefinition.orElse(null);
@@ -48,10 +48,10 @@ public class DerivedAction extends ReplaceAction {
         }
 
         if (entityDefinitionToCreate == null && entityInstanceToCreate!= null) {
-            throw new IllegalArgumentException("Entity definition not found for " + entityNameToCreate);
+            throw new IllegalArgumentException("Entity definition not found for " + entityToCreate);
         }
 
-        EntityDefinition entityDefinitionRes = new EntityDefinitionImpl(entityNameToCreate);
+        EntityDefinition entityDefinitionRes = new EntityDefinitionImpl(entityToCreate.getName());
         entityDefinitionRes.setPopulation(entityDefinitionToCreate.getPopulation() + 1);
         EntityInstance resEntityInstance = new EntityInstanceImpl(entityDefinitionRes, entityInstanceToKill.getId());
 
