@@ -3,6 +3,8 @@ package simulation.Impl;
 import Defenitions.EntPopDTO;
 import Defenitions.ProgressSimulationDTO;
 import Defenitions.RerunInfoDTO;
+import Histogram.api.Histogram;
+import Histogram.impl.HistogramImpl;
 import Instance.EntityPopGraphDTO;
 import Instance.InstancesPerTickDTO;
 import action.api.Action;
@@ -15,9 +17,12 @@ import execution.instance.enitty.EntityInstance;
 import execution.instance.enitty.manager.EntityInstanceManager;
 import execution.instance.enitty.manager.EntityInstanceManagerImpl;
 import execution.instance.environment.api.ActiveEnvironment;
+import histogramDTO.HistogramByPropertyEntitiesDTO;
+import histogramDTO.HistoryRunningSimulationDTO;
 import simulation.api.SimulationManager;
 import simulation.api.SimulationState;
 
+import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
@@ -25,10 +30,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class SimulationManagerImpl implements SimulationManager {
-
     private final WorldDefinition worldDefinition;
     private ActiveEnvironment simEnvironment;
     private Context context;
+    Map<String, Histogram> histogramMap = new LinkedHashMap<>();
     private final String guid = UUID.randomUUID().toString();
     private  Instant StartTime;
     private Boolean isTerminated = false;
@@ -37,7 +42,6 @@ public class SimulationManagerImpl implements SimulationManager {
     private Boolean isStop = false;
     private EntityPopGraphDTO graphDTO = new EntityPopGraphDTO();
     private RerunInfoDTO rerunInfoDTO;
-
     private SimulationState simState = SimulationState.PENDING;
     private ProgressSimulationDTO progressDTO = new ProgressSimulationDTO(0,0,null,simState);
     private ValidationEngine validationEngine = new ValidationEngineImpl();
@@ -183,22 +187,64 @@ public class SimulationManagerImpl implements SimulationManager {
 
                 if (worldDefinition.getTerminationTerm().getByUser() != null && worldDefinition.getTerminationTerm().getByUser() && isStop) {
                     isTerminated = true;
+                    terminationReason = "Simulation has been ended by the user";
                 }
 
                 else if (validationEngine.simulationEndedByTicks(ticks, StartTime, worldDefinition)) {
                     isTerminated = true;
+                    terminationReason = "The simulation has been ended by the terms shown in the file";
                 }
             }
             //endregion
-            String endReason = "steam" /*getTerminationReason(ticks,simulationStart)*/;
             simState = SimulationState.FINISHED;
 
-            //createHistogram(Guid);
+            createHistogram(guid);
         } catch (Exception e) {
-            System.out.println(e);
+            terminationReason="We have ended the simulation due to an error:  "+ e;
         }
     }
+    void createHistogram(String guid){
+        String histogramDate = createHistogramDate();
+        Map<Integer, EntityInstance> instanceMap = new LinkedHashMap<>();
 
+        context.getEntityManager().getInstances().forEach(instance->{
+            instanceMap.put(instance.getId(), instance);
+        });
+        Histogram histogram = new HistogramImpl(guid,histogramDate,instanceMap);
+        histogramMap.put(guid,histogram);
+
+    }
+    String createHistogramDate(){
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy | HH.mm.ss");
+        Date currDate = new Date();
+        return sdf.format(currDate);
+
+    }
+    public HistogramByPropertyEntitiesDTO setHistogramPerProperty(String guid, String propName) {
+
+        Map<Object, Integer> histogramByProperty = new LinkedHashMap<>();
+        Histogram histogram = histogramMap.get(guid);
+        histogram.getEntitiesInstances().forEach((sNameEntityIns, entityInstance) -> {
+            Object propValue = entityInstance.getPropertyByName(propName).getValue();
+            if (histogramByProperty.containsKey(propValue)) {
+                histogramByProperty.put(propValue, histogramByProperty.get(propValue) + 1);
+            } else {
+                histogramByProperty.put(propValue, 1);
+            }
+        });
+        HistogramByPropertyEntitiesDTO histogramByPropertyEntitiesDTO  = new HistogramByPropertyEntitiesDTO(histogramByProperty);
+
+        return histogramByPropertyEntitiesDTO;
+    }
+
+    public HistoryRunningSimulationDTO createHistoryRunningSimulationDTO() {
+        Map<String, String> history = new LinkedHashMap<>();
+        for (Map.Entry<String, Histogram> entry : histogramMap.entrySet()) {
+            history.put(entry.getKey(), entry.getValue().getSimulationTime());
+        }
+        HistoryRunningSimulationDTO historyRunningSimulationDTO = new HistoryRunningSimulationDTO(history);
+        return historyRunningSimulationDTO;
+    }
     private void createContext() {
         EntityInstanceManager entityInstanceManager = new EntityInstanceManagerImpl();
         AtomicInteger index = new AtomicInteger(0);

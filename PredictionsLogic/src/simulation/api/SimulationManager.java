@@ -5,6 +5,8 @@ import Defenitions.RerunInfoDTO;
 import Instance.EntityPopGraphDTO;
 import execution.context.Context;
 import execution.instance.environment.api.ActiveEnvironment;
+import histogramDTO.HistogramByPropertyEntitiesDTO;
+import histogramDTO.HistoryRunningSimulationDTO;
 
 import java.time.Instant;
 
@@ -26,6 +28,8 @@ public interface SimulationManager extends Runnable {
     void setIsTerminated();
 
     RerunInfoDTO getReRunInfoDTO();
+    HistoryRunningSimulationDTO createHistoryRunningSimulationDTO();
+    HistogramByPropertyEntitiesDTO setHistogramPerProperty(String guid, String propName);
 
 
 }

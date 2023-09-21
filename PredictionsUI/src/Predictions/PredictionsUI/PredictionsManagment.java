@@ -1,3 +1,4 @@
+/*
 package Predictions.PredictionsUI;
 
 import Defenitions.*;
@@ -294,7 +295,7 @@ public class PredictionsManagment {
     private void showHistogram() {
         chooseOptionForInfoSimulation();
     }
-    String getSelectedSimulationGuid() {
+  String getSelectedSimulationGuid() {
         int counter = 0;
         StringBuilder historySimulation = new StringBuilder();
         HistoryRunningSimulationDTO historyRunningSimulationDTO = engine.createHistoryRunningSimulationDTO();
@@ -327,7 +328,7 @@ public class PredictionsManagment {
             }
         }
     }
-    void chooseOptionForInfoSimulation(){
+   void chooseOptionForInfoSimulation(){
         boolean runLoop = true;
         String guid = getSelectedSimulationGuid();
         System.out.println("Please choose which way to see past running simulation:\n" +
@@ -357,7 +358,7 @@ public class PredictionsManagment {
 
     }
 
-    private void handlePrintingByAmount(String guid) {
+   private void handlePrintingByAmount(String guid) {
 
         Map<String,EntityDefinitionDTO> entityDefinitionDTOS = engine.getEntitiesDTO();
         String chosenEntity = printEntitiesList(entityDefinitionDTOS);
@@ -449,3 +450,4 @@ public class PredictionsManagment {
     }
 }
 
+*/
