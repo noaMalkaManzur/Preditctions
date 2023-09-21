@@ -92,7 +92,6 @@ public class EngineImpl implements Engine {
     Map<String, Histogram> histogramMap = new LinkedHashMap<>();
     private ActiveEnvironment activeEnvironment;
     private int primaryEntStartPop;
-
     private Boolean actionDTOFlag = false;
     RulesDTO rulesDTO;
     List<ActionDTO> actionDTOS;
@@ -100,6 +99,7 @@ public class EngineImpl implements Engine {
     ValidationEngine validationEngine = new ValidationEngineImpl();
     private Integer maxPopulation;
     private ThreadManager threadManager = new ThreadManager(1);
+    private LinkedHashMap<String,SimulationManager> simulationsMap;
 
     //region Command number 1
     @Override
@@ -113,6 +113,7 @@ public class EngineImpl implements Engine {
                     PRDWorld prdWorld = (PRDWorld) jaxbUnmarshaller.unmarshal(file);
                     EnvVariablesManager envManager = new EnvVariableManagerImpl();
                     WorldDefinition MyWorld = new WorldImpl();
+                    simulationsMap = new LinkedHashMap<>();
                     activeEnvironment = new ActiveEnvironmentImpl();
 
                     setEnvVariablesFromXML(envManager, prdWorld.getPRDEnvironment().getPRDEnvProperty());
@@ -476,8 +477,9 @@ public class EngineImpl implements Engine {
         SecondaryEntityDefinition secondaryEntity = null;
         String secondaryEntityDTO = null;
         if (action.getMode() != null && action.getKill() != null && action.getCreate() != null) {
-            String entityNameToKill = action.getKill();
-            String entityNameToCreate = action.getCreate();
+            EntityDefinition entityToKill = world.getEntities().get(action.getKill());
+            EntityDefinition entityToCreate = world.getEntities().get(action.getCreate());
+
             if (action.getMode().equals("scratch")) {
                 if (action.getPRDSecondaryEntity() != null) {
                     if(validationEngine.checkEntityExist(action.getPRDSecondaryEntity().getEntity(), world)) {
@@ -492,7 +494,7 @@ public class EngineImpl implements Engine {
                 }
                 if(!actionDTOFlag)
                     actionDTOS.add(new ReplaceDTO(ActionTypeDTO.REPLACE,action.getEntity(),secondaryEntityDTO,action.getKill(),action.getCreate(), ModesDTO.SCRATCH));
-                return new ScratchAction(null, null,entityNameToKill,entityNameToCreate, secondaryEntity);
+                return new ScratchAction(null, null,entityToKill,entityToCreate, secondaryEntity);
             }
             else if (action.getMode().equals("derived")) {
                 if (action.getPRDSecondaryEntity() != null) {
@@ -507,7 +509,7 @@ public class EngineImpl implements Engine {
                 }
                 if(!actionDTOFlag)
                     actionDTOS.add(new ReplaceDTO(ActionTypeDTO.REPLACE,action.getEntity(),secondaryEntityDTO,action.getKill(),action.getCreate(), ModesDTO.DERIVED));
-                return new DerivedAction(null,null, entityNameToKill, entityNameToCreate, secondaryEntity);
+                return new DerivedAction(null,null, entityToCreate, entityToCreate, secondaryEntity);
             } else {
                 throw new IllegalArgumentException("Not valid argument for condition");
             }
@@ -982,8 +984,8 @@ public class EngineImpl implements Engine {
     public TerminationDTO getTerminationDTO(){
         return new TerminationDTO(world.getTerminationTerm().getBySeconds(), world.getTerminationTerm().getByTicks(),world.getTerminationTerm().getByUser());
     }
-    public SimulationInfoDTO getSimulationInfo(){
-        return null;
+    public Map<String, SimulationManager> getSimulationInfo(){
+        return simulationsMap;
     }
 
     @Override
@@ -1004,7 +1006,6 @@ public class EngineImpl implements Engine {
         }
         return new EnvironmentDefinitionDTO(envVariables);
     }
-    //region validation
 
     @Override
     public void addEnvVarToActiveEnv(Object userValue, String name) {
@@ -1049,164 +1050,9 @@ public class EngineImpl implements Engine {
     {
         SimulationManager simulationManager = new SimulationManagerImpl(world,activeEnvironment);
         threadManager.executeSimulation(simulationManager);
+        simulationsMap.put(simulationManager.getGuid(),simulationManager);
         return "GreatSuccess";
     }
-//    public String runSimulation()
-//    {
-//        //region HistogramCreation
-//        String Guid = UUID.randomUUID().toString();
-//        Instant simulationStart = Instant.now();
-//        //endregion
-//        createContext();
-//        int ticks = 0;
-//        boolean isTerminated = false;
-//
-//        List<EntityInstance> afterConditionList = new ArrayList<>();
-//        while (!isTerminated)
-//        {
-//            int finalTicks = ticks;
-//            List<Action> activeAction = new ArrayList<>();
-//
-//            moveEntities();
-//            activeAction = getActiveAction(finalTicks);
-//            List<Action> finalActiveAction = activeAction;
-//
-//            context.getEntityManager().getInstances().forEach(entityInstance -> {
-//                context.setPrimaryInstance(entityInstance.getId());
-//                finalActiveAction.forEach(action -> {
-//                    if (action.getContextEntity().getName().equals(entityInstance.getEntityDef().getName())) {
-//                        if (action.hasSecondaryEntity()) {
-//                            List<EntityInstance> afterConditionInstances = new ArrayList<>();
-//                            String secondaryEntityName = action.getSecondaryEntityDefinition().getName();
-//                            List<EntityInstance> entityInstancesFiltered = context.getEntityManager().getInstances().stream()
-//                                    .filter(entityInstance1 -> entityInstance1.getEntityDef().getName().equals(secondaryEntityName)).collect(Collectors.toList());
-//                            afterConditionInstances  = handleSecondaryEntityList(action, entityInstancesFiltered, context);
-//                            if (afterConditionInstances != null) {
-//                                afterConditionInstances.forEach(secondEntity -> {
-//                                    context.setSecondEntity(secondEntity);
-//                                    action.invoke(context, finalTicks);
-//                                });
-//                            }
-//                        }
-//                        else{
-//                            action.invoke(context, finalTicks);
-//                        }
-//                    }
-//                });
-//            });
-//
-//            ticks++;
-//            context.setCurrTick(ticks);
-//            activateKillAction();
-//            replaceActionList();
-//            if(ticks==840/*validationEngine.simulationEnded(ticks,simulationStart, world)*/)
-//                isTerminated = true;
-//        }
-//        String endReason ="steam" /*getTerminationReason(ticks,simulationStart)*/;
-//        createHistogram(Guid);
-//        return Guid+ "\n" + endReason;
-//    }
-
-    private void replaceActionList() {
-        context.getEntityManager().getReplaceEntityList().forEach(entityInstance -> {
-            context.getEntityManager().addEntityInstance(entityInstance);
-            context.getGrid().setNewCell(entityInstance);
-        });
-        context.getEntityManager().ClearReplaceList();
-    }
-
-    private List<EntityInstance> handleSecondaryEntityList(Action action, List<EntityInstance> entityInstancesFiltered, Context context) {
-        String count = action.getSecondaryEntityDefinition().getCount();
-        List<EntityInstance> afterFilterSelection = new ArrayList<>();
-
-        if (entityInstancesFiltered.isEmpty()) {
-            return Collections.emptyList();
-        }
-        //todo:change it
-        if (action.getSecondaryEntityDefinition().getConditionAction() == null && action.getSecondaryEntityDefinition().getCount() == null) {
-            return entityInstancesFiltered.subList(0, Math.min(1, entityInstancesFiltered.size()));
-        }
-
-        for (EntityInstance entityInstance : entityInstancesFiltered) {
-            if (action.getSecondaryEntityDefinition().getConditionAction().checkCondition(context)) {
-                afterFilterSelection.add(entityInstance);
-            }
-        }
-
-        if (count.toLowerCase().contains("all")) {
-            return afterFilterSelection;
-        } else {
-            try {
-                int counter = Integer.parseInt(count);
-                int size = Math.min(counter, afterFilterSelection.size());
-                List<EntityInstance> randomList = new ArrayList<>(afterFilterSelection);
-                Collections.shuffle(randomList);
-                return randomList.subList(0, size);
-
-            } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("Selection for secondary entity is not a number or 'all'");
-            }
-        }
-    }
-
-
-
-    private List<Action> getActiveAction(int finalTicks) {
-        List<Action> activeAction = new ArrayList<>();
-        world.getRules().forEach((name, rule) ->
-        {
-            if (rule.getActivation().isActive(finalTicks)) {
-                rule.getActionsToPerform().forEach(action -> {
-                    activeAction.add(action);
-                });
-            }
-        });
-        return activeAction;
-    }
-
-    private void moveEntities() {
-        context.getEntityManager().getInstances().forEach(entityInstance ->
-                entityInstance.setCoordinate(world.getGrid().getNextMove(entityInstance)));
-    }
-
-    private String getTerminationReason(int ticks, Instant simulationStart) {
-        String ticksMsg = "The simulation has ended because " + ticks +" ticks has passed";
-        String secondsMsg = "The simulation has ended because more then " + world.getTerminationTerm().getBySeconds() +" seconds has passed";
-        if(world.getTerminationTerm().getByTicks() == ticks)
-            return ticksMsg;
-        else
-            return secondsMsg;
-    }
-
-    private void activateKillAction() {
-        context.getEntityManager().getKillList().forEach(idToKill ->
-        {
-            context.getEntityManager().executeKill(idToKill);
-            context.getGrid().clearCell(idToKill);
-        });
-        context.getEntityManager().clearKillList();
-    }
-
-    private void createContext() {
-        EntityInstanceManager entityInstanceManager = new EntityInstanceManagerImpl();
-        EntityInstance primaryEntityInstance = null;
-
-        AtomicInteger index = new AtomicInteger(0);
-
-        world.getEntities().forEach((key, value) -> {
-            int population = value.getPopulation();
-            for (int i = 0; i < population; i++) {
-                int currentIndex = index.getAndIncrement();
-                entityInstanceManager.createEntityInstance(value);
-                entityInstanceManager.getInstances().get(currentIndex).setCoordinate(world.getGrid().getRandomCoordinateInit(entityInstanceManager.getInstances().get(currentIndex)));
-            }
-        });
-        primaryEntityInstance = entityInstanceManager.getInstances().get(0);
-        primaryEntStartPop = primaryEntityInstance.getEntityDef().getPopulation();
-        context = new ContextImpl(primaryEntityInstance,entityInstanceManager,activeEnvironment, null, world.getGrid());
-
-    }
-    //endregion
     //endregion
     //region Command number 4
 

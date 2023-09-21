@@ -14,45 +14,25 @@ import expression.api.Expression;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 public class DerivedAction extends ReplaceAction {
 
-    public DerivedAction(EntityDefinition entityDefinition, List<Expression> expressionList, String entityNameToKill, String entityNameToCreate, SecondaryEntityDefinition secondaryEntityDef) {
-        super(entityDefinition, expressionList, entityNameToKill, entityNameToCreate, secondaryEntityDef);
+    public DerivedAction(EntityDefinition entityDefinition, List<Expression> expressionList, EntityDefinition entityDefKill, EntityDefinition entityDefToCreate, SecondaryEntityDefinition secondaryEntityDef) {
+        super(entityDefinition, expressionList, entityDefKill, entityDefToCreate, secondaryEntityDef);
+
     }
 
     public EntityInstance createEntityInstance(Context context) {
 
         EntityInstance entityInstanceToKill = context.getPrimaryEntityInstance();
-        EntityInstance entityInstanceToCreate = context.getSecondaryEntityInstance();
-        EntityDefinition entityDefinitionToCreate;
+        EntityInstance entityInstanceToCreate = new EntityInstanceImpl(entityToKill, entityInstanceToKill.getId());
 
-        if (entityInstanceToCreate.getEntityDef().getName().equals(entityNameToCreate)) {
-            entityDefinitionToCreate = entityInstanceToCreate.getEntityDef();
-        } else {
-            Optional<EntityDefinition> optionalEntityDefinition = context.getEntityManager()
-                    .getInstances()
-                    .stream()
-                    .map(EntityInstance::getEntityDef)
-                    .filter(entityDef -> entityDef.getName().equals(entityNameToCreate))
-                    .findFirst();
-
-            entityDefinitionToCreate = optionalEntityDefinition.orElse(null);
-            entityInstanceToCreate = new EntityInstanceImpl(entityDefinitionToCreate, entityInstanceToKill.getId());
-            if (entityDefinitionToCreate != null) {
-                for (Map.Entry<String, PropertyDefinition> property : entityDefinitionToCreate.getProps().entrySet()) {
-                  entityInstanceToCreate.getEntityDef().addPropertyDefinition(property.getValue());
-                }
-            }
+        for (Map.Entry<String, PropertyDefinition> property : entityToCreate.getProps().entrySet()) {
+            entityInstanceToCreate.getEntityDef().addPropertyDefinition(property.getValue());
         }
 
-        if (entityDefinitionToCreate == null && entityInstanceToCreate!= null) {
-            throw new IllegalArgumentException("Entity definition not found for " + entityNameToCreate);
-        }
-
-        EntityDefinition entityDefinitionRes = new EntityDefinitionImpl(entityNameToCreate);
-        entityDefinitionRes.setPopulation(entityDefinitionToCreate.getPopulation() + 1);
+        EntityDefinition entityDefinitionRes = new EntityDefinitionImpl(entityToCreate.getName());
+        entityDefinitionRes.setPopulation(entityToCreate.getPopulation() + 1);
         EntityInstance resEntityInstance = new EntityInstanceImpl(entityDefinitionRes, entityInstanceToKill.getId());
 
         EntityInstance finalEntityInstanceToCreate = entityInstanceToCreate;

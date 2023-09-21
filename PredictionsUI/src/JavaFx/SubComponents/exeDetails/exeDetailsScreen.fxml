@@ -55,8 +55,8 @@
                   <Font size="18.0" />
                </font>
             </Label>
-            <TextField fx:id="currTickText" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-            <TextField fx:id="secondsCountText" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            <TextField fx:id="currTickText" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <TextField fx:id="secondsCountText" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="5" />
             <ButtonBar maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="2">
                <buttons>
                   <Button fx:id="StopBtn" mnemonicParsing="false" text="Stop">
