@@ -1,17 +1,21 @@
 package Defenitions;
 
+import simulation.api.SimulationState;
+
 import java.util.List;
 import java.util.Map;
 
 public class ProgressSimulationDTO {
     private final long seconds;
     private final Integer currTick;
-    List<EntPopDTO> entPopDTO;
+    private List<EntPopDTO> entPopDTO;
+    private SimulationState simulationState;
 
-    public ProgressSimulationDTO(long bySeconds, Integer byTicks, List<EntPopDTO> entPopDTO) {
+    public ProgressSimulationDTO(long bySeconds, Integer byTicks, List<EntPopDTO> entPopDTO,SimulationState state) {
         this.seconds = bySeconds;
         this.currTick = byTicks;
         this.entPopDTO = entPopDTO;
+        this.simulationState = state;
 
     }
     public long getSeconds(){
@@ -22,4 +26,7 @@ public class ProgressSimulationDTO {
     }
     public List<EntPopDTO> getEntitiesUpdateData(){return entPopDTO;}
 
+    public SimulationState getSimulationState() {
+        return simulationState;
+    }
 }

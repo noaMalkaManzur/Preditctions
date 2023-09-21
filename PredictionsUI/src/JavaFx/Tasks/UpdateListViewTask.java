@@ -1,50 +1,54 @@
 package JavaFx.Tasks;
 
+import Defenitions.simulationViewDTO;
+import engine.api.Engine;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
-import javafx.scene.control.ListView;
-import simulation.Impl.SimulationManagerImpl;
-import simulation.api.SimulationManager;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
+import java.util.function.Consumer;
 
 public class UpdateListViewTask extends Task<Void> {
-    private final ListView<String> listView;
-    private final Map<String, SimulationManager> simMap;
-    private List<String> myList = new ArrayList<>();
-    private String selectedItem;
+    private final ObservableList<simulationViewDTO> observableList;
+    private Engine engineCopy;
+
+    private Consumer<simulationViewDTO> simulationViewDTOConsumer;
 
     private static final long SLEEP_DURATION = 1000;
 
-    public UpdateListViewTask(ListView<String> listView, Map<String, SimulationManager> simMap) {
-        this.listView = listView;
-        this.simMap = simMap;
+    public UpdateListViewTask(ObservableList<simulationViewDTO> observableList, Engine engineCopy, Consumer<simulationViewDTO> simulationViewDTOConsumer) {
+        this.observableList = observableList;
+        this.engineCopy = engineCopy;
+        this.simulationViewDTOConsumer = simulationViewDTOConsumer;
     }
+
 
     protected Void call() throws Exception {
         while (!isCancelled()) {
             Platform.runLater(() -> {
-                //listView.getItems().clear();
+                for (simulationViewDTO newDTO : engineCopy.getSimulationsView()) {
+                    Optional<simulationViewDTO> existingDTO = observableList.stream()
+                            .filter(dto -> dto.getGuid().equals(newDTO.getGuid()))
+                            .findFirst();
 
-                for (String key : simMap.keySet()) {
-                    if(!myList.contains(key)) {
-                        myList.add(key);
-                        listView.getItems().add(key);
+                    if (existingDTO.isPresent()) {
+                        simulationViewDTO currentDTO = existingDTO.get();
+
+                        if (currentDTO.getState() != newDTO.getState()) {
+                            currentDTO.setState(newDTO.getState());
+                            simulationViewDTOConsumer.accept(currentDTO);
+                        }
+                    } else {
+                        observableList.add(newDTO);
                     }
                 }
-//                listView.setOnMouseClicked(event -> {
-//                    selectedItem = listView.getSelectionModel().getSelectedItem();
-//                });
-//                if(selectedItem !=null)
-//                {
-//                    listView.getSelectionModel().select(selectedItem);
-//                }
             });
 
             Thread.sleep(SLEEP_DURATION);
         }
         return null;
     }
+
 }

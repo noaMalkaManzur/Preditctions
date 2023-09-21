@@ -5,6 +5,7 @@ import Defenitions.ProgressSimulationDTO;
 import Instance.EntityPopGraphDTO;
 import Instance.InstancesPerTickDTO;
 import action.api.Action;
+import com.sun.deploy.uitoolkit.impl.fx.FXPluginToolkit;
 import definition.world.api.WorldDefinition;
 import execution.context.Context;
 import execution.context.ContextImpl;
@@ -29,13 +30,15 @@ public class SimulationManagerImpl implements SimulationManager {
     private ActiveEnvironment simEnvironment;
     private Context context;
     private final String guid = UUID.randomUUID().toString();
-    private final Instant StartTime = Instant.now();
+    private  Instant StartTime;
     private Boolean isTerminated = false;
     private String terminationReason;
     private Boolean isPause = false;
-    private ProgressSimulationDTO progressDTO;
     private EntityPopGraphDTO graphDTO = new EntityPopGraphDTO();
     private SimulationState simState = SimulationState.PENDING;
+    private ProgressSimulationDTO progressDTO = new ProgressSimulationDTO(0,0,null,simState);
+
+    private final Object pauseLock = new Object();
 
     public SimulationManagerImpl(WorldDefinition worldDefinition,ActiveEnvironment simEnvironment) {
         this.worldDefinition = worldDefinition;
@@ -90,9 +93,9 @@ public class SimulationManagerImpl implements SimulationManager {
         try {
             //region Simulation Create
             createContext();
+            StartTime = Instant.now();
             simState =  SimulationState.RUNNING;
             int ticks = 0;
-            boolean isTerminated = false;
             List<EntPopDTO> entitiesUpdateData = new ArrayList<>();
             //endregion
 
@@ -160,25 +163,27 @@ public class SimulationManagerImpl implements SimulationManager {
                 activateKillAction();
                 replaceActionList();
 
-                long seconds = Duration.between(getStartTime(), Instant.now()).toMillis() /1000;
-                progressDTO = new ProgressSimulationDTO(seconds, finalTicks, entitiesUpdateData);
+                long seconds = Duration.between(getStartTime(), Instant.now()).getSeconds();
+                progressDTO = new ProgressSimulationDTO(seconds, finalTicks, entitiesUpdateData,simState);
 
                 while (isPause) {
-                    try {
-                        sleep(100);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+                    synchronized (pauseLock) {
+                        try {
+                            pauseLock.wait(); // Wait when isPause is true
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
                     }
                 }
 
-                if (seconds > 45 /*validationEngine.simulationEnded(ticks,simulationStart, world)*/)
+                if (seconds > 150/*validationEngine.simulationEnded(ticks,simulationStart, world)*/)
                 {
-                    simState = SimulationState.FINISHED;
                     isTerminated = true;
                 }
             }
             //endregion
             String endReason = "steam" /*getTerminationReason(ticks,simulationStart)*/;
+            simState = SimulationState.FINISHED;
 
             //createHistogram(Guid);
         } catch (Exception e) {
@@ -271,5 +276,23 @@ public class SimulationManagerImpl implements SimulationManager {
     public SimulationState getState()
     {
         return simState;
+    }
+    @Override
+    public void setPause(Boolean pause) {
+        isPause = pause;
+        synchronized (pauseLock) {
+            if (!isPause) {
+                pauseLock.notify();
+            }
+        }
+    }
+    @Override
+    public void setIsTerminated()
+    {
+        synchronized (pauseLock) {
+            isPause = false;
+            isTerminated = true;
+            pauseLock.notify();
+        }
     }
 }

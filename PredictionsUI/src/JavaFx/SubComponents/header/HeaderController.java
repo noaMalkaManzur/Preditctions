@@ -66,9 +66,6 @@ public class HeaderController {
     }
     public void bindHeaderToFullApp(){
         xmlPathTextField.textProperty().bind(mainController.selectedFileProperty());
-//        QueueSizeLbl.textProperty().bind(Bindings.format("%d",mainController.getQueueSize()));
-//        RunningSimLbl.textProperty().bind(Bindings.format("%d",mainController.getRunningSimLabel()));
-//        FinishedSimLbl.textProperty().bind(Bindings.format("%d",mainController.getFinishedSimLabel()));
     }
 }
 
