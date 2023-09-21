@@ -156,7 +156,14 @@ public class ValidationEngineImpl implements ValidationEngine {
     @Override
     public boolean simulationEndedByTicks(int ticks, Instant simulationStart, WorldDefinition world) {
         long diff = Duration.between(simulationStart, Instant.now()).getSeconds();
-        return (world.getTerminationTerm().getByTicks() == ticks || diff >= world.getTerminationTerm().getBySeconds());
+        if(world.getTerminationTerm().getByTicks() != null && world.getTerminationTerm().getBySeconds() != null) {
+            return (world.getTerminationTerm().getByTicks() == ticks || diff >= world.getTerminationTerm().getBySeconds());
+        } else if (world.getTerminationTerm().getByTicks() != null) {
+            return (world.getTerminationTerm().getByTicks() == ticks);
+        } else if (world.getTerminationTerm().getBySeconds() != null) {
+            return (diff >= world.getTerminationTerm().getBySeconds());
+        }
+        return false;
     }
 
     @Override

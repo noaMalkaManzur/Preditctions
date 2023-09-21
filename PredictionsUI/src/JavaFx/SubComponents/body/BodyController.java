@@ -6,6 +6,7 @@ import JavaFx.SubComponents.detailsTab.DetailsTabController;
 import JavaFx.SubComponents.newExeTab.NewExeScreenController;
 import JavaFx.SubComponents.resultTab.ResultTabController;
 import engine.api.Engine;
+import exceptions.NoChosenSimException;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ScrollPane;
@@ -75,9 +76,6 @@ public class BodyController {
         return mainController.getTerminationDTO();
     }
 
-    public void clearTree() {
-        detailsTabComponentController.clearTree();
-    }
     public void enableTabPane()
     {
         tabPaneComponent.setDisable(false);
@@ -85,10 +83,6 @@ public class BodyController {
     public void initNewExeScreen()
     {
         newExeTabComponentController.initNewExeScreen();
-    }
-    public void clearNewExeScreen()
-    {
-        newExeTabComponentController.clearNewExeScreen();
     }
 
     public Integer getMaxPop() {
@@ -133,10 +127,6 @@ public class BodyController {
 
     }
 
-    public Map<String, SimulationManager> getSimulationMap() {
-       return mainController.getSimulationMap();
-    }
-
     public Engine getEngine() {
         return mainController.getEngine();
     }
@@ -151,5 +141,15 @@ public class BodyController {
 
     public void resetSimVars() {
         mainController.resetSimVars();
+    }
+
+    public void onReRun(String selectedGuid) {
+        try{
+            newExeTabComponentController.setOnReRun(getEngine().getReRunInfo(selectedGuid));
+            tabPaneComponent.getSelectionModel().select(1);
+        }catch (Exception e)
+        {
+            throw new NoChosenSimException("No Selected Simulation!");
+        }
     }
 }

@@ -15,7 +15,6 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 
 import java.util.LinkedList;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 public class ResultTabController
@@ -112,13 +111,14 @@ public class ResultTabController
             exeDetailsScreenComponentController.startUpdateTableTask();
             isLiveUpdateStarted = false;
         }
+
         for(int i = 0; i < executionsLstComponent.getItems().size();i++) {
-
             if (getSelectedGuid().equals(executionsLstComponent.getItems().get(i).getGuid())) {
-                exeDetailsScreenComponentController.SetUiButtons(executionsLstComponent.getItems().get(i));
+                exeDetailsScreenComponentController.SetUIButtons(executionsLstComponent.getItems().get(i));
+                exeResultsScreenComponentController.SetUI(executionsLstComponent.getItems().get(i));
             }
-
         }
+
     }
     public void setPause(String selectedGuid, boolean b) {
         bodyController.setPause(selectedGuid,b);
@@ -126,5 +126,9 @@ public class ResultTabController
 
     public void setTerminated(String selectedGuid) {
         bodyController.setTerminated(selectedGuid);
+    }
+
+    public void onReRun() {
+        bodyController.onReRun(getSelectedGuid());
     }
 }

@@ -2,18 +2,15 @@ package JavaFx.SubComponents.newExeTab;
 
 import Defenitions.EnvPropertyDefinitionDTO;
 import Defenitions.EnvironmentDefinitionDTO;
+import Defenitions.RerunInfoDTO;
 import JavaFx.SubComponents.body.BodyController;
 import definition.property.api.PropertyType;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Timer;
-import java.util.concurrent.ExecutorService;
 
 public class NewExeScreenController {
     private BodyController bodyController;
@@ -74,7 +71,6 @@ public class NewExeScreenController {
             if (newValue.isEmpty()) {
                 //ignore
             } else {
-                // Input is valid, update the spinner's value
                 Integer intValue = Integer.parseInt(newValue);
                 if (bodyController.checkPopulation(intValue,selectedItem)) {
                     spinnerValueFactory.setValue(intValue);
@@ -101,17 +97,13 @@ public class NewExeScreenController {
     public void initEntList() {
         Collection<String> EntitiesDTO = bodyController.getEntityDTO().keySet();
         entList.getItems().addAll(EntitiesDTO);
-        EntitiesDTO.forEach(entName ->{
-            entValMap.put(entName,0);
-        });
+        EntitiesDTO.forEach(entName -> entValMap.put(entName,0));
     }
 
     public void initEnvList() {
         Collection<String> EnvDTO = bodyController.getEnvDTO().getEnvProps().keySet();
         envList.getItems().addAll(EnvDTO);
-        EnvDTO.forEach(envName ->{
-            envValMap.put(envName,"");
-        });
+        EnvDTO.forEach(envName -> envValMap.put(envName,""));
     }
 
     public void initNewExeScreen() {
@@ -128,22 +120,26 @@ public class NewExeScreenController {
 
     public void selectedEnt() {
         String selectedItem = entList.getSelectionModel().getSelectedItem();
-        entLabel.setText(selectedItem);
-        popSpinner.setDisable(false);
-        popSpinner.getValueFactory().setValue(entValMap.get(selectedItem));
+        if(selectedItem != null) {
+            entLabel.setText(selectedItem);
+            popSpinner.setDisable(false);
+            popSpinner.getValueFactory().setValue(entValMap.get(selectedItem));
+        }
     }
 
     public void selectedEnv() {
         String selectedItem = envList.getSelectionModel().getSelectedItem();
-        EnvPropertyDefinitionDTO envVarDTO = bodyController.getEnvDTO().getEnvProps().get(selectedItem);
-        envLabel.setText(selectedItem);
-        typeLabel.setText(envVarDTO.getType().toString());
-        if (envVarDTO.getRange() != null)
-            rangeLabel.setText(envVarDTO.getRange().getRangeFrom() + "-" + envVarDTO.getRange().getRangeTo());
-        else
-            rangeLabel.setText("No Range To Display");
-        envValue.setDisable(false);
-        envValue.setText(envValMap.get(selectedItem));
+        if(selectedItem != null) {
+            EnvPropertyDefinitionDTO envVarDTO = bodyController.getEnvDTO().getEnvProps().get(selectedItem);
+            envLabel.setText(selectedItem);
+            typeLabel.setText(envVarDTO.getType().toString());
+            if (envVarDTO.getRange() != null)
+                rangeLabel.setText(envVarDTO.getRange().getRangeFrom() + "-" + envVarDTO.getRange().getRangeTo());
+            else
+                rangeLabel.setText("No Range To Display");
+            envValue.setDisable(false);
+            envValue.setText(envValMap.get(selectedItem));
+        }
 
     }
     public void onSaveEnvVarClicked()
@@ -233,6 +229,11 @@ public class NewExeScreenController {
         typeLabel.clear();
         rangeLabel.clear();
         initNewExeScreen();
+    }
+
+    public void setOnReRun(RerunInfoDTO reRunInfo) {
+        envValMap = new HashMap<>(reRunInfo.getEnvVal());
+        entValMap = new HashMap<>(reRunInfo.getEntPop());
     }
 }
 
