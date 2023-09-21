@@ -10,6 +10,7 @@ import histogramDTO.HistoryRunningSimulationDTO;
 import simulation.api.SimulationManager;
 import simulationInfo.SimulationInfoDTO;
 
+import java.util.List;
 import java.util.Map;
 
 public interface Engine
@@ -60,6 +61,7 @@ public interface Engine
 
     ThreadManager getThreadManager();
     ProgressSimulationDTO getProgressDTO();
+    List<simulationViewDTO> getSimulationsView();
 
     //endregion
 }

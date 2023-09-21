@@ -21,6 +21,8 @@ public interface SimulationManager extends Runnable {
     ProgressSimulationDTO getProgressDTO();
     EntityPopGraphDTO getGraphDTO();
     SimulationState getState();
+    void setPause(Boolean pause);
+    void setIsTerminated();
 
 
 }

@@ -59,22 +59,22 @@
             <TextField fx:id="secondsCountText" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="5" />
             <ButtonBar maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="2">
                <buttons>
-                  <Button fx:id="StopBtn" mnemonicParsing="false" text="Stop">
+                  <Button fx:id="StopBtn" mnemonicParsing="false" onAction="#onStopBtnClicked" text="Stop">
                      <font>
                         <Font size="15.0" />
                      </font>
                   </Button>
-                  <Button fx:id="pauseBtn" mnemonicParsing="false" text="Pause">
+                  <Button fx:id="pauseBtn" mnemonicParsing="false" onAction="#onPauseBtnClicked" text="Pause">
                      <font>
                         <Font size="15.0" />
                      </font>
                   </Button>
-                  <Button fx:id="resumeBtn" mnemonicParsing="false" text="Resume">
+                  <Button fx:id="resumeBtn" mnemonicParsing="false" onAction="#onResumeBtnClicked" text="Resume">
                      <font>
                         <Font size="15.0" />
                      </font>
                   </Button>
-                  <Button fx:id="rerunBtn" mnemonicParsing="false" text="Rerun!">
+                  <Button fx:id="rerunBtn" mnemonicParsing="false" onAction="#onRerunBtnClicked" text="Rerun!">
                      <font>
                         <Font size="15.0" />
                      </font>

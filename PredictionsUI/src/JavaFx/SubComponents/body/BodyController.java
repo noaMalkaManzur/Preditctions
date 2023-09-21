@@ -12,6 +12,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TabPane;
 import simulation.api.SimulationManager;
 
+import java.util.List;
 import java.util.Map;
 
 public class BodyController {
@@ -139,4 +140,13 @@ public class BodyController {
     public Engine getEngine() {
         return mainController.getEngine();
     }
+
+    public void setPause(String selectedGuid, boolean b) {
+        mainController.setPause(selectedGuid,b);
+    }
+
+    public void setTerminated(String selectedGuid) {
+        mainController.setTerminated(selectedGuid);
+    }
+
 }

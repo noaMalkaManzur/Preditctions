@@ -169,4 +169,12 @@ public class PredictionsAppController {
     public Engine getEngine() {
         return engine;
     }
+
+    public void setPause(String selectedGuid, boolean b) {
+        engine.getSimulationInfo().get(selectedGuid).setPause(b);
+    }
+
+    public void setTerminated(String selectedGuid) {
+        engine.getSimulationInfo().get(selectedGuid).setIsTerminated();
+    }
 }

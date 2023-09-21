@@ -1,6 +1,7 @@
 package JavaFx.Tasks;
 
 import Defenitions.ProgressSimulationDTO;
+import JavaFx.SubComponents.resultTab.ResultTabController;
 import engine.api.Engine;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -12,12 +13,11 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 public class UpdateExeDetailsTask extends Task<ProgressSimulationDTO> {
     private Engine engineCopy;
-    private String simGuid;
-    private static final long SLEEP_DURATION = 1000;
+    private  ResultTabController resultTabController;
 
-    public UpdateExeDetailsTask(Engine engineCopy, String simGuid) {
-        this.engineCopy = engineCopy;
-        this.simGuid = simGuid;
+    public UpdateExeDetailsTask(ResultTabController resultTabController) {
+        this.resultTabController = resultTabController;
+        this.engineCopy = resultTabController.getEngine();
     }
 
     @Override
@@ -26,10 +26,19 @@ public class UpdateExeDetailsTask extends Task<ProgressSimulationDTO> {
         myTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                Platform.runLater(() -> {
-                    ProgressSimulationDTO progressDTO = engineCopy.getSimulationInfo().get(simGuid).getProgressDTO();
-                    updateValue(progressDTO);
-                });
+                try {
+                    Platform.runLater(() -> {
+                        String simGuid = resultTabController.getSelectedGuid();
+                        if (isCancelled()) {
+                            // Do not update the UI if the task is canceled
+                            return;
+                        }
+                        ProgressSimulationDTO progressDTO = engineCopy.getSimulationInfo().get(simGuid).getProgressDTO();
+                        updateValue(progressDTO);
+                    });
+                } catch (Exception e) {
+                    // Handle exceptions here (e.g., log or display an error message)
+                }
             }
         }, 0, 500);
 
@@ -39,4 +48,6 @@ public class UpdateExeDetailsTask extends Task<ProgressSimulationDTO> {
         myTimer.cancel();
         return null;
     }
+
+
 }

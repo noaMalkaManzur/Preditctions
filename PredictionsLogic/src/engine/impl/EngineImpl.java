@@ -85,6 +85,7 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class EngineImpl implements Engine {
     private WorldDefinition world;
@@ -99,7 +100,7 @@ public class EngineImpl implements Engine {
     ValidationEngine validationEngine = new ValidationEngineImpl();
     private Integer maxPopulation;
     private ThreadManager threadManager = new ThreadManager(1);
-    private LinkedHashMap<String,SimulationManager> simulationsMap;
+    private Map<String,SimulationManager> simulationsMap;
 
     //region Command number 1
     @Override
@@ -986,6 +987,13 @@ public class EngineImpl implements Engine {
     }
     public Map<String, SimulationManager> getSimulationInfo(){
         return simulationsMap;
+    }
+    @Override
+    public List<simulationViewDTO> getSimulationsView()
+    {
+        return simulationsMap.values().stream().map(s->{
+            return new simulationViewDTO(s.getGuid(),s.getState(),s.getStartTime());
+        }).collect(Collectors.toList());
     }
 
     @Override
