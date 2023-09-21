@@ -1,9 +1,6 @@
 package JavaFx.SubComponents.exeDetails;
 
-import Defenitions.EntPopDTO;
-import Defenitions.EntityDefinitionDTO;
-import Defenitions.EntityPropDefinitionDTO;
-import Defenitions.ProgressSimulationDTO;
+import Defenitions.*;
 import Instance.EntityMangerDTO;
 import JavaFx.SubComponents.resultTab.ResultTabController;
 import JavaFx.Tasks.UpdateExeDetailsTask;
@@ -62,6 +59,10 @@ public class ExeDetailsController {
     @FXML
     public void initialize()
     {
+        StopBtn.setDisable(true);
+        pauseBtn.setDisable(true);
+        resumeBtn.setDisable(true);
+        rerunBtn.setDisable(true);
         tableViewComponent.setItems(data);
     }
     public void setResultTabController(ResultTabController resultTabController) {
@@ -131,6 +132,36 @@ public class ExeDetailsController {
     }
 
     public void onRerunBtnClicked(ActionEvent actionEvent) {
+    }
+    public void SetUiButtons(simulationViewDTO simulationViewDTO)
+    {
+        switch(simulationViewDTO.getState())
+        {
+            case PENDING:
+            {
+                StopBtn.setDisable(true);
+                pauseBtn.setDisable(true);
+                resumeBtn.setDisable(true);
+                rerunBtn.setDisable(true);
+            }
+            break;
+            case RUNNING:
+            {
+                StopBtn.setDisable(false);
+                pauseBtn.setDisable(false);
+                resumeBtn.setDisable(false);
+                rerunBtn.setDisable(true);
+            }
+            break;
+            case FINISHED:
+            {
+                StopBtn.setDisable(true);
+                pauseBtn.setDisable(true);
+                resumeBtn.setDisable(true);
+                rerunBtn.setDisable(false);
+            }
+            break;
+        }
     }
 }
 

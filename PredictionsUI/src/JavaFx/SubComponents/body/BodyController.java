@@ -149,4 +149,7 @@ public class BodyController {
         mainController.setTerminated(selectedGuid);
     }
 
+    public void resetSimVars() {
+        mainController.resetSimVars();
+    }
 }

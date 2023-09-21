@@ -177,4 +177,8 @@ public class PredictionsAppController {
     public void setTerminated(String selectedGuid) {
         engine.getSimulationInfo().get(selectedGuid).setIsTerminated();
     }
+
+    public void resetSimVars() {
+        engine.resetSimVars();
+    }
 }

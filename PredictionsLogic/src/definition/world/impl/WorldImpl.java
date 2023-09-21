@@ -1,11 +1,13 @@
 package definition.world.impl;
 
 import definition.entity.EntityDefinition;
+import definition.entity.EntityDefinitionImpl;
 import definition.environment.api.EnvVariablesManager;
 import definition.world.api.Termination;
 import definition.world.api.WorldDefinition;
 import rule.Rule;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class WorldImpl implements WorldDefinition
@@ -15,7 +17,18 @@ public class WorldImpl implements WorldDefinition
     private Map<String,Rule> rules;
     private Termination terminationTerm;
     private Grid grid;
-    private Integer threadCount;
+    public WorldImpl()
+    {
+
+    }
+
+    public WorldImpl(WorldDefinition worldDefinition) {
+        this.entities = new HashMap<>(worldDefinition.getEntities());
+        this.envVariables = worldDefinition.getEnvVariables();
+        this.rules = new HashMap<>(worldDefinition.getRules());
+        this.terminationTerm = worldDefinition.getTerminationTerm();
+        this.grid = worldDefinition.getGrid();
+    }
 
     public Map<String, EntityDefinition> getEntities() {
         return entities;
@@ -53,8 +66,18 @@ public class WorldImpl implements WorldDefinition
 
     @Override
     public void setThreadCount(Integer prdThreadCount) {
-        this.threadCount = prdThreadCount;
+
     }
 
     public void setGrid(Grid grid) {this.grid = grid;}
+    public Map<String,EntityDefinition> cloneEntities(Map<String,EntityDefinition> entMap)
+    {
+        Map<String,EntityDefinition> resMap = new HashMap<>();
+        entMap.forEach((name,ent)->
+        {
+            resMap.put(name,new EntityDefinitionImpl(name));
+            //ToDo: properties and populations
+        });
+        return resMap;
+    }
 }

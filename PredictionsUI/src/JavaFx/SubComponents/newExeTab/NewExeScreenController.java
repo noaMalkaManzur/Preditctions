@@ -160,7 +160,7 @@ public class NewExeScreenController {
                     userValue = PropertyType.DECIMAL.parse(userEnvInput);
                     bodyController.addEnvVarToActiveEnv(userValue,envVarDTO.getName());
                     envValMap.put(selectedItem,userEnvInput);
-                    bodyController.showAlert(selectedItem + "is Set!\nValue is:" + userEnvInput, Alert.AlertType.INFORMATION,"Success");
+                    bodyController.showAlert(selectedItem + "is Set!\nValue is: " + userEnvInput, Alert.AlertType.INFORMATION,"Success");
                 }
                 else
                 {
@@ -216,6 +216,8 @@ public class NewExeScreenController {
             bodyController.initRandomEnvVars(envName);
         //endregion
         bodyController.runSimulation();
+        onClearBtnClicked();
+        bodyController.resetSimVars();
     }
 
     public void onClearBtnClicked()

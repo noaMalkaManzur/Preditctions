@@ -114,7 +114,7 @@ public class EngineImpl implements Engine {
                     PRDWorld prdWorld = (PRDWorld) jaxbUnmarshaller.unmarshal(file);
                     EnvVariablesManager envManager = new EnvVariableManagerImpl();
                     WorldDefinition MyWorld = new WorldImpl();
-                    simulationsMap = new LinkedHashMap<>();
+                    simulationsMap = new HashMap<>();
                     activeEnvironment = new ActiveEnvironmentImpl();
 
                     setEnvVariablesFromXML(envManager, prdWorld.getPRDEnvironment().getPRDEnvProperty());
@@ -969,7 +969,7 @@ public class EngineImpl implements Engine {
     @Override
     public boolean checkPopulation(Integer intValue, String entName) {
         int currPop = world.getEntities().get(entName).getPopulation();
-        return (maxPopulation + currPop) - intValue >= 0;
+        return (maxPopulation) - intValue >= 0;
     }
     @Override
     public void initEnvVar(Object userInput,String selectedEnv)
@@ -1056,10 +1056,22 @@ public class EngineImpl implements Engine {
     @Override
     public String runSimulation()
     {
-        SimulationManager simulationManager = new SimulationManagerImpl(world,activeEnvironment);
+        WorldDefinition MyWorld = new WorldImpl(world);
+        ActiveEnvironment MyActiveEnv = new ActiveEnvironmentImpl(activeEnvironment);
+        SimulationManager simulationManager = new SimulationManagerImpl(MyWorld,MyActiveEnv);
         threadManager.executeSimulation(simulationManager);
         simulationsMap.put(simulationManager.getGuid(),simulationManager);
-        return "GreatSuccess";
+        return "Great Success";
+    }
+    @Override
+    public void resetSimVars()
+    {
+        world.getEntities().forEach((s,entDef)->
+        {
+            entDef.setPopulation(0);
+        });
+        activeEnvironment = new ActiveEnvironmentImpl();
+        maxPopulation = getMaxPop();
     }
     //endregion
     //region Command number 4

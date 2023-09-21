@@ -8,4 +8,5 @@ public interface ActiveEnvironment {
     PropertyInstance getProperty(String name);
     void addPropertyInstance(PropertyInstance propertyInstance);
     Map<String,PropertyInstance> getProperties();
+
 }
