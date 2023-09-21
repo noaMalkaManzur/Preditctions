@@ -63,5 +63,7 @@ public interface Engine
     ProgressSimulationDTO getProgressDTO();
     List<simulationViewDTO> getSimulationsView();
 
+    void resetSimVars();
+
     //endregion
 }

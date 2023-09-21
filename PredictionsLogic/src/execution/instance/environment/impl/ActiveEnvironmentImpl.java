@@ -14,6 +14,11 @@ public class ActiveEnvironmentImpl implements ActiveEnvironment {
         envVariables = new HashMap<>();
     }
 
+    public ActiveEnvironmentImpl(ActiveEnvironment activeEnv)
+    {
+        this.envVariables = new HashMap<>(activeEnv.getProperties());
+    }
+
     @Override
     public PropertyInstance getProperty(String name) {
         if (!envVariables.containsKey(name)) {

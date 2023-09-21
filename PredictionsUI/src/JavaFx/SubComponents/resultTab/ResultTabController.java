@@ -102,7 +102,9 @@ public class ResultTabController
     }
 
     public String getSelectedGuid() {
-        return executionsLstComponent.getSelectionModel().getSelectedItem().getGuid();
+        if (executionsLstComponent.getSelectionModel().getSelectedItem() != null)
+            return executionsLstComponent.getSelectionModel().getSelectedItem().getGuid();
+        return null;
     }
     public void selectedItem()
     {
@@ -110,7 +112,13 @@ public class ResultTabController
             exeDetailsScreenComponentController.startUpdateTableTask();
             isLiveUpdateStarted = false;
         }
-        //ToDo setUI buttons etc by the simState;
+        for(int i = 0; i < executionsLstComponent.getItems().size();i++) {
+
+            if (getSelectedGuid().equals(executionsLstComponent.getItems().get(i).getGuid())) {
+                exeDetailsScreenComponentController.SetUiButtons(executionsLstComponent.getItems().get(i));
+            }
+
+        }
     }
     public void setPause(String selectedGuid, boolean b) {
         bodyController.setPause(selectedGuid,b);
