@@ -3,12 +3,6 @@ package definition.world.impl;
 import definition.entity.EntityDefinition;
 import definition.entity.EntityDefinitionImpl;
 import definition.environment.api.EnvVariablesManager;
-import definition.property.api.PropertyType;
-import definition.property.impl.BooleanPropertyDefinition;
-import definition.property.impl.FloatPropertyDefinition;
-import definition.property.impl.IntegerPropertyDefinition;
-import definition.property.impl.StringPropertyDefinition;
-import definition.value.generator.api.ValueGenerator;
 import definition.world.api.Termination;
 import definition.world.api.WorldDefinition;
 import rule.Rule;
@@ -33,7 +27,7 @@ public class WorldImpl implements WorldDefinition
         this.envVariables = worldDefinition.getEnvVariables();
         this.rules = new HashMap<>(worldDefinition.getRules());
         this.terminationTerm = worldDefinition.getTerminationTerm();
-        this.grid = worldDefinition.getGrid();
+        this.grid = new Grid(worldDefinition.getGrid().getRows(), worldDefinition.getGrid().getCols());
     }
 
     public Map<String, EntityDefinition> getEntities() {
@@ -74,7 +68,6 @@ public class WorldImpl implements WorldDefinition
     public void setThreadCount(Integer prdThreadCount) {
 
     }
-
     public void setGrid(Grid grid) {this.grid = grid;}
     public Map<String,EntityDefinition> cloneEntities(Map<String,EntityDefinition> entMap)
     {
