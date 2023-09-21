@@ -12,13 +12,13 @@
 
 <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="JavaFx.SubComponents.resultTab.ResultTabController">
    <content>
-      <SplitPane dividerPositions="0.2">
+      <SplitPane dividerPositions="0.3">
         <items>
           <AnchorPane maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefWidth="300">
                <children>
-                  <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <GridPane layoutY="14.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="651.0" prefWidth="270.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <columnConstraints>
-                        <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
+                        <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" />
                      </columnConstraints>
                      <rowConstraints>
                         <RowConstraints minHeight="10.0" vgrow="NEVER" />
@@ -30,7 +30,11 @@
                               <Font size="24.0" />
                            </font>
                         </Label>
-                        <ListView fx:id="executionsLstComponent" maxHeight="1.7976931348623157E308" GridPane.hgrow="NEVER" GridPane.rowIndex="1" />
+                        <ScrollPane fitToHeight="true" fitToWidth="true" GridPane.hgrow="NEVER" GridPane.rowIndex="1">
+                           <content>
+                              <ListView fx:id="executionsLstComponent" onContextMenuRequested="#selectedItem" onMouseClicked="#selectedItem" />
+                           </content>
+                        </ScrollPane>
                      </children>
                   </GridPane>
                </children>

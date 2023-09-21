@@ -1,5 +1,6 @@
 package simulation.Impl;
 
+import Defenitions.EntPopDTO;
 import Defenitions.ProgressSimulationDTO;
 import Instance.EntityPopGraphDTO;
 import Instance.InstancesPerTickDTO;
@@ -12,6 +13,7 @@ import execution.instance.enitty.manager.EntityInstanceManager;
 import execution.instance.enitty.manager.EntityInstanceManagerImpl;
 import execution.instance.environment.api.ActiveEnvironment;
 import simulation.api.SimulationManager;
+import simulation.api.SimulationState;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -31,8 +33,9 @@ public class SimulationManagerImpl implements SimulationManager {
     private Boolean isTerminated = false;
     private String terminationReason;
     private Boolean isPause = false;
-
-    EntityPopGraphDTO graphDTO = new EntityPopGraphDTO();
+    private ProgressSimulationDTO progressDTO;
+    private EntityPopGraphDTO graphDTO = new EntityPopGraphDTO();
+    private SimulationState simState = SimulationState.PENDING;
 
     public SimulationManagerImpl(WorldDefinition worldDefinition,ActiveEnvironment simEnvironment) {
         this.worldDefinition = worldDefinition;
@@ -73,13 +76,13 @@ public class SimulationManagerImpl implements SimulationManager {
     public String getSimulationEndReason() {
         return terminationReason;
     }
-
-    public ActiveEnvironment getSimEnvironment() {
-        return simEnvironment;
+    @Override
+    public ProgressSimulationDTO getProgressDTO() {
+        return progressDTO;
     }
-
-    public void setSimEnvironment(ActiveEnvironment simEnvironment) {
-        this.simEnvironment = simEnvironment;
+    @Override
+    public EntityPopGraphDTO getGraphDTO() {
+        return graphDTO;
     }
 
     @Override
@@ -87,9 +90,10 @@ public class SimulationManagerImpl implements SimulationManager {
         try {
             //region Simulation Create
             createContext();
+            simState =  SimulationState.RUNNING;
             int ticks = 0;
             boolean isTerminated = false;
-            Map<String, Integer> entitiesUpdateData = new HashMap<>();
+            List<EntPopDTO> entitiesUpdateData = new ArrayList<>();
             //endregion
 
             //region Simulation Run
@@ -137,15 +141,27 @@ public class SimulationManagerImpl implements SimulationManager {
                     }
                 }
                 graphDTO.getGraphData().add(popPerEntityMap);
+                entitiesUpdateData.clear();
+
+                worldDefinition.getEntities().forEach((name,entDef)->
+                {
+                    AtomicInteger instanceCount = new AtomicInteger(0);
+                    context.getEntityManager().getInstances().forEach(entityInstance ->
+                    {
+                        if (entityInstance.getEntityDef().getName().equals(name)) {
+                            instanceCount.incrementAndGet();
+                        }
+                    });
+                    entitiesUpdateData.add(new EntPopDTO(name,instanceCount.get()));
+                });
                 //endregion
                 ticks++;
                 context.setCurrTick(ticks);
                 activateKillAction();
                 replaceActionList();
 
-                long milliseconds = Duration.between(getStartTime(), Instant.now()).toMillis();
-                long seconds = milliseconds / 1000;
-                ProgressSimulationDTO progressDTO = new ProgressSimulationDTO(seconds, finalTicks, entitiesUpdateData);
+                long seconds = Duration.between(getStartTime(), Instant.now()).toMillis() /1000;
+                progressDTO = new ProgressSimulationDTO(seconds, finalTicks, entitiesUpdateData);
 
                 while (isPause) {
                     try {
@@ -156,12 +172,14 @@ public class SimulationManagerImpl implements SimulationManager {
                 }
 
                 if (seconds > 45 /*validationEngine.simulationEnded(ticks,simulationStart, world)*/)
+                {
+                    simState = SimulationState.FINISHED;
                     isTerminated = true;
+                }
             }
             //endregion
-
-
             String endReason = "steam" /*getTerminationReason(ticks,simulationStart)*/;
+
             //createHistogram(Guid);
         } catch (Exception e) {
             System.out.println(e);
@@ -244,9 +262,14 @@ public class SimulationManagerImpl implements SimulationManager {
         });
         context.getEntityManager().ClearReplaceList();
     }
-
-    public EntityPopGraphDTO getGraphDTO() {
-        return graphDTO;
+    public ActiveEnvironment getSimEnvironment() {
+        return simEnvironment;
     }
-
+    public void setSimEnvironment(ActiveEnvironment simEnvironment) {
+        this.simEnvironment = simEnvironment;
+    }
+    public SimulationState getState()
+    {
+        return simState;
+    }
 }

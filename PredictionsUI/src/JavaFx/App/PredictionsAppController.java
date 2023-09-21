@@ -10,6 +10,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ScrollPane;
+import simulation.api.SimulationManager;
 
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -31,6 +32,7 @@ public class PredictionsAppController {
     private SimpleIntegerProperty queueSizeLabel;
     private SimpleIntegerProperty runningSimLabel;
     private SimpleIntegerProperty finishedSimLabel;
+
 
 
     @FXML
@@ -159,5 +161,12 @@ public class PredictionsAppController {
 
     public ThreadManager getThreadManager() {
         return engine.getThreadManager();
+    }
+
+    public Map<String, SimulationManager> getSimulationMap() {
+        return engine.getSimulationInfo();
+    }
+    public Engine getEngine() {
+        return engine;
     }
 }

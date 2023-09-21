@@ -1,5 +1,7 @@
 package simulation.api;
 
+import Defenitions.ProgressSimulationDTO;
+import Instance.EntityPopGraphDTO;
 import execution.context.Context;
 import execution.instance.environment.api.ActiveEnvironment;
 
@@ -16,6 +18,9 @@ public interface SimulationManager extends Runnable {
     String getSimulationEndReason();
     ActiveEnvironment getSimEnvironment();
     void setSimEnvironment(ActiveEnvironment simEnvironment);
+    ProgressSimulationDTO getProgressDTO();
+    EntityPopGraphDTO getGraphDTO();
+    SimulationState getState();
 
 
 }

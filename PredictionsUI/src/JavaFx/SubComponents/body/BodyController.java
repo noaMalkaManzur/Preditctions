@@ -5,10 +5,12 @@ import JavaFx.App.PredictionsAppController;
 import JavaFx.SubComponents.detailsTab.DetailsTabController;
 import JavaFx.SubComponents.newExeTab.NewExeScreenController;
 import JavaFx.SubComponents.resultTab.ResultTabController;
+import engine.api.Engine;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TabPane;
+import simulation.api.SimulationManager;
 
 import java.util.Map;
 
@@ -35,6 +37,7 @@ public class BodyController {
 
     @FXML
     private ResultTabController resultTabComponentController;
+    private Boolean updateListStarted =false;
 
     @FXML
     public void initialize()
@@ -121,7 +124,19 @@ public class BodyController {
 
     public void runSimulation() {
         tabPaneComponent.getSelectionModel().select(2);
+        if(!updateListStarted) {
+            resultTabComponentController.startUpdateListViewTask();
+            updateListStarted = true;
+        }
         mainController.runSimulation();
 
+    }
+
+    public Map<String, SimulationManager> getSimulationMap() {
+       return mainController.getSimulationMap();
+    }
+
+    public Engine getEngine() {
+        return mainController.getEngine();
     }
 }

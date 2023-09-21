@@ -48,8 +48,8 @@ public class PredictionsManagment {
                         }
                     case 2:
                         if (LoadedXMLFile) {
-                            SimulationInfoDTO simulationInfoDTO = engine.getSimulationInfo();
-                            printSimulation(simulationInfoDTO);
+                            //SimulationInfoDTO simulationInfoDTO = engine.getSimulationInfo();
+                            //printSimulation(simulationInfoDTO);
                         } else {
                             throw new NoFileWasLoadedException("The system doesn't have any XML file to run on!");
                         }

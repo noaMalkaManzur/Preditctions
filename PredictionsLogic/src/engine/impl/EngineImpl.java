@@ -984,8 +984,8 @@ public class EngineImpl implements Engine {
     public TerminationDTO getTerminationDTO(){
         return new TerminationDTO(world.getTerminationTerm().getBySeconds(), world.getTerminationTerm().getByTicks(),world.getTerminationTerm().getByUser());
     }
-    public SimulationInfoDTO getSimulationInfo(){
-        return null;
+    public Map<String, SimulationManager> getSimulationInfo(){
+        return simulationsMap;
     }
 
     @Override

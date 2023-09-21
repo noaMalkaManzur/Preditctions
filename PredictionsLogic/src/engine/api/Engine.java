@@ -7,6 +7,7 @@ import engine.Validaton.api.ValidationEngine;
 import histogramDTO.HistogramByAmountEntitiesDTO;
 import histogramDTO.HistogramByPropertyEntitiesDTO;
 import histogramDTO.HistoryRunningSimulationDTO;
+import simulation.api.SimulationManager;
 import simulationInfo.SimulationInfoDTO;
 
 import java.util.Map;
@@ -20,7 +21,7 @@ public interface Engine
     RulesDTO getRulesDTO();
     TerminationDTO getTerminationDTO();
     Map<String, EntityDefinitionDTO> getEntitiesDTO();
-    SimulationInfoDTO getSimulationInfo();
+    Map<String, SimulationManager> getSimulationInfo();
     WorldDefinitionDTO getWorldDefinitionDTO();
     //endregion
     //region Command 3
