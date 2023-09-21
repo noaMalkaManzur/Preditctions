@@ -49,25 +49,6 @@ public class ValidationEngineImpl implements ValidationEngine {
         return value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false");
     }
 
-/*@Override
-public boolean checkEntityExist(PRDAction action, WorldDefinition world) {
-    if (action.getType().toLowerCase().contains("proximity")) {
-        if (!world.getEntities().containsKey(action.getPRDBetween().getSourceEntity())
-                || !world.getEntities().containsKey(action.getPRDBetween().getTargetEntity())) {
-            throw new EntityNotExistException("One or both entities do not exist in this world.");
-        }
-    } else if (action.getType().toLowerCase().contains("replace")) {
-        if (!world.getEntities().containsKey(action.getKill())
-                || !world.getEntities().containsKey(action.getCreate())) {
-            throw new EntityNotExistException("One or both entities do not exist in this world.");
-        }
-    } else {
-        if (!world.getEntities().containsKey(action.getEntity())) {
-            throw new EntityNotExistException("Entity: " + action.getEntity() + " does not exist in this world.");
-        }
-    }
-    return true;
-}*/
     @Override
     public boolean checkEntityExist(String entityName, WorldDefinition world) {
         if (!world.getEntities().containsKey(entityName)) {
@@ -173,8 +154,8 @@ public boolean checkEntityExist(PRDAction action, WorldDefinition world) {
     }
 
     @Override
-    public boolean simulationEnded(int ticks, Instant simulationStart, WorldDefinition world) {
-        long diff = Duration.between(simulationStart, Instant.now()).toMillis()/ 1000;
+    public boolean simulationEndedByTicks(int ticks, Instant simulationStart, WorldDefinition world) {
+        long diff = Duration.between(simulationStart, Instant.now()).getSeconds();
         return (world.getTerminationTerm().getByTicks() == ticks || diff >= world.getTerminationTerm().getBySeconds());
     }
 

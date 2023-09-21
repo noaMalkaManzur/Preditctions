@@ -5,8 +5,9 @@ import Defenitions.ProgressSimulationDTO;
 import Instance.EntityPopGraphDTO;
 import Instance.InstancesPerTickDTO;
 import action.api.Action;
-import com.sun.deploy.uitoolkit.impl.fx.FXPluginToolkit;
 import definition.world.api.WorldDefinition;
+import engine.Validaton.api.ValidationEngine;
+import engine.Validaton.impl.ValidationEngineImpl;
 import execution.context.Context;
 import execution.context.ContextImpl;
 import execution.instance.enitty.EntityInstance;
@@ -22,8 +23,6 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import static java.lang.Thread.sleep;
-
 public class SimulationManagerImpl implements SimulationManager {
 
     private final WorldDefinition worldDefinition;
@@ -34,9 +33,11 @@ public class SimulationManagerImpl implements SimulationManager {
     private Boolean isTerminated = false;
     private String terminationReason;
     private Boolean isPause = false;
+    private Boolean isStop = false;
     private EntityPopGraphDTO graphDTO = new EntityPopGraphDTO();
     private SimulationState simState = SimulationState.PENDING;
     private ProgressSimulationDTO progressDTO = new ProgressSimulationDTO(0,0,null,simState);
+    ValidationEngine validationEngine = new ValidationEngineImpl();
 
     private final Object pauseLock = new Object();
 
@@ -176,8 +177,11 @@ public class SimulationManagerImpl implements SimulationManager {
                     }
                 }
 
-                if (seconds > 150/*validationEngine.simulationEnded(ticks,simulationStart, world)*/)
-                {
+                if (worldDefinition.getTerminationTerm().getByUser() && isStop) {
+                    isTerminated = true;
+                }
+
+                if (validationEngine.simulationEndedByTicks(ticks, StartTime, worldDefinition)) {
                     isTerminated = true;
                 }
             }
@@ -286,12 +290,13 @@ public class SimulationManagerImpl implements SimulationManager {
             }
         }
     }
+
     @Override
     public void setIsTerminated()
     {
         synchronized (pauseLock) {
             isPause = false;
-            isTerminated = true;
+            isStop = true;
             pauseLock.notify();
         }
     }

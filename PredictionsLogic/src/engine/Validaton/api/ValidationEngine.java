@@ -25,7 +25,7 @@ public interface ValidationEngine {
     boolean isValidIntegerVar(String userInput, Range range);
     boolean isValidDoubleVar(String userInput, Range range);
     boolean isValidStringVar(String userInput);
-    boolean simulationEnded(int ticks, Instant simulationStart, WorldDefinition world);
+    boolean simulationEndedByTicks(int ticks, Instant simulationStart, WorldDefinition world);
 
     boolean isValidUserInput(EnvPropertyDefinitionDTO envPropertyDefinitionDTO, String userEnvInput);
 
