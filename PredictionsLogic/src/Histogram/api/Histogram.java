@@ -9,10 +9,8 @@ public interface Histogram {
     String getSimulationTime();
     void setSimulationTime(String simulationTime);
     void setGuid(String guid);
-    int getPopAfterSimulation();
-    int getPopBeforeSimulation();
+
     Map<Integer, EntityInstance> getEntitiesInstances();
     Map<Object, Integer> getHistogramByProperty();
     void setHistogramByProperty(Map<Object, Integer> histogramByProperty);
-
 }

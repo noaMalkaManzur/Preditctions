@@ -5,11 +5,9 @@ import Instance.ActiveEnvDTO;
 import Instance.EntityPopGraphDTO;
 import ThreadManager.ThreadManager;
 import engine.Validaton.api.ValidationEngine;
-import histogramDTO.HistogramByAmountEntitiesDTO;
 import histogramDTO.HistogramByPropertyEntitiesDTO;
 import histogramDTO.HistoryRunningSimulationDTO;
 import simulation.api.SimulationManager;
-import simulationInfo.SimulationInfoDTO;
 
 import java.util.List;
 import java.util.Map;
@@ -38,13 +36,11 @@ public interface Engine
     void clearActiveEnv();
     //endregion
     //region Command 4
-    HistoryRunningSimulationDTO createHistoryRunningSimulationDTO();
-  
-    HistogramByAmountEntitiesDTO createHistogramByAmountEntitiesDTO(String guid,String name);
+
 
     String runSimulation();
 
-    HistogramByPropertyEntitiesDTO setHistogramPerProperty(String guid, String propName);
+
 
     GridDTO getGridDTO();
 
