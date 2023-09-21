@@ -33,8 +33,10 @@ public class UpdateExeDetailsTask extends Task<ProgressSimulationDTO> {
                             // Do not update the UI if the task is canceled
                             return;
                         }
-                        ProgressSimulationDTO progressDTO = engineCopy.getSimulationInfo().get(simGuid).getProgressDTO();
-                        updateValue(progressDTO);
+                        if(simGuid!=null) {
+                            ProgressSimulationDTO progressDTO = engineCopy.getSimulationInfo().get(simGuid).getProgressDTO();
+                            updateValue(progressDTO);
+                        }
                     });
                 } catch (Exception e) {
                     // Handle exceptions here (e.g., log or display an error message)
