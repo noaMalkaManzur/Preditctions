@@ -3,6 +3,12 @@ package definition.world.impl;
 import definition.entity.EntityDefinition;
 import definition.entity.EntityDefinitionImpl;
 import definition.environment.api.EnvVariablesManager;
+import definition.property.api.PropertyType;
+import definition.property.impl.BooleanPropertyDefinition;
+import definition.property.impl.FloatPropertyDefinition;
+import definition.property.impl.IntegerPropertyDefinition;
+import definition.property.impl.StringPropertyDefinition;
+import definition.value.generator.api.ValueGenerator;
 import definition.world.api.Termination;
 import definition.world.api.WorldDefinition;
 import rule.Rule;
@@ -73,10 +79,27 @@ public class WorldImpl implements WorldDefinition
     public Map<String,EntityDefinition> cloneEntities(Map<String,EntityDefinition> entMap)
     {
         Map<String,EntityDefinition> resMap = new HashMap<>();
-        entMap.forEach((name,ent)->
+        entMap.forEach((entityName,ent)->
         {
-            resMap.put(name,new EntityDefinitionImpl(name));
-            //ToDo: properties and populations
+            int population = ent.getPopulation();
+
+            resMap.put(entityName,new EntityDefinitionImpl(entityName));
+            resMap.get(entityName).setPopulation(population);
+            ent.getProps().forEach((propName,propertyDefinition)->{
+                if(propertyDefinition.getType().equals(PropertyType.DECIMAL)){
+                    resMap.get(entityName).addPropertyDefinition(new IntegerPropertyDefinition(propName,PropertyType.DECIMAL,(ValueGenerator<Integer>)propertyDefinition.generateValue(), propertyDefinition.getRange(), propertyDefinition.getRandomInit()));
+                }
+                else if(propertyDefinition.getType().equals(PropertyType.FLOAT)){
+                    resMap.get(entityName).addPropertyDefinition(new FloatPropertyDefinition(propName,PropertyType.FLOAT,(ValueGenerator<Float>)propertyDefinition.generateValue(), propertyDefinition.getRange(), propertyDefinition.getRandomInit()));
+                }
+                else if(propertyDefinition.getType().equals(PropertyType.BOOLEAN)){
+                    resMap.get(entityName).addPropertyDefinition(new BooleanPropertyDefinition(propName,PropertyType.BOOLEAN,(ValueGenerator<Boolean>)propertyDefinition.generateValue(),propertyDefinition.getRandomInit()));
+
+                }
+                else {
+                    resMap.get(entityName).addPropertyDefinition(new StringPropertyDefinition(propName,PropertyType.STRING,(ValueGenerator<String>)propertyDefinition.generateValue(),propertyDefinition.getRandomInit()));
+                }
+            });
         });
         return resMap;
     }
