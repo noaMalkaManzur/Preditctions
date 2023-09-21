@@ -17,6 +17,7 @@ import Generated.*;
 import Histogram.api.Histogram;
 import Histogram.impl.HistogramImpl;
 import Instance.ActiveEnvDTO;
+import Instance.EntityPopGraphDTO;
 import Instance.EnvPropertyInstanceDTO;
 import ThreadManager.ThreadManager;
 import action.api.Action;
@@ -1072,6 +1073,16 @@ public class EngineImpl implements Engine {
         });
         activeEnvironment = new ActiveEnvironmentImpl();
         maxPopulation = getMaxPop();
+    }
+    @Override
+    public RerunInfoDTO getReRunInfo(String selectedGuid)
+    {
+        return simulationsMap.get(selectedGuid).getReRunInfoDTO();
+    }
+    @Override
+    public EntityPopGraphDTO getGraphDTO(String selectedGuid)
+    {
+        return simulationsMap.get(selectedGuid).getGraphDTO();
     }
     //endregion
     //region Command number 4

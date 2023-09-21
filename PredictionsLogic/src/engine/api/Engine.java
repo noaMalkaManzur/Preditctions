@@ -2,6 +2,7 @@ package engine.api;
 
 import Defenitions.*;
 import Instance.ActiveEnvDTO;
+import Instance.EntityPopGraphDTO;
 import ThreadManager.ThreadManager;
 import engine.Validaton.api.ValidationEngine;
 import histogramDTO.HistogramByAmountEntitiesDTO;
@@ -64,6 +65,12 @@ public interface Engine
     List<simulationViewDTO> getSimulationsView();
 
     void resetSimVars();
+
+    RerunInfoDTO getReRunInfo(String selectedGuid);
+
+    EntityPopGraphDTO getGraphDTO(String selectedGuid);
+
+
 
     //endregion
 }

@@ -2,6 +2,7 @@ package simulation.Impl;
 
 import Defenitions.EntPopDTO;
 import Defenitions.ProgressSimulationDTO;
+import Defenitions.RerunInfoDTO;
 import Instance.EntityPopGraphDTO;
 import Instance.InstancesPerTickDTO;
 import action.api.Action;
@@ -35,9 +36,11 @@ public class SimulationManagerImpl implements SimulationManager {
     private Boolean isPause = false;
     private Boolean isStop = false;
     private EntityPopGraphDTO graphDTO = new EntityPopGraphDTO();
+    private RerunInfoDTO rerunInfoDTO;
+
     private SimulationState simState = SimulationState.PENDING;
     private ProgressSimulationDTO progressDTO = new ProgressSimulationDTO(0,0,null,simState);
-    ValidationEngine validationEngine = new ValidationEngineImpl();
+    private ValidationEngine validationEngine = new ValidationEngineImpl();
 
     private final Object pauseLock = new Object();
 
@@ -93,6 +96,7 @@ public class SimulationManagerImpl implements SimulationManager {
     public void run() {
         try {
             //region Simulation Create
+            rerunInfoDTO = initReRunInfo();
             createContext();
             StartTime = Instant.now();
             simState =  SimulationState.RUNNING;
@@ -177,11 +181,11 @@ public class SimulationManagerImpl implements SimulationManager {
                     }
                 }
 
-                if (worldDefinition.getTerminationTerm().getByUser() && isStop) {
+                if (worldDefinition.getTerminationTerm().getByUser() != null && worldDefinition.getTerminationTerm().getByUser() && isStop) {
                     isTerminated = true;
                 }
 
-                if (validationEngine.simulationEndedByTicks(ticks, StartTime, worldDefinition)) {
+                else if (validationEngine.simulationEndedByTicks(ticks, StartTime, worldDefinition)) {
                     isTerminated = true;
                 }
             }
@@ -290,6 +294,23 @@ public class SimulationManagerImpl implements SimulationManager {
             }
         }
     }
+    private RerunInfoDTO initReRunInfo() {
+        Map<String,Integer> entPopMap = new HashMap<>();
+        Map<String,String> envVarMap = new HashMap<>();
+        worldDefinition.getEntities().forEach((s,e)->{
+            entPopMap.put(s,e.getPopulation());
+        });
+        simEnvironment.getProperties().forEach((s,p)->{
+            envVarMap.put(s,p.getValue().toString());
+        });
+        return new RerunInfoDTO(entPopMap,envVarMap);
+    }
+    @Override
+    public RerunInfoDTO getReRunInfoDTO()
+    {
+        return rerunInfoDTO;
+    }
+
 
     @Override
     public void setIsTerminated()
