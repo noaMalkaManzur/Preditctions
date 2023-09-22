@@ -1,6 +1,7 @@
 package JavaFx.SubComponents.body;
 
 import Defenitions.*;
+import Instance.ActiveEnvDTO;
 import JavaFx.App.PredictionsAppController;
 import JavaFx.SubComponents.detailsTab.DetailsTabController;
 import JavaFx.SubComponents.newExeTab.NewExeScreenController;
@@ -162,5 +163,14 @@ public class BodyController {
         {
             throw new NoChosenSimException("No Selected Simulation!");
         }
+    }
+
+    public ActiveEnvDTO getActiveEndDTO() {
+        return mainController.getActiveEnvDTO();
+    }
+
+    public void clearResScreen() {
+        tabPaneComponent.getSelectionModel().select(0);
+        resultTabComponentController.clearLstView();
     }
 }

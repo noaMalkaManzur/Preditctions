@@ -132,4 +132,9 @@ public class ResultTabController
     public void onReRun() {
         bodyController.onReRun(getSelectedGuid());
     }
+    public void clearLstView()
+    {
+        executionsLstComponent.getItems().clear();
+        exeDetailsScreenComponentController.clearScreen();
+    }
 }
