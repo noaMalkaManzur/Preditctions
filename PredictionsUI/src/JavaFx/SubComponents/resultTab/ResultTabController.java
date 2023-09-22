@@ -47,6 +47,7 @@ public class ResultTabController
             exeDetailsScreenComponentController.setResultTabController(this);
             exeResultsScreenComponentController.setResultTabController(this);
             exeDetailsScreenComponentController.initializeTableView();
+            exeResultsScreenComponent.setDisable(true);
         }
         this.simulationViewDTOConsumer = (s) ->
         {
