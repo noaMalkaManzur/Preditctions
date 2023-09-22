@@ -41,7 +41,7 @@
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                <children>
-                  <ScrollPane fx:id="consistencySP" fitToHeight="true" fitToWidth="true" layoutX="14.0" layoutY="82.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="396.0" prefWidth="415.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <ScrollPane fx:id="consistencySP" fitToHeight="true" fitToWidth="true" layoutX="14.0" layoutY="82.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="396.0" prefWidth="415.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <content>
                         <GridPane>
                           <columnConstraints>
@@ -58,23 +58,21 @@
                                     <Font size="24.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="91.0" text="Property Value:" GridPane.rowIndex="1">
+                              <Label layoutX="10.0" layoutY="91.0" text="Avg Property Value:" GridPane.rowIndex="1">
                                  <font>
                                     <Font size="24.0" />
                                  </font>
                               </Label>
-                              <TextField fx:id="consistencyTxt" GridPane.columnIndex="1" />
-                              <TextField fx:id="propValTxt" layoutX="217.0" layoutY="96.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <TextField fx:id="consistencyTxt" editable="false" GridPane.columnIndex="1" GridPane.hgrow="NEVER" />
+                              <TextField fx:id="propValTxt" editable="false" layoutX="217.0" layoutY="96.0" GridPane.columnIndex="1" GridPane.hgrow="NEVER" GridPane.rowIndex="1" />
                            </children>
                         </GridPane>
                      </content>
                   </ScrollPane>
-                  <BarChart fx:id="propBarChart" layoutX="-13.0" layoutY="-62.0" prefHeight="396.0" prefWidth="415.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <BarChart fx:id="propBarChart" categoryGap="12.0" layoutX="-13.0" layoutY="-62.0" prefHeight="396.0" prefWidth="415.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <xAxis>
                       <CategoryAxis fx:id="propAxis" side="BOTTOM">
-                           <tickLabelFont>
-                              <Font size="5.0" />
-                           </tickLabelFont></CategoryAxis>
+                           </CategoryAxis>
                     </xAxis>
                     <yAxis>
                       <NumberAxis side="LEFT" />

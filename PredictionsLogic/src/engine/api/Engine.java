@@ -64,6 +64,8 @@ public interface Engine
 
     HistogramByPropertyEntitiesDTO getHistogramByProp(String entName, String prop, String selectedGuid);
 
+    StatisticsDTO getStatitsticDTO(String parent, String selectedItem, String selectedGuid);
+
 
     //endregion
 }

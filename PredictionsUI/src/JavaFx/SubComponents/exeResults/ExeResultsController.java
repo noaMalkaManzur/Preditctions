@@ -1,6 +1,7 @@
 package JavaFx.SubComponents.exeResults;
 
 import Defenitions.EntityDefinitionDTO;
+import Defenitions.StatisticsDTO;
 import Defenitions.simulationViewDTO;
 import Instance.EntityPopGraphDTO;
 import JavaFx.SubComponents.QuantitiesGraph.GraphScreenController;
@@ -70,5 +71,9 @@ public class ExeResultsController {
 
     public HistogramByPropertyEntitiesDTO getHistogramByProp(String entName, String propName) {
         return resultTabController.getEngine().getHistogramByProp(entName,propName,resultTabController.getSelectedGuid());
+    }
+
+    public StatisticsDTO getStaticDTO(String parent, String selectedItem) {
+        return resultTabController.getEngine().getStatitsticDTO(parent,selectedItem,resultTabController.getSelectedGuid());
     }
 }

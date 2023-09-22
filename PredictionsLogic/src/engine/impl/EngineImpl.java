@@ -1076,5 +1076,10 @@ public class EngineImpl implements Engine {
     public HistogramByPropertyEntitiesDTO getHistogramByProp(String entName, String prop, String selectedGuid) {
         return simulationsMap.get(selectedGuid).getHistogramPerProperty(entName,prop);
     }
+
+    @Override
+    public StatisticsDTO getStatitsticDTO(String parent, String selectedItem, String selectedGuid) {
+        return simulationsMap.get(selectedGuid).getStatisticsDTO(parent,selectedItem);
+    }
 }
 

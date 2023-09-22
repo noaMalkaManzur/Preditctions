@@ -2,6 +2,7 @@ package simulation.api;
 
 import Defenitions.ProgressSimulationDTO;
 import Defenitions.RerunInfoDTO;
+import Defenitions.StatisticsDTO;
 import Instance.EntityPopGraphDTO;
 import execution.context.Context;
 import execution.instance.environment.api.ActiveEnvironment;
@@ -29,6 +30,7 @@ public interface SimulationManager extends Runnable {
     RerunInfoDTO getReRunInfoDTO();
     void createHistoryRunningSimulationDTO();
     HistogramByPropertyEntitiesDTO getHistogramPerProperty(String entName,String propName);
+    StatisticsDTO getStatisticsDTO(String entName,String propName);
 
 
 }
