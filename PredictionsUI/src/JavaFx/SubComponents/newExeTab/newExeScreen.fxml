@@ -170,6 +170,11 @@
                               <Font size="29.0" />
                            </font>
                         </Button>
+                        <Button fx:id="setAllValsBtn" layoutX="704.0" layoutY="9.0" maxHeight="1.7976931348623157E308" mnemonicParsing="false" onAction="#onSetValsBtnClicked" prefWidth="200.0" text="Set All Values" visible="false" GridPane.columnIndex="1" GridPane.rowSpan="2" GridPane.vgrow="ALWAYS">
+                           <font>
+                              <Font size="24.0" />
+                           </font>
+                        </Button>
                      </children>
                   </GridPane>
                </children>

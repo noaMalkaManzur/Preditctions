@@ -19,7 +19,7 @@ public class PredictionsApp extends Application {
         primaryStage.setTitle("Live Example");
         FXMLLoader fxmlLoader = new FXMLLoader();
 
-        URL url = getClass().getResource("../App/predictionsApp.fxml");
+        URL url = getClass().getResource("/JavaFx/App/predictionsApp.fxml");
         fxmlLoader.setLocation(url);
         Parent load = fxmlLoader.load(url.openStream());
 

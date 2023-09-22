@@ -5,6 +5,7 @@ import Instance.InstancesPerTickDTO;
 import JavaFx.SubComponents.exeResults.ExeResultsController;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.ListView;
 
@@ -20,6 +21,10 @@ public class GraphScreenController
     private ListView<String> entLstView;
     @FXML
     private LineChart<Integer,Integer> entPopGraph;
+    @FXML
+    NumberAxis ticksAxis;
+    @FXML
+    NumberAxis popAxis;
     public void setExeResultsTab(ExeResultsController exeResultsController) {
         this.exeResultsController = exeResultsController;
     }
@@ -46,9 +51,17 @@ public class GraphScreenController
         }
     }
     public void initEntList() {
-        if(entLstView.getItems().size() > 0)
+        if (entLstView.getItems().size() > 0)
             entLstView.getItems().clear();
-        Collection<String> EntitiesDTO = exeResultsController.getEntityDTO();
-        entLstView.getItems().addAll(EntitiesDTO);
+
+        Collection<String> EntitiesDTO = exeResultsController.getEntityStringDTO();
+
+        // Ensure that all elements are strings
+        List<String> stringEntities = EntitiesDTO.stream()
+                .map(Object::toString)
+                .collect(Collectors.toList());
+
+        entLstView.getItems().addAll(stringEntities);
     }
+
 }

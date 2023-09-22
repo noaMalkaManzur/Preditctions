@@ -94,8 +94,6 @@ public class ExeDetailsController {
         String selectedGuid = resultTabController.getSelectedGuid();
         resultTabController.setPause(selectedGuid,true);
     }
-
-
     public void onStopBtnClicked() {
         String selectedGuid = resultTabController.getSelectedGuid();
         resultTabController.setTerminated(selectedGuid);

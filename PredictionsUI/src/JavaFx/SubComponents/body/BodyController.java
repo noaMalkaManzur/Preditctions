@@ -8,13 +8,12 @@ import JavaFx.SubComponents.resultTab.ResultTabController;
 import engine.api.Engine;
 import exceptions.NoChosenSimException;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TabPane;
+import javafx.scene.control.*;
 import simulation.api.SimulationManager;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class BodyController {
     private PredictionsAppController mainController;
@@ -117,13 +116,24 @@ public class BodyController {
         mainController.initRandomEnvVars(envName);
     }
 
-    public void runSimulation() {
-        tabPaneComponent.getSelectionModel().select(2);
-        if(!updateListStarted) {
-            resultTabComponentController.startUpdateListViewTask();
-            updateListStarted = true;
-        }
-        mainController.runSimulation();
+    public void runSimulation(String ValuesString) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Values Confirmation");
+        alert.setContentText(ValuesString);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        result.ifPresent(selectedButton -> {
+            if (selectedButton == ButtonType.OK) {
+                tabPaneComponent.getSelectionModel().select(2);
+                if (!updateListStarted) {
+                    resultTabComponentController.startUpdateListViewTask();
+                    updateListStarted = true;
+                }
+                mainController.runSimulation();
+                newExeTabComponentController.onClearBtnClicked();
+                resetSimVars();
+            }
+        });
 
     }
 
@@ -147,6 +157,7 @@ public class BodyController {
         try{
             newExeTabComponentController.setOnReRun(getEngine().getReRunInfo(selectedGuid));
             tabPaneComponent.getSelectionModel().select(1);
+            showAlert("To start the simulation with the same values please click Set All Values Button!", Alert.AlertType.valueOf("INFORMATION"),"Information");
         }catch (Exception e)
         {
             throw new NoChosenSimException("No Selected Simulation!");

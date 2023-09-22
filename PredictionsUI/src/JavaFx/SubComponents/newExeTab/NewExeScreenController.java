@@ -47,6 +47,8 @@ public class NewExeScreenController {
 
     @FXML
     private Button startBtn;
+    @FXML
+    private Button setAllValsBtn;
 
     Map<String,Integer> entValMap = new HashMap<>();
     Map<String,String> envValMap = new HashMap<>();
@@ -146,63 +148,7 @@ public class NewExeScreenController {
     {
         String selectedItem = envList.getSelectionModel().getSelectedItem();
         String userEnvInput  = envValue.getText().trim();
-        EnvPropertyDefinitionDTO envVarDTO = bodyController.getEnvDTO().getEnvProps().get(selectedItem);
-        Object userValue;
-        switch (envVarDTO.getType())
-        {
-            case DECIMAL:
-                if(bodyController.isValidInput(envVarDTO,userEnvInput))
-                {
-                    userValue = PropertyType.DECIMAL.parse(userEnvInput);
-                    bodyController.addEnvVarToActiveEnv(userValue,envVarDTO.getName());
-                    envValMap.put(selectedItem,userEnvInput);
-                    bodyController.showAlert(selectedItem + "is Set!\nValue is: " + userEnvInput, Alert.AlertType.INFORMATION,"Success");
-                }
-                else
-                {
-                    bodyController.showAlert("Invalid Input!", Alert.AlertType.ERROR,"Error");
-                }
-                break;
-            case FLOAT:
-                if(bodyController.isValidInput(envVarDTO,userEnvInput))
-                {
-                    userValue = PropertyType.FLOAT.parse(userEnvInput);
-                    bodyController.addEnvVarToActiveEnv(userValue,envVarDTO.getName());
-                    envValMap.put(selectedItem,userEnvInput);
-                    bodyController.showAlert(selectedItem + "is Set!\nValue is:" + userEnvInput, Alert.AlertType.INFORMATION,"Success");
-                }
-                else
-                {
-                    bodyController.showAlert("Invalid Input!", Alert.AlertType.ERROR,"Error");
-                }
-                break;
-            case BOOLEAN:
-                if(bodyController.isValidInput(envVarDTO,userEnvInput))
-                {
-                    userValue = PropertyType.BOOLEAN.parse(userEnvInput);
-                    bodyController.addEnvVarToActiveEnv(userValue,envVarDTO.getName());
-                    envValMap.put(selectedItem,userEnvInput);
-                    bodyController.showAlert(selectedItem + "is Set!\nValue is:" + userEnvInput, Alert.AlertType.INFORMATION,"Success");
-                }
-                else
-                {
-                    bodyController.showAlert("Invalid Input!", Alert.AlertType.ERROR,"Error");
-                }
-                break;
-            case STRING:
-                if(bodyController.isValidInput(envVarDTO,userEnvInput))
-                {
-                    bodyController.addEnvVarToActiveEnv(userEnvInput,envVarDTO.getName());
-                    envValMap.put(selectedItem,userEnvInput);
-                    bodyController.showAlert(selectedItem + "is Set!\nValue is:" + userEnvInput, Alert.AlertType.INFORMATION,"Success");
-                }
-                else
-                {
-                    bodyController.showAlert("Invalid Input!", Alert.AlertType.ERROR,"Error");
-                }
-                break;
-        }
-
+        setEnvVar(selectedItem,userEnvInput,true);
     }
     public void onStartBtnClicked()
     {
@@ -211,9 +157,23 @@ public class NewExeScreenController {
         for(String envName: myEnvDef.getEnvProps().keySet())
             bodyController.initRandomEnvVars(envName);
         //endregion
-        bodyController.runSimulation();
-        onClearBtnClicked();
-        bodyController.resetSimVars();
+        bodyController.runSimulation(valuesString());
+        if(setAllValsBtn.isVisible())
+            setAllValsBtn.setVisible(false);
+
+    }
+
+    private String valuesString() {
+        StringBuilder mySb = new StringBuilder();
+        mySb.append("This are the values you set for the simulation:").append(System.lineSeparator());
+        envValMap.forEach((name,value)->
+        {
+            mySb.append(name).append(":").append(value).append(System.lineSeparator());
+        });
+        entValMap.forEach((name,value)->{
+            mySb.append(name).append(":").append(value).append(System.lineSeparator());
+        });
+        return mySb.toString();
     }
 
     public void onClearBtnClicked()
@@ -234,6 +194,81 @@ public class NewExeScreenController {
     public void setOnReRun(RerunInfoDTO reRunInfo) {
         envValMap = new HashMap<>(reRunInfo.getEnvVal());
         entValMap = new HashMap<>(reRunInfo.getEntPop());
+        setAllValsBtn.setVisible(true);
+    }
+    public void onSetValsBtnClicked()
+    {
+        entValMap.forEach((name,pop)->
+        {
+            validateAndSetValue(popSpinner.getValueFactory(),name);
+            bodyController.setEntPop(name,pop);
+        });
+        envValMap.forEach((name,pop)->{
+           setEnvVar(name,pop,false);
+        });
+    }
+    private void setEnvVar(String selectedItem,String userEnvInput,Boolean showMsg)
+    {
+        EnvPropertyDefinitionDTO envVarDTO = bodyController.getEnvDTO().getEnvProps().get(selectedItem);
+        Object userValue;
+        switch (envVarDTO.getType())
+        {
+            case DECIMAL:
+                if(bodyController.isValidInput(envVarDTO,userEnvInput))
+                {
+                    userValue = PropertyType.DECIMAL.parse(userEnvInput);
+                    bodyController.addEnvVarToActiveEnv(userValue,envVarDTO.getName());
+                    envValMap.put(selectedItem,userEnvInput);
+                    if(showMsg)
+                        bodyController.showAlert(selectedItem + "is Set!\nValue is: " + userEnvInput, Alert.AlertType.INFORMATION,"Success");
+                }
+                else
+                {
+                    bodyController.showAlert("Invalid Input!", Alert.AlertType.ERROR,"Error");
+                }
+                break;
+            case FLOAT:
+                if(bodyController.isValidInput(envVarDTO,userEnvInput))
+                {
+                    userValue = PropertyType.FLOAT.parse(userEnvInput);
+                    bodyController.addEnvVarToActiveEnv(userValue,envVarDTO.getName());
+                    envValMap.put(selectedItem,userEnvInput);
+                    if(showMsg)
+                        bodyController.showAlert(selectedItem + "is Set!\nValue is: " + userEnvInput, Alert.AlertType.INFORMATION,"Success");
+                }
+                else
+                {
+                    bodyController.showAlert("Invalid Input!", Alert.AlertType.ERROR,"Error");
+                }
+                break;
+            case BOOLEAN:
+                if(bodyController.isValidInput(envVarDTO,userEnvInput))
+                {
+                    userValue = PropertyType.BOOLEAN.parse(userEnvInput);
+                    bodyController.addEnvVarToActiveEnv(userValue,envVarDTO.getName());
+                    envValMap.put(selectedItem,userEnvInput);
+                    if(showMsg)
+                        bodyController.showAlert(selectedItem + "is Set!\nValue is: " + userEnvInput, Alert.AlertType.INFORMATION,"Success");
+                }
+                else
+                {
+                    bodyController.showAlert("Invalid Input!", Alert.AlertType.ERROR,"Error");
+                }
+                break;
+            case STRING:
+                if(bodyController.isValidInput(envVarDTO,userEnvInput))
+                {
+                    bodyController.addEnvVarToActiveEnv(userEnvInput,envVarDTO.getName());
+                    envValMap.put(selectedItem,userEnvInput);
+                    if(showMsg)
+                        bodyController.showAlert(selectedItem + "is Set!\nValue is: " + userEnvInput, Alert.AlertType.INFORMATION,"Success");
+                }
+                else
+                {
+                    bodyController.showAlert("Invalid Input!", Alert.AlertType.ERROR,"Error");
+                }
+                break;
+        }
     }
 }
 

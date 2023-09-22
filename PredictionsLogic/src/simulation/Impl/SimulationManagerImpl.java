@@ -33,7 +33,6 @@ public class SimulationManagerImpl implements SimulationManager {
     private final WorldDefinition worldDefinition;
     private ActiveEnvironment simEnvironment;
     private Context context;
-    Map<String, Histogram> histogramMap = new LinkedHashMap<>();
     private final String guid = UUID.randomUUID().toString();
     private  Instant StartTime;
     private Boolean isTerminated = false;
@@ -45,6 +44,8 @@ public class SimulationManagerImpl implements SimulationManager {
     private SimulationState simState = SimulationState.PENDING;
     private ProgressSimulationDTO progressDTO = new ProgressSimulationDTO(0,0,null,simState);
     private ValidationEngine validationEngine = new ValidationEngineImpl();
+    private Histogram histogram;
+    private HistogramByPropertyEntitiesDTO histogramByPropertyEntitiesDTO;
 
     private final Object pauseLock = new Object();
 
@@ -198,20 +199,20 @@ public class SimulationManagerImpl implements SimulationManager {
             //endregion
             simState = SimulationState.FINISHED;
 
-            createHistogram(guid);
+           createHistogram();
         } catch (Exception e) {
             terminationReason="We have ended the simulation due to an error:  "+ e;
         }
     }
-    void createHistogram(String guid){
+    void createHistogram()
+    {
         String histogramDate = createHistogramDate();
         Map<Integer, EntityInstance> instanceMap = new LinkedHashMap<>();
 
         context.getEntityManager().getInstances().forEach(instance->{
             instanceMap.put(instance.getId(), instance);
         });
-        Histogram histogram = new HistogramImpl(guid,histogramDate,instanceMap);
-        histogramMap.put(guid,histogram);
+        histogram = new HistogramImpl(guid,histogramDate,instanceMap);
 
     }
     String createHistogramDate(){
@@ -220,31 +221,31 @@ public class SimulationManagerImpl implements SimulationManager {
         return sdf.format(currDate);
 
     }
-    public HistogramByPropertyEntitiesDTO setHistogramPerProperty(String guid, String propName) {
+    @Override
+    public HistogramByPropertyEntitiesDTO getHistogramPerProperty(String entName,String propName) {
 
         Map<Object, Integer> histogramByProperty = new LinkedHashMap<>();
-        Histogram histogram = histogramMap.get(guid);
-        histogram.getEntitiesInstances().forEach((sNameEntityIns, entityInstance) -> {
-            Object propValue = entityInstance.getPropertyByName(propName).getValue();
-            if (histogramByProperty.containsKey(propValue)) {
-                histogramByProperty.put(propValue, histogramByProperty.get(propValue) + 1);
-            } else {
-                histogramByProperty.put(propValue, 1);
+        histogram.getEntitiesInstances().forEach((NameEntityIns, entityInstance) -> {
+            if(entityInstance.getEntityDef().getName().equals(entName)) {
+                Object propValue = entityInstance.getPropertyByName(propName).getValue();
+                if (histogramByProperty.containsKey(propValue)) {
+                    histogramByProperty.put(propValue, histogramByProperty.get(propValue) + 1);
+                } else {
+                    histogramByProperty.put(propValue, 1);
+                }
             }
         });
-        HistogramByPropertyEntitiesDTO histogramByPropertyEntitiesDTO  = new HistogramByPropertyEntitiesDTO(histogramByProperty);
-
-        return histogramByPropertyEntitiesDTO;
+        return new HistogramByPropertyEntitiesDTO(histogramByProperty);
     }
 
-    public HistoryRunningSimulationDTO createHistoryRunningSimulationDTO() {
-        Map<String, String> history = new LinkedHashMap<>();
-        for (Map.Entry<String, Histogram> entry : histogramMap.entrySet()) {
-            history.put(entry.getKey(), entry.getValue().getSimulationTime());
-        }
-        HistoryRunningSimulationDTO historyRunningSimulationDTO = new HistoryRunningSimulationDTO(history);
-        return historyRunningSimulationDTO;
-    }
+   public void createHistoryRunningSimulationDTO() {
+//        Map<String, String> history = new LinkedHashMap<>();
+//        for (Map.Entry<String, Histogram> entry : histogramMap.entrySet()) {
+//            history.put(entry.getKey(), entry.getValue().getSimulationTime());
+//        }
+//        HistoryRunningSimulationDTO historyRunningSimulationDTO = new HistoryRunningSimulationDTO(history);
+//        return historyRunningSimulationDTO;
+   }
     private void createContext() {
         EntityInstanceManager entityInstanceManager = new EntityInstanceManagerImpl();
         AtomicInteger index = new AtomicInteger(0);
@@ -356,8 +357,6 @@ public class SimulationManagerImpl implements SimulationManager {
     {
         return rerunInfoDTO;
     }
-
-
     @Override
     public void setIsTerminated()
     {

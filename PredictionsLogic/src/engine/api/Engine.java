@@ -37,11 +37,7 @@ public interface Engine
     //endregion
     //region Command 4
 
-
     String runSimulation();
-
-
-
     GridDTO getGridDTO();
 
     Integer getMaxPop();
@@ -66,6 +62,7 @@ public interface Engine
 
     EntityPopGraphDTO getGraphDTO(String selectedGuid);
 
+    HistogramByPropertyEntitiesDTO getHistogramByProp(String entName, String prop, String selectedGuid);
 
 
     //endregion

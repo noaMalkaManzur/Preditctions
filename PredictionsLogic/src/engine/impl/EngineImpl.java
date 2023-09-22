@@ -61,6 +61,7 @@ import execution.instance.environment.impl.ActiveEnvironmentImpl;
 import execution.instance.property.PropertyInstanceImpl;
 import expression.api.Expression;
 import expression.impl.*;
+import histogramDTO.HistogramByPropertyEntitiesDTO;
 import rule.ActivationImpl;
 import rule.Rule;
 import rule.RuleImpl;
@@ -1070,13 +1071,10 @@ public class EngineImpl implements Engine {
     {
         return simulationsMap.get(selectedGuid).getGraphDTO();
     }
-    //endregion
-    //region Command number 4
 
-
-
-
-    //endregion
-
+    @Override
+    public HistogramByPropertyEntitiesDTO getHistogramByProp(String entName, String prop, String selectedGuid) {
+        return simulationsMap.get(selectedGuid).getHistogramPerProperty(entName,prop);
+    }
 }
 
