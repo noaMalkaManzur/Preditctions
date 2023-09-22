@@ -72,7 +72,7 @@ public class PropertyInstanceImpl implements PropertyInstance {
       try{
           double sum=0;
           for(Object value: valuesList){
-            sum = (double)value;
+            sum += (double)value;
         }
         return sum / valuesList.size();
       }

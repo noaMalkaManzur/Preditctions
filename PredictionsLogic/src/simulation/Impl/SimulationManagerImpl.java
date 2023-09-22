@@ -3,6 +3,7 @@ package simulation.Impl;
 import Defenitions.EntPopDTO;
 import Defenitions.ProgressSimulationDTO;
 import Defenitions.RerunInfoDTO;
+import Defenitions.StatisticsDTO;
 import Histogram.api.Histogram;
 import Histogram.impl.HistogramImpl;
 import Instance.EntityPopGraphDTO;
@@ -17,8 +18,8 @@ import execution.instance.enitty.EntityInstance;
 import execution.instance.enitty.manager.EntityInstanceManager;
 import execution.instance.enitty.manager.EntityInstanceManagerImpl;
 import execution.instance.environment.api.ActiveEnvironment;
+import execution.instance.property.PropertyInstance;
 import histogramDTO.HistogramByPropertyEntitiesDTO;
-import histogramDTO.HistoryRunningSimulationDTO;
 import simulation.api.SimulationManager;
 import simulation.api.SimulationState;
 
@@ -46,6 +47,7 @@ public class SimulationManagerImpl implements SimulationManager {
     private ValidationEngine validationEngine = new ValidationEngineImpl();
     private Histogram histogram;
     private HistogramByPropertyEntitiesDTO histogramByPropertyEntitiesDTO;
+    private StatisticsDTO statisticsDTO = new StatisticsDTO(0,0);
 
     private final Object pauseLock = new Object();
 
@@ -198,13 +200,45 @@ public class SimulationManagerImpl implements SimulationManager {
             }
             //endregion
             simState = SimulationState.FINISHED;
-
-           createHistogram();
+            //need to get the property name from user
+            createConsistency(ticks, context, "age", "Sick");
+            createHistogram();
         } catch (Exception e) {
             terminationReason="We have ended the simulation due to an error:  "+ e;
         }
     }
-    void createHistogram()
+
+    private void createConsistency(int ticks, Context context, String propertyName, String entityName) {
+        double totalAverageValue = 0;
+        double totalAverageTickNumbSinceChangeValue = 0;
+        int instanceCount = 0;
+
+        for (EntityInstance entityInstance : context.getEntityManager().getInstances()) {
+
+            if (entityInstance.getEntityDef().getName().equals(entityName)) {
+                PropertyInstance property = entityInstance.getPropertyByName(propertyName);
+                if (property != null) {
+                    try{
+                        totalAverageValue += property.averageValueProperty();
+                    }
+                    catch(Exception e){
+                        totalAverageValue = 0;
+                    }
+                    totalAverageTickNumbSinceChangeValue += property.averageTickNumbSinceChangeValue(ticks);
+                    instanceCount++;
+                }
+            }
+        }
+
+        if (instanceCount > 0) {
+            statisticsDTO = new StatisticsDTO(totalAverageValue / instanceCount,totalAverageTickNumbSinceChangeValue / instanceCount );
+            /*double averageValue = totalAverageValue / instanceCount;
+            double averageTickNumbSinceChangeValue = totalAverageTickNumbSinceChangeValue / instanceCount;*/
+        }
+
+    }
+
+    private void createHistogram()
     {
         String histogramDate = createHistogramDate();
         Map<Integer, EntityInstance> instanceMap = new LinkedHashMap<>();

@@ -53,4 +53,9 @@ public class EntityInstanceImpl implements EntityInstance {
         this.coordinate = coordinate;
 
     }
+
+    @Override
+    public Map<String, PropertyInstance> getProperties() {
+        return properties;
+    }
 }
