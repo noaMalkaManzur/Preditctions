@@ -137,5 +137,11 @@ public class ExeDetailsController {
             break;
         }
     }
+
+    public void clearScreen() {
+        currTickText.clear();
+        secondsCountText.clear();
+        data.clear();
+    }
 }
 

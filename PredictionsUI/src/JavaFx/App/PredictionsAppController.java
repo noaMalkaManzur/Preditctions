@@ -1,6 +1,7 @@
 package JavaFx.App;
 
 import Defenitions.*;
+import Instance.ActiveEnvDTO;
 import JavaFx.SubComponents.body.BodyController;
 import JavaFx.SubComponents.header.HeaderController;
 import ThreadManager.ThreadManager;
@@ -81,6 +82,8 @@ public class PredictionsAppController {
             bodyComponentController.populateTree();
             bodyComponentController.initNewExeScreen();
             bodyComponentController.enableTabPane();
+            bodyComponentController.clearResScreen();
+
             showAlert("Loaded file succeeded!",Alert.AlertType.INFORMATION,"Success");
         } catch (RuntimeException exception) {
             showAlert("Operation failed: " + exception.getMessage(), Alert.AlertType.ERROR,"Error");
@@ -180,5 +183,9 @@ public class PredictionsAppController {
 
     public void resetSimVars() {
         engine.resetSimVars();
+    }
+
+    public ActiveEnvDTO getActiveEnvDTO() {
+        return engine.ShowUserEnvVariables();
     }
 }

@@ -3,6 +3,7 @@ package JavaFx.SubComponents.newExeTab;
 import Defenitions.EnvPropertyDefinitionDTO;
 import Defenitions.EnvironmentDefinitionDTO;
 import Defenitions.RerunInfoDTO;
+import Instance.ActiveEnvDTO;
 import JavaFx.SubComponents.body.BodyController;
 import definition.property.api.PropertyType;
 import javafx.fxml.FXML;
@@ -118,6 +119,8 @@ public class NewExeScreenController {
     public void clearNewExeScreen() {
         entList.getItems().clear();
         envList.getItems().clear();
+        envValMap.clear();
+        entValMap.clear();
     }
 
     public void selectedEnt() {
@@ -157,6 +160,11 @@ public class NewExeScreenController {
         for(String envName: myEnvDef.getEnvProps().keySet())
             bodyController.initRandomEnvVars(envName);
         //endregion
+        ActiveEnvDTO activeEnvDTO = bodyController.getActiveEndDTO();
+        envValMap.clear();
+        activeEnvDTO.getEnvPropInstances().forEach((name,value)->{
+            envValMap.put(name,value.getVal().toString());
+        });
         bodyController.runSimulation(valuesString());
         if(setAllValsBtn.isVisible())
             setAllValsBtn.setVisible(false);
