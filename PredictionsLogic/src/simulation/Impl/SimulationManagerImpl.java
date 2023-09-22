@@ -36,6 +36,7 @@ public class SimulationManagerImpl implements SimulationManager {
     private Context context;
     private final String guid = UUID.randomUUID().toString();
     private  Instant StartTime;
+    private  Integer ticks = 0;
     private Boolean isTerminated = false;
     private String terminationReason;
     private Boolean isPause = false;
@@ -107,7 +108,6 @@ public class SimulationManagerImpl implements SimulationManager {
             createContext();
             StartTime = Instant.now();
             simState =  SimulationState.RUNNING;
-            int ticks = 0;
             List<EntPopDTO> entitiesUpdateData = new ArrayList<>();
             //endregion
 
@@ -201,14 +201,13 @@ public class SimulationManagerImpl implements SimulationManager {
             //endregion
             simState = SimulationState.FINISHED;
             //need to get the property name from user
-            createConsistency(ticks, context, "age", "Sick");
             createHistogram();
         } catch (Exception e) {
             terminationReason="We have ended the simulation due to an error:  "+ e;
         }
     }
 
-    private void createConsistency(int ticks, Context context, String propertyName, String entityName) {
+    private void createConsistency(int ticks, String propertyName, String entityName) {
         double totalAverageValue = 0;
         double totalAverageTickNumbSinceChangeValue = 0;
         int instanceCount = 0;
@@ -232,8 +231,6 @@ public class SimulationManagerImpl implements SimulationManager {
 
         if (instanceCount > 0) {
             statisticsDTO = new StatisticsDTO(totalAverageValue / instanceCount,totalAverageTickNumbSinceChangeValue / instanceCount );
-            /*double averageValue = totalAverageValue / instanceCount;
-            double averageTickNumbSinceChangeValue = totalAverageTickNumbSinceChangeValue / instanceCount;*/
         }
 
     }
@@ -391,6 +388,13 @@ public class SimulationManagerImpl implements SimulationManager {
     {
         return rerunInfoDTO;
     }
+
+    @Override
+    public StatisticsDTO getStatisticsDTO(String entName, String propName) {
+        createConsistency(ticks,propName,entName);
+        return statisticsDTO;
+    }
+
     @Override
     public void setIsTerminated()
     {

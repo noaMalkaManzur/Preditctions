@@ -8,6 +8,6 @@ public class StatisticsDTO {
         this.averageValue = averageValue;
         this.averageTickNumbSinceChangeValue = averageTickNumbSinceChangeValue;
     }
-    double getAverageValue(){return averageValue;}
-    double getAverageTickNumbSinceChangeValue(){return averageTickNumbSinceChangeValue;}
+    public double getAverageValue(){return averageValue;}
+    public double getAverageTickNumbSinceChangeValue(){return averageTickNumbSinceChangeValue;}
 }

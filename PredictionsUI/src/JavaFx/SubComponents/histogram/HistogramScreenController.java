@@ -1,6 +1,7 @@
 package JavaFx.SubComponents.histogram;
 
 import Defenitions.EntityDefinitionDTO;
+import Defenitions.StatisticsDTO;
 import JavaFx.SubComponents.exeResults.ExeResultsController;
 import histogramDTO.HistogramByPropertyEntitiesDTO;
 import javafx.collections.FXCollections;
@@ -9,6 +10,7 @@ import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
+import javafx.scene.text.Font;
 import sun.reflect.generics.tree.Tree;
 
 import java.util.ArrayList;
@@ -42,6 +44,7 @@ public class HistogramScreenController
         treeViewComponent.setRoot(root);
         optionsCmbx.setItems(FXCollections.observableArrayList("Histogram", "Consistency"));
         optionsCmbx.getSelectionModel().select("Histogram");
+        consistencySP.setVisible(false);
     }
     public TreeItem<String> PopulateEntityBranch() {
         TreeItem<String> entityBranch = new TreeItem<>("Entities");
@@ -73,22 +76,35 @@ public class HistogramScreenController
             {
                 if(option.equals("Histogram"))
                 {
+                    consistencySP.setVisible(false);
+                    propBarChart.setVisible(true);
                     setBarChart(selectedItem.getParent().getValue(),selectedItem.getValue());
+
                 }
                 else if(option.equals("Consistency"))
                 {
-                    //ToDo: setConsistency(selectedItem.getParent(),selectedItem);
+                    propBarChart.setVisible(false);
+                    consistencySP.setVisible(true);
+                    setConsistency(selectedItem.getParent().getValue(),selectedItem.getValue());
                 }
             }
 
         }
 
     }
+
+    private void setConsistency(String parent, String selectedItem) {
+        consistencyTxt.clear();
+        propValTxt.clear();
+        StatisticsDTO StatDTO = exeResultsController.getStaticDTO(parent,selectedItem);
+        consistencyTxt.setText(String.valueOf(StatDTO.getAverageTickNumbSinceChangeValue()));
+        propValTxt.setText(String.valueOf(StatDTO.getAverageValue()));
+    }
+
     private void setBarChart(String parent, String selectedItem) {
         HistogramByPropertyEntitiesDTO histogram = exeResultsController.getHistogramByProp(parent, selectedItem);
         Map<Object, Integer> data = histogram.getHistogramByProperty();
         XYChart.Series<Object, Integer> series = new XYChart.Series<>();
-        series.setName("Data Series");
 
         // Add data to the series
         for (Map.Entry<Object, Integer> entry : data.entrySet()) {
@@ -97,9 +113,9 @@ public class HistogramScreenController
             series.getData().add(new XYChart.Data<>(keyAsString, entry.getValue()));
         }
 
+        Font xAxisLabelFont = Font.font("Arial", 15);
+        propAxis.setTickLabelFont(xAxisLabelFont);
 
-
-        // Add the series to the Bar Chart
         propBarChart.getData().clear();
         propBarChart.getData().add(series);
     }
