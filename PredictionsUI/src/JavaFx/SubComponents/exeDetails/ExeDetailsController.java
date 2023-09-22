@@ -73,18 +73,20 @@ public class ExeDetailsController {
         updateExeDetailsTask.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 Platform.runLater(() -> {
-                    if(!newValue.getSimulationState().equals(SimulationState.PENDING)) {
-                        currTickText.setText(newValue.getCurrTick().toString());
-                        secondsCountText.setText(String.valueOf(newValue.getSeconds()));
-                        data.clear();
-                        data.addAll(newValue.getEntitiesUpdateData());
+                    try {
+                        if (!newValue.getSimulationState().equals(SimulationState.PENDING)) {
+                            currTickText.setText(newValue.getCurrTick().toString());
+                            secondsCountText.setText(String.valueOf(newValue.getSeconds()));
+                            data.clear();
+                            data.addAll(newValue.getEntitiesUpdateData());
+                        } else {
+                            currTickText.setText(newValue.getCurrTick().toString());
+                            secondsCountText.setText(String.valueOf(newValue.getSeconds()));
+                            data.clear();
+                        }
                     }
-                    else
-                    {
-                        currTickText.setText(newValue.getCurrTick().toString());
-                        secondsCountText.setText(String.valueOf(newValue.getSeconds()));
-                        data.clear();
-                    }
+                    catch (Exception ignored)
+                    {}
                 });
             }
         });
