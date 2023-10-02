@@ -10,9 +10,11 @@ import engine.api.Engine;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
+import simulation.api.SimulationState;
 
 import java.util.LinkedList;
 import java.util.function.Consumer;
@@ -53,6 +55,9 @@ public class ResultTabController
         {
             Platform.runLater(() -> {
                 refreshListView(s);
+                if(s.getState().equals(SimulationState.FINISHED))
+                    bodyController.showAlert("Simulation: " + s.getGuid() + "\nFinished its run!\nTermination Reason:" +
+                            getEngine().getTerminationReason(s.getGuid()), Alert.AlertType.INFORMATION,"Info");
             });
         };
 
@@ -108,15 +113,19 @@ public class ResultTabController
     }
     public void selectedItem()
     {
-        if(!isLiveUpdateStarted) {
-            exeDetailsScreenComponentController.startUpdateTableTask();
-            isLiveUpdateStarted = false;
-        }
+        String SelectedItem = executionsLstComponent.getSelectionModel().getSelectedItem().getGuid();
+        if(SelectedItem != null)
+        {
+            if (!isLiveUpdateStarted) {
+                exeDetailsScreenComponentController.startUpdateTableTask();
+                isLiveUpdateStarted = false;
+            }
 
-        for(int i = 0; i < executionsLstComponent.getItems().size();i++) {
-            if (getSelectedGuid().equals(executionsLstComponent.getItems().get(i).getGuid())) {
-                exeDetailsScreenComponentController.SetUIButtons(executionsLstComponent.getItems().get(i));
-                exeResultsScreenComponentController.SetUI(executionsLstComponent.getItems().get(i));
+            for (int i = 0; i < executionsLstComponent.getItems().size(); i++) {
+                if (getSelectedGuid().equals(executionsLstComponent.getItems().get(i).getGuid())) {
+                    exeDetailsScreenComponentController.SetUIButtons(executionsLstComponent.getItems().get(i));
+                    exeResultsScreenComponentController.SetUI(executionsLstComponent.getItems().get(i));
+                }
             }
         }
 

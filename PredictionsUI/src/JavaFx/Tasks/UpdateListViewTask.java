@@ -5,6 +5,7 @@ import engine.api.Engine;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import simulation.api.SimulationState;
 
 import java.util.List;
 import java.util.Optional;
@@ -39,6 +40,7 @@ public class UpdateListViewTask extends Task<Void> {
                         if (currentDTO.getState() != newDTO.getState()) {
                             currentDTO.setState(newDTO.getState());
                             simulationViewDTOConsumer.accept(currentDTO);
+
                         }
                     } else {
                         observableList.add(newDTO);

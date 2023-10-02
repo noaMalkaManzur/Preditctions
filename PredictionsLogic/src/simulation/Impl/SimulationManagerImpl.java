@@ -404,4 +404,9 @@ public class SimulationManagerImpl implements SimulationManager {
             pauseLock.notify();
         }
     }
+
+    @Override
+    public String getTerminationReason() {
+        return terminationReason;
+    }
 }

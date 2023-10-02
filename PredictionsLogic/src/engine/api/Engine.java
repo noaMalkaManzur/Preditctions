@@ -6,7 +6,6 @@ import Instance.EntityPopGraphDTO;
 import ThreadManager.ThreadManager;
 import engine.Validaton.api.ValidationEngine;
 import histogramDTO.HistogramByPropertyEntitiesDTO;
-import histogramDTO.HistoryRunningSimulationDTO;
 import simulation.api.SimulationManager;
 
 import java.util.List;
@@ -65,6 +64,8 @@ public interface Engine
     HistogramByPropertyEntitiesDTO getHistogramByProp(String entName, String prop, String selectedGuid);
 
     StatisticsDTO getStatitsticDTO(String parent, String selectedItem, String selectedGuid);
+
+    String getTerminationReason(String selectedGuid);
 
 
     //endregion
