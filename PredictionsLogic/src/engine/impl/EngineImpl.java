@@ -1081,5 +1081,10 @@ public class EngineImpl implements Engine {
     public StatisticsDTO getStatitsticDTO(String parent, String selectedItem, String selectedGuid) {
         return simulationsMap.get(selectedGuid).getStatisticsDTO(parent,selectedItem);
     }
+
+    @Override
+    public String getTerminationReason(String selectedGuid) {
+        return simulationsMap.get(selectedGuid).getTerminationReason();
+    }
 }
 

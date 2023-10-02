@@ -33,4 +33,6 @@ public interface SimulationManager extends Runnable {
     StatisticsDTO getStatisticsDTO(String entName,String propName);
 
 
+    String getTerminationReason();
+
 }
