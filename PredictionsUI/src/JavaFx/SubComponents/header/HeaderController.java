@@ -3,10 +3,14 @@ package JavaFx.SubComponents.header;
 import JavaFx.App.PredictionsAppController;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
@@ -30,6 +34,9 @@ public class HeaderController {
     private Label RunningSimLbl;
     @FXML
     private Label FinishedSimLbl;
+    @FXML
+    private ComboBox<String> skinsComboBox;
+
 
     @FXML
     public void initialize() {
@@ -45,6 +52,7 @@ public class HeaderController {
             });
         }
     }, 0, 1000);
+
     }
 
     @FXML
@@ -66,6 +74,14 @@ public class HeaderController {
     }
     public void bindHeaderToFullApp(){
         xmlPathTextField.textProperty().bind(mainController.selectedFileProperty());
+        skinsComboBox.setItems(FXCollections.observableArrayList("Dark Mode", "Pistachio Mode","Default"));
+        skinsComboBox.getSelectionModel().select(2);
+        skinsComboBox.valueProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue, String oldVal, String newVal) {
+                mainController.changeSkin(skinsComboBox.getValue());
+            }
+        });
     }
 }
 

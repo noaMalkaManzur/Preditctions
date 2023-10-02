@@ -188,4 +188,17 @@ public class PredictionsAppController {
     public ActiveEnvDTO getActiveEnvDTO() {
         return engine.ShowUserEnvVariables();
     }
+    public void changeSkin(String value) {
+        if(value.equals("Dark Mode")){
+            predictionsAppScrollPane.getStylesheets().clear();
+            predictionsAppScrollPane.getStylesheets().add("/JavaFx/Resources/darkMode.css");
+        }
+        if (value.equals("Pistachio Mode")){
+            predictionsAppScrollPane.getStylesheets().clear();
+            predictionsAppScrollPane.getStylesheets().add("/JavaFx/Resources/pistachioMode.css");
+        }
+        if (value.equals("Default")){
+            predictionsAppScrollPane.getStylesheets().clear();
+        }
+    }
 }
