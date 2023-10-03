@@ -2,10 +2,12 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/AdminClient/AdminClient.iml" filepath="$PROJECT_DIR$/AdminClient/AdminClient.iml" />
       <module fileurl="file://$PROJECT_DIR$/DTO/DTO.iml" filepath="$PROJECT_DIR$/DTO/DTO.iml" />
       <module fileurl="file://$PROJECT_DIR$/PredictionsLogic/PredictionsLogic.iml" filepath="$PROJECT_DIR$/PredictionsLogic/PredictionsLogic.iml" />
       <module fileurl="file://$PROJECT_DIR$/PredictionsUI/PredictionsUI.iml" filepath="$PROJECT_DIR$/PredictionsUI/PredictionsUI.iml" />
       <module fileurl="file://$PROJECT_DIR$/Preditctions.iml" filepath="$PROJECT_DIR$/Preditctions.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Server/Server.iml" filepath="$PROJECT_DIR$/Server/Server.iml" />
     </modules>
   </component>
 </project>
