@@ -17,7 +17,7 @@ public interface WorldDefinition
 
     public void setEnvVariables(EnvVariablesManager envVariables);
 
-    public Map<String, Rule> getRules();
+    public Map<String,Rule> getRules();
 
     public void setRules(Map<String, Rule> rules);
 
@@ -28,5 +28,7 @@ public interface WorldDefinition
     void setGrid(Grid grid);
 
     Grid getGrid();
+    String getSimulationName();
+    void setSimulationName(String simulationName);
     void setThreadCount(Integer prdThreadCount);
 }

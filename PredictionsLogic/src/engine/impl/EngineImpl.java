@@ -77,9 +77,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class EngineImpl implements Engine {
+
     private WorldDefinition world;
     private Context context;
-
     private ActiveEnvironment activeEnvironment;
     private Boolean actionDTOFlag = false;
     RulesDTO rulesDTO;
@@ -89,6 +89,7 @@ public class EngineImpl implements Engine {
     private Integer maxPopulation;
     private ThreadManager threadManager = new ThreadManager(1);
     private Map<String,SimulationManager> simulationsMap;
+    private WorldDefinitionDTO worldDefinitionDTO;
 
     //region Command number 1
     @Override
@@ -114,17 +115,36 @@ public class EngineImpl implements Engine {
                     MyWorld.setRules(getRulesFromXML(prdWorld.getPRDRules(),MyWorld));
                     MyWorld.setTerminationTerm(getTerminationTermFromXML(prdWorld.getPRDTermination()));
                     this.world = MyWorld;
-
+                    setWorldDefinitionDTO();
                     if(threadManager != null)
                         threadManager.shutDownThreads();
 
                     threadManager = new ThreadManager(prdWorld.getPRDThreadCount());
+
                 }
             }
         } catch (JAXBException | FileNotFoundException | BadFileSuffixException e) {
             throw new RuntimeException(e);
         }
     }
+    public void setWorldDefinitionDTO(){
+        Map<String, EntityDefinitionDTO> entitiesDTO = getEntitiesDTO();
+        EnvironmentDefinitionDTO environmentDefinitionDTO = getEnvDTO();
+        Map<String, RuleDTO> rulesDTO = createRulesDTO();
+        GridDTO gridDTO = getGridDTO();
+        TerminationDTO terminationDTO = getTerminationDTO();
+        worldDefinitionDTO =  new WorldDefinitionDTO(entitiesDTO,environmentDefinitionDTO, rulesDTO,terminationDTO ,gridDTO);
+    }
+
+    private Map<String, RuleDTO> createRulesDTO() {
+        Map<String, RuleDTO> rulesDTOMap = new LinkedHashMap<>();
+        rulesDTO.getRuleDTOList().forEach(ruleDTO -> {
+            rulesDTOMap.put(ruleDTO.getName(), ruleDTO);
+        });
+
+        return rulesDTOMap;
+    }
+
 
     private Integer convertThreadPoolSize(int prdThreadCount) {
         if (prdThreadCount >= 1)
@@ -986,7 +1006,7 @@ public class EngineImpl implements Engine {
 
     @Override
     public WorldDefinitionDTO getWorldDefinitionDTO() {
-        return null;
+        return worldDefinitionDTO;
     }
 
     //endregion

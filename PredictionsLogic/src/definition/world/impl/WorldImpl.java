@@ -17,6 +17,7 @@ public class WorldImpl implements WorldDefinition
     private Map<String,Rule> rules;
     private Termination terminationTerm;
     private Grid grid;
+    private String simulationName;
     public WorldImpl()
     {
 
@@ -28,6 +29,7 @@ public class WorldImpl implements WorldDefinition
         this.rules = new HashMap<>(worldDefinition.getRules());
         this.terminationTerm = worldDefinition.getTerminationTerm();
         this.grid = new Grid(worldDefinition.getGrid().getRows(), worldDefinition.getGrid().getCols());
+        this.simulationName = worldDefinition.getSimulationName();
     }
 
     public Map<String, EntityDefinition> getEntities() {
@@ -63,6 +65,16 @@ public class WorldImpl implements WorldDefinition
     }
 
     public Grid getGrid() {return grid;}
+
+    @Override
+    public String getSimulationName() {
+        return simulationName;
+    }
+
+    @Override
+    public void setSimulationName(String simulationName) {
+        this.simulationName = simulationName;
+    }
 
     @Override
     public void setThreadCount(Integer prdThreadCount) {
