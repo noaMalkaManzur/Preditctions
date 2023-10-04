@@ -107,19 +107,21 @@ public class EngineImpl implements Engine {
                     activeEnvironment = new ActiveEnvironmentImpl();
 
                     setEnvVariablesFromXML(envManager, prdWorld.getPRDEnvironment().getPRDEnvProperty());
-
-                    MyWorld.setThreadCount(convertThreadPoolSize(prdWorld.getPRDThreadCount()));
+                    // todo:handle getting from admin!
+                    MyWorld.setThreadCount(4);
                     MyWorld.setEnvVariables(envManager);
                     MyWorld.setGrid(getGridFromFile(prdWorld));
                     MyWorld.setEntities(getEntitiesFromXML(prdWorld.getPRDEntities()));
                     MyWorld.setRules(getRulesFromXML(prdWorld.getPRDRules(),MyWorld));
-                    MyWorld.setTerminationTerm(getTerminationTermFromXML(prdWorld.getPRDTermination()));
+                    MyWorld.setSimulationName(prdWorld.getName());
+                    // no more termination
+                    //MyWorld.setTerminationTerm(getTerminationTermFromXML(prdWorld.getPRDTermination()));
                     this.world = MyWorld;
                     setWorldDefinitionDTO();
                     if(threadManager != null)
                         threadManager.shutDownThreads();
 
-                    threadManager = new ThreadManager(prdWorld.getPRDThreadCount());
+                    threadManager = new ThreadManager(4);
 
                 }
             }
@@ -133,7 +135,7 @@ public class EngineImpl implements Engine {
         Map<String, RuleDTO> rulesDTO = createRulesDTO();
         GridDTO gridDTO = getGridDTO();
         TerminationDTO terminationDTO = getTerminationDTO();
-        worldDefinitionDTO =  new WorldDefinitionDTO(entitiesDTO,environmentDefinitionDTO, rulesDTO,terminationDTO ,gridDTO);
+        worldDefinitionDTO =  new WorldDefinitionDTO(entitiesDTO,environmentDefinitionDTO, rulesDTO,terminationDTO ,gridDTO, world.getSimulationName());
     }
 
     private Map<String, RuleDTO> createRulesDTO() {
@@ -145,7 +147,7 @@ public class EngineImpl implements Engine {
         return rulesDTOMap;
     }
 
-
+    //todo:delete the thread pool is from adminClient
     private Integer convertThreadPoolSize(int prdThreadCount) {
         if (prdThreadCount >= 1)
             return prdThreadCount;
@@ -471,7 +473,8 @@ public class EngineImpl implements Engine {
         List<ConditionAction> conditionActionList = createConditionList(action.getPRDSecondaryEntity().getPRDSelection().getPRDCondition(), action,world);
         List<Expression> expressionList = new ArrayList<>();
         if(singularity.equalsIgnoreCase("single")) {
-            expressionList.add(getExpression(prdCondition.getEntity(),prdCondition.getProperty(), prdCondition.getProperty(),world).get(0));
+            //todo: maybe change it back to prdCondition.getProperty() NEED TO CHECK
+            expressionList.add(getExpression(prdCondition.getEntity(),prdCondition.getProperty(),prdCondition.getProperty(),world).get(0));
             expressionList.add(getExpression(prdCondition.getEntity(),prdCondition.getProperty(), prdCondition.getValue(),world).get(0));
             return new SingleAction(world.getEntities().get(prdCondition.getEntity()), expressionList, null, null, prdCondition.getOperator(), null);
         }
@@ -545,7 +548,7 @@ public class EngineImpl implements Engine {
             secondaryEntity = new SecondaryEntityDefinitionImpl(action.getPRDBetween().getTargetEntity(), null, null);
             secondaryEntityDTO = action.getPRDBetween().getTargetEntity();
         }
-        //ToDO: w8 for answer from behema
+
         if(!actionDTOFlag)
             actionDTOS.add(new ProximityDTO(ActionTypeDTO.PROXIMITY,action.getPRDBetween().getSourceEntity(),
                 secondaryEntityDTO,action.getPRDBetween().getSourceEntity(),action.getPRDBetween().getTargetEntity()
@@ -692,8 +695,9 @@ public class EngineImpl implements Engine {
         String operator = action.getPRDCondition().getOperator();
         String value = action.getPRDCondition().getValue();
         List<Expression> expressionList = new ArrayList<>();
-        expressionList.add(getExpression(action.getEntity(),action.getProperty(),action.getProperty(),world).get(0));
-        expressionList.add(getExpression(action.getEntity(),action.getProperty(),action.getPRDCondition().getValue(),world).get(0));
+        //todo: handle in here!!action.getProperty()
+        expressionList.add(getExpression(action.getEntity(),action.getPRDCondition().getProperty(),action.getPRDCondition().getProperty(),world).get(0));
+        expressionList.add(getExpression(action.getEntity(),action.getPRDCondition().getProperty(),action.getPRDCondition().getValue(),world).get(0));
 
         if (validationEngine.checkIfEntityHasProp(propName, action.getEntity(), world)) {
             if (action.getPRDSecondaryEntity() != null) {
@@ -991,7 +995,8 @@ public class EngineImpl implements Engine {
     }
 
     public TerminationDTO getTerminationDTO(){
-        return new TerminationDTO(world.getTerminationTerm().getBySeconds(), world.getTerminationTerm().getByTicks(),world.getTerminationTerm().getByUser());
+        return  new TerminationDTO(500,500, false);
+        /*return new TerminationDTO(world.getTerminationTerm().getBySeconds(), world.getTerminationTerm().getByTicks(),world.getTerminationTerm().getByUser());*/
     }
     public Map<String, SimulationManager> getSimulationInfo(){
         return simulationsMap;

@@ -27,7 +27,7 @@ public class LoadFile extends HttpServlet {
             if (filePath != null && !filePath.isEmpty()) {
                 engine.loadXmlFiles(filePath);
                 WorldDefinitionDTO worldDefinitionDTO = engine.getWorldDefinitionDTO();
-                //worldsDTO.put(worldDefinitionDTO.getName(),worldDefinitionDTO);
+                worldsDTO.put(worldDefinitionDTO.getSimulationName(),worldDefinitionDTO);
             } else {
                 res.sendError(400, "No file path was provided.");
             }
