@@ -78,7 +78,8 @@ import java.util.stream.Collectors;
 
 public class EngineImpl implements Engine {
 
-    private WorldDefinition world;
+    private Map<String,WorldDefinition> worlds;
+    //private List<WorldDefinition> worlds;
     private Context context;
     private ActiveEnvironment activeEnvironment;
     private Boolean actionDTOFlag = false;
@@ -89,7 +90,7 @@ public class EngineImpl implements Engine {
     private Integer maxPopulation;
     private ThreadManager threadManager = new ThreadManager(1);
     private Map<String,SimulationManager> simulationsMap;
-    private WorldDefinitionDTO worldDefinitionDTO;
+    private Map<String, WorldDefinitionDTO> worldsDefinitionDTO;
 
     //region Command number 1
     @Override
@@ -97,10 +98,16 @@ public class EngineImpl implements Engine {
         try {
             if (validationEngine.isFileExist(fileName)) {
                 if (validationEngine.isXMLFile(fileName)) {
+                    if(worlds== null){
+                        worlds =new HashMap<>();
+                    }
                     File file = new File(fileName);
                     JAXBContext jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
                     Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
                     PRDWorld prdWorld = (PRDWorld) jaxbUnmarshaller.unmarshal(file);
+                    if(worlds.containsKey(prdWorld.getName())){
+                        throw new IllegalArgumentException("Simulation name '" + prdWorld.getName() + "' already exists.");
+                    }
                     EnvVariablesManager envManager = new EnvVariableManagerImpl();
                     WorldDefinition MyWorld = new WorldImpl();
                     simulationsMap = new HashMap<>();
@@ -116,7 +123,8 @@ public class EngineImpl implements Engine {
                     MyWorld.setSimulationName(prdWorld.getName());
                     // no more termination
                     //MyWorld.setTerminationTerm(getTerminationTermFromXML(prdWorld.getPRDTermination()));
-                    this.world = MyWorld;
+
+                    worlds.put(MyWorld.getSimulationName(), MyWorld);
                     setWorldDefinitionDTO();
                     if(threadManager != null)
                         threadManager.shutDownThreads();
@@ -129,14 +137,25 @@ public class EngineImpl implements Engine {
             throw new RuntimeException(e);
         }
     }
-    public void setWorldDefinitionDTO(){
-        Map<String, EntityDefinitionDTO> entitiesDTO = getEntitiesDTO();
-        EnvironmentDefinitionDTO environmentDefinitionDTO = getEnvDTO();
-        Map<String, RuleDTO> rulesDTO = createRulesDTO();
-        GridDTO gridDTO = getGridDTO();
-        TerminationDTO terminationDTO = getTerminationDTO();
-        worldDefinitionDTO =  new WorldDefinitionDTO(entitiesDTO,environmentDefinitionDTO, rulesDTO,terminationDTO ,gridDTO, world.getSimulationName());
+    public void setWorldDefinitionDTO() {
+        worlds.forEach( (simulationName,world) -> {
+            if (worldsDefinitionDTO == null || !worldsDefinitionDTO.containsKey(simulationName)) {
+                Map<String, EntityDefinitionDTO> entitiesDTO = getEntitiesDTO(world);
+                EnvironmentDefinitionDTO environmentDefinitionDTO = getEnvDTO(world);
+                Map<String, RuleDTO> rulesDTO = createRulesDTO();
+                GridDTO gridDTO = getGridDTO(world);
+                TerminationDTO terminationDTO = getTerminationDTO();
+                WorldDefinitionDTO worldDefinitionDTO = new WorldDefinitionDTO(entitiesDTO, environmentDefinitionDTO, rulesDTO, terminationDTO, gridDTO,simulationName);
+
+                if (worldsDefinitionDTO == null) {
+                    worldsDefinitionDTO = new LinkedHashMap<>();
+                }
+                worldsDefinitionDTO.put(world.getSimulationName(), worldDefinitionDTO);
+            }
+        });
     }
+
+
 
     private Map<String, RuleDTO> createRulesDTO() {
         Map<String, RuleDTO> rulesDTOMap = new LinkedHashMap<>();
@@ -935,7 +954,7 @@ public class EngineImpl implements Engine {
     //endregion
     //endregion
     //region Command number 2
-    public Map<String, EntityDefinitionDTO> getEntitiesDTO() {
+    public Map<String, EntityDefinitionDTO> getEntitiesDTO(WorldDefinition world) {
         Map<String, EntityDefinitionDTO> entityDTO = new LinkedHashMap<>();
         for (Map.Entry<String, EntityDefinition> entDef : world.getEntities().entrySet()) {
             Map<String, EntityPropDefinitionDTO> propsDTO = new LinkedHashMap<>();
@@ -954,39 +973,39 @@ public class EngineImpl implements Engine {
     public RulesDTO getRulesDTO() {
         return rulesDTO;
     }
-    public GridDTO getGridDTO()
+    public GridDTO getGridDTO(WorldDefinition world)
     {
         return new GridDTO(world.getGrid().getRows(),world.getGrid().getCols());
     }
 
     @Override
-    public Integer getMaxPop() {
+    public Integer getMaxPop(WorldDefinition world) {
         return world.getGrid().getCols() * world.getGrid().getRows();
     }
 
     @Override
-    public void setEntPop(String entName, Integer value) {
-        maxPopulation = getMaxPop();
+    public void setEntPop(String entName, Integer value, WorldDefinition world) {
+        maxPopulation = getMaxPop(world);
         world.getEntities().get(entName).setPopulation(value);
         world.getEntities().values().forEach(entityDefinition -> {
             maxPopulation -= entityDefinition.getPopulation();
         });
     }
     @Override
-    public Integer getSpaceLeft(String selectedItem)
+    public Integer getSpaceLeft(String selectedItem, WorldDefinition world)
     {
         int currPop = world.getEntities().get(selectedItem).getPopulation();
         return maxPopulation + currPop ;
     }
     @Override
-    public boolean checkPopulation(Integer intValue, String entName) {
+    public boolean checkPopulation(Integer intValue, String entName, WorldDefinition world) {
         int currPop = world.getEntities().get(entName).getPopulation();
         return (maxPopulation) - intValue >= 0;
     }
     @Override
-    public void initEnvVar(Object userInput,String selectedEnv)
+    public void initEnvVar(Object userInput,String selectedEnv, WorldDefinition world)
     {
-        addEnvVarToActiveEnv(userInput,selectedEnv);
+        addEnvVarToActiveEnv(userInput,selectedEnv, world);
     }
 
     @Override
@@ -1010,14 +1029,14 @@ public class EngineImpl implements Engine {
     }
 
     @Override
-    public WorldDefinitionDTO getWorldDefinitionDTO() {
-        return worldDefinitionDTO;
+    public Map<String,WorldDefinitionDTO> getWorldsDefinitionDTO() {
+        return worldsDefinitionDTO;
     }
 
     //endregion
     //region Command number 3
     @Override
-    public EnvironmentDefinitionDTO getEnvDTO()
+    public EnvironmentDefinitionDTO getEnvDTO(WorldDefinition world)
     {
         Map<String, EnvPropertyDefinitionDTO> envVariables = new LinkedHashMap<>();
         for(Map.Entry<String,PropertyDefinition> prop :world.getEnvVariables().getEnvVariables().entrySet())
@@ -1029,7 +1048,7 @@ public class EngineImpl implements Engine {
     }
 
     @Override
-    public void addEnvVarToActiveEnv(Object userValue, String name) {
+    public void addEnvVarToActiveEnv(Object userValue, String name, WorldDefinition world) {
         PropertyDefinition myPropDef = world.getEnvVariables().getEnvVariables().get(name);
         if(userValue != null)
             activeEnvironment.addPropertyInstance(new PropertyInstanceImpl(myPropDef,userValue));
@@ -1037,7 +1056,7 @@ public class EngineImpl implements Engine {
             activeEnvironment.addPropertyInstance(new PropertyInstanceImpl(myPropDef,myPropDef.generateValue()));
     }
     @Override
-    public void initRandomEnvVars(String name)
+    public void initRandomEnvVars(String name, WorldDefinition world)
     {
         if(!checkIfEnvIsInitialized(name))
         {
@@ -1067,7 +1086,7 @@ public class EngineImpl implements Engine {
         return new ActiveEnvDTO(envPropertyInstanceDTO);
     }
     @Override
-    public String runSimulation()
+    public String runSimulation(WorldDefinition world)
     {
         WorldDefinition MyWorld = new WorldImpl(world);
         ActiveEnvironment MyActiveEnv = new ActiveEnvironmentImpl(activeEnvironment);
@@ -1077,14 +1096,14 @@ public class EngineImpl implements Engine {
         return "Great Success";
     }
     @Override
-    public void resetSimVars()
+    public void resetSimVars(WorldDefinition world)
     {
         world.getEntities().forEach((s,entDef)->
         {
             entDef.setPopulation(0);
         });
         activeEnvironment = new ActiveEnvironmentImpl();
-        maxPopulation = getMaxPop();
+        maxPopulation = getMaxPop(world);
     }
     @Override
     public RerunInfoDTO getReRunInfo(String selectedGuid)
@@ -1112,4 +1131,3 @@ public class EngineImpl implements Engine {
         return simulationsMap.get(selectedGuid).getTerminationReason();
     }
 }
-
