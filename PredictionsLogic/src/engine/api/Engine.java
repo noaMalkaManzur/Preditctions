@@ -4,6 +4,7 @@ import Defenitions.*;
 import Instance.ActiveEnvDTO;
 import Instance.EntityPopGraphDTO;
 import ThreadManager.ThreadManager;
+import definition.world.api.WorldDefinition;
 import engine.Validaton.api.ValidationEngine;
 import histogramDTO.HistogramByPropertyEntitiesDTO;
 import simulation.api.SimulationManager;
@@ -19,35 +20,35 @@ public interface Engine
     //region Command 2
     RulesDTO getRulesDTO();
     TerminationDTO getTerminationDTO();
-    Map<String, EntityDefinitionDTO> getEntitiesDTO();
+    Map<String, EntityDefinitionDTO> getEntitiesDTO(WorldDefinition world);
     Map<String, SimulationManager> getSimulationInfo();
-    WorldDefinitionDTO getWorldDefinitionDTO();
+    Map<String, WorldDefinitionDTO> getWorldsDefinitionDTO();
     //endregion
     //region Command 3
-    EnvironmentDefinitionDTO getEnvDTO();
+    EnvironmentDefinitionDTO getEnvDTO(WorldDefinition world);
 
-    void addEnvVarToActiveEnv(Object userValue, String name);
+    void addEnvVarToActiveEnv(Object userValue, String name, WorldDefinition world);
 
     ActiveEnvDTO ShowUserEnvVariables();
 
-    public void initRandomEnvVars(String name);
+    public void initRandomEnvVars(String name,WorldDefinition world);
 
     void clearActiveEnv();
     //endregion
     //region Command 4
 
-    String runSimulation();
-    GridDTO getGridDTO();
+    String runSimulation(WorldDefinition world);
+    GridDTO getGridDTO( WorldDefinition world);
 
-    Integer getMaxPop();
+    Integer getMaxPop(WorldDefinition world);
 
-    void setEntPop(String selectedItem, Integer value);
+    void setEntPop(String selectedItem, Integer value, WorldDefinition world);
 
-    boolean checkPopulation(Integer intValue,String entName);
+    boolean checkPopulation(Integer intValue,String entName, WorldDefinition world);
 
-    Integer getSpaceLeft(String selectedItem);
+    Integer getSpaceLeft(String selectedItem, WorldDefinition world);
 
-    void initEnvVar(Object userInput,String selectedEnv);
+    void initEnvVar(Object userInput,String selectedEnv, WorldDefinition world);
 
     ValidationEngine getValidation();
 
@@ -55,7 +56,7 @@ public interface Engine
     ProgressSimulationDTO getProgressDTO();
     List<simulationViewDTO> getSimulationsView();
 
-    void resetSimVars();
+    void resetSimVars(WorldDefinition world);
 
     RerunInfoDTO getReRunInfo(String selectedGuid);
 

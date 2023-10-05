@@ -23,10 +23,25 @@
     <orderEntry type="module" module-name="PredictionsLogic" exported="" />
     <orderEntry type="module" module-name="DTO" exported="" />
     <orderEntry type="library" exported="" scope="PROVIDED" name="Tomcat 10.0.11" level="application_server_libraries" />
-    <orderEntry type="module-library" exported="">
+    <orderEntry type="module-library" exported="" scope="TEST">
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../3rdParty/Gson/gson-2.8.8.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/../3rdParty/Gson/gson-2.8.8-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../3rdParty/Gson/gson-2.8.8.jar!/" />
+          <root url="jar://$MODULE_DIR$/../3rdParty/okHttp/annotations-13.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/../3rdParty/okHttp/kotlin-stdlib-1.4.10.jar!/" />
+          <root url="jar://$MODULE_DIR$/../3rdParty/okHttp/okhttp-4.9.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../3rdParty/okHttp/okio-2.8.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
