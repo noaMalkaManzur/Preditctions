@@ -35,7 +35,7 @@ public class LoadFile extends HttpServlet {
                 String jsonRes = gson.toJson(worldDefinitionDTO);
                 worldsDTO.put(worldDefinitionDTO.getSimulationName(),worldDefinitionDTO);
                 try(PrintWriter out = res.getWriter()){
-                    out.print(jsonRes);
+                    out.print("file Loaded Successfully");
                     out.flush();
                 }
             } else {
