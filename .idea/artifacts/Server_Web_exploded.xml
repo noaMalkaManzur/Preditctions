@@ -10,6 +10,9 @@
           <element id="module-output" name="DTO" />
           <element id="module-output" name="PredictionsLogic" />
         </element>
+        <element id="directory" name="lib">
+          <element id="file-copy" path="$PROJECT_DIR$/3rdParty/Gson/gson-2.8.8.jar" />
+        </element>
       </element>
     </root>
   </artifact>
