@@ -1,4 +1,4 @@
-package adminMangar.servlet;
+package adminManager.servlet;
 import Defenitions.WorldDefinitionDTO;
 import com.google.gson.Gson;
 import engine.api.Engine;
