@@ -4,12 +4,12 @@ import java.util.Map;
 
 public class WorldDefinitionDTO
 {
+    private final String simulationName;
     private final Map<String,EntityDefinitionDTO> entities;
     private final EnvironmentDefinitionDTO environmentVars;
     private final Map<String, RuleDTO> rules;
     private final TerminationDTO terms;
     private final GridDTO grid;
-    private final String simulationName;
 
     public WorldDefinitionDTO(Map<String, EntityDefinitionDTO> entities, EnvironmentDefinitionDTO environmentVars, Map<String, RuleDTO> rules, TerminationDTO terms, GridDTO grid, String simulationName) {
         this.entities = entities;
