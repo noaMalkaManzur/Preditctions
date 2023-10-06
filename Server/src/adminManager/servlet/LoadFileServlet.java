@@ -1,4 +1,4 @@
-package serverManger.servlet;
+package adminMangar.servlet;
 import Defenitions.WorldDefinitionDTO;
 import com.google.gson.Gson;
 import engine.api.Engine;
@@ -8,34 +8,30 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.Part;
-import java.io.File;
+
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.google.gson.Gson;
-
-@WebServlet(name = "loadFile", urlPatterns = "/loadFile")
-public class LoadFile extends HttpServlet {
-
-    Map<String,WorldDefinitionDTO> worldsDTO = new LinkedHashMap<>();
+@WebServlet(name = "LoadFileServlet", urlPatterns = "/loadFile")
+public class LoadFileServlet extends HttpServlet {
+    private Engine engine;
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
-        Engine engine = new EngineImpl();
-        getServletContext().setAttribute("engine", engine);
+
+        if(engine == null){
+            engine = new EngineImpl();
+            //getServletContext().setAttribute("engine", engine);
+        }
         String filePath = req.getParameter("filePath");
-        Gson gson = new Gson();
 
         try {
             if (filePath != null && !filePath.isEmpty()) {
                 engine.loadXmlFiles(filePath);
-                WorldDefinitionDTO worldDefinitionDTO = engine.getWorldDefinitionDTO();
-                String jsonRes = gson.toJson(worldDefinitionDTO);
-                worldsDTO.put(worldDefinitionDTO.getSimulationName(),worldDefinitionDTO);
+                //Map<String,WorldDefinitionDTO> worldsDefinitionDTO = engine.getWorldsDefinitionDTO();
+                //String jsonRes = gson.toJson(worldDefinitionDTO);
                 try(PrintWriter out = res.getWriter()){
-                    out.print(jsonRes);
+                    out.print("file Loaded Successfully");
                     out.flush();
                 }
             } else {

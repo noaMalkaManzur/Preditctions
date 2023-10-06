@@ -1,3 +1,4 @@
+/*
 package JavaFx.SubComponents.entProperty;
 
 import Defenitions.EntityDefinitionDTO;
@@ -83,3 +84,4 @@ public class EntityScreenController {
         this.detailsTabController = detailsTabController;
     }
 }
+*/

@@ -1,3 +1,4 @@
+/*
 package JavaFx.SubComponents.actions.Set;
 
 import Defenitions.Actions.Condition.impl.SingleDTO;
@@ -57,3 +58,4 @@ public class SetScreenController {
     }
 
 }
+*/

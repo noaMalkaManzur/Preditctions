@@ -1,3 +1,4 @@
+/*
 package JavaFx.SubComponents.actions.plusMinus;
 
 import Defenitions.Actions.IncreaseDecrease.IncreaseDecreaseDTO;
@@ -57,3 +58,4 @@ public class IncreaseDecreaseScreenController {
     }
 
 }
+*/

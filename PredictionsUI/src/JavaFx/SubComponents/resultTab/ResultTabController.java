@@ -1,3 +1,4 @@
+/*
 package JavaFx.SubComponents.resultTab;
 
 import Defenitions.simulationViewDTO;
@@ -147,3 +148,4 @@ public class ResultTabController
         exeDetailsScreenComponentController.clearScreen();
     }
 }
+*/

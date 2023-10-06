@@ -1,3 +1,4 @@
+/*
 package JavaFx.SubComponents.activation;
 
 import Defenitions.Actions.Calculation.CalculationDTO;
@@ -38,3 +39,4 @@ public class ActivationScreenController {
         this.detailsTabController = detailsTabController;
     }
 }
+*/

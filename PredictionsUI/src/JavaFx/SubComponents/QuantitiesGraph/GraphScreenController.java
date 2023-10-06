@@ -1,3 +1,4 @@
+/*
 package JavaFx.SubComponents.QuantitiesGraph;
 
 import Instance.EntityPopGraphDTO;
@@ -65,3 +66,4 @@ public class GraphScreenController
     }
 
 }
+*/

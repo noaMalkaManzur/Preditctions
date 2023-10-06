@@ -1,3 +1,4 @@
+/*
 package JavaFx.SubComponents.actions.Condition;
 
 import Defenitions.Actions.Calculation.CalculationDTO;
@@ -71,3 +72,4 @@ public class SingleScreenController {
     }
 
 }
+*/

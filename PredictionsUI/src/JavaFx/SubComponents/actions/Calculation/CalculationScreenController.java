@@ -1,3 +1,4 @@
+/*
 package JavaFx.SubComponents.actions.Calculation;
 
 import Defenitions.Actions.Calculation.CalculationDTO;
@@ -58,3 +59,4 @@ public class CalculationScreenController {
         this.detailsTabController = detailsTabController;
     }
 }
+*/

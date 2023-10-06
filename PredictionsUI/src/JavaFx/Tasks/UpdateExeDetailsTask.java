@@ -1,3 +1,4 @@
+/*
 package JavaFx.Tasks;
 
 import Defenitions.ProgressSimulationDTO;
@@ -53,3 +54,4 @@ public class UpdateExeDetailsTask extends Task<ProgressSimulationDTO> {
 
 
 }
+*/

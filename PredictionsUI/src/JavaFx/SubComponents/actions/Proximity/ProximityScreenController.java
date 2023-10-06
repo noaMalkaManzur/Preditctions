@@ -1,3 +1,4 @@
+/*
 package JavaFx.SubComponents.actions.Proximity;
 
 import Defenitions.Actions.Condition.impl.SingleDTO;
@@ -67,3 +68,4 @@ public class ProximityScreenController {
     }
 
 }
+*/

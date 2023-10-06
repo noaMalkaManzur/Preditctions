@@ -1,3 +1,4 @@
+/*
 package JavaFx.SubComponents.termination;
 
 import Defenitions.TerminationDTO;
@@ -41,3 +42,4 @@ public class TerminationScreenController {
     }
 
 }
+*/

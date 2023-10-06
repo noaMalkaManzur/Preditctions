@@ -1,3 +1,4 @@
+/*
 package JavaFx.SubComponents.body;
 
 import Defenitions.*;
@@ -174,3 +175,4 @@ public class BodyController {
         resultTabComponentController.clearLstView();
     }
 }
+*/

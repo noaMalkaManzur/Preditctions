@@ -1,3 +1,4 @@
+/*
 package JavaFx.SubComponents.histogram;
 
 import Defenitions.EntityDefinitionDTO;
@@ -121,3 +122,4 @@ public class HistogramScreenController
     }
 
 }
+*/

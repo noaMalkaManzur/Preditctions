@@ -23,7 +23,7 @@
     <orderEntry type="module" module-name="PredictionsLogic" exported="" />
     <orderEntry type="module" module-name="DTO" exported="" />
     <orderEntry type="library" exported="" scope="PROVIDED" name="Tomcat 10.0.11" level="application_server_libraries" />
-    <orderEntry type="module-library" exported="">
+    <orderEntry type="module-library" exported="" scope="PROVIDED">
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../3rdParty/Gson/gson-2.8.8.jar!/" />

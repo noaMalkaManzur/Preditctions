@@ -1,3 +1,4 @@
+/*
 package JavaFx.SubComponents.actions.Kill;
 
 import Defenitions.Actions.Kill.KillDTO;
@@ -47,3 +48,4 @@ public class KillScreenController {
         this.detailsTabController = detailsTabController;
     }
 }
+*/

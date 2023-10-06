@@ -1,3 +1,4 @@
+/*
 package JavaFx.SubComponents.exeResults;
 
 import Defenitions.EntityDefinitionDTO;
@@ -77,3 +78,4 @@ public class ExeResultsController {
         return resultTabController.getEngine().getStatitsticDTO(parent,selectedItem,resultTabController.getSelectedGuid());
     }
 }
+*/

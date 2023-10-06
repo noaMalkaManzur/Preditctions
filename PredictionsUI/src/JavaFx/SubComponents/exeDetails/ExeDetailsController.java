@@ -1,3 +1,4 @@
+/*
 package JavaFx.SubComponents.exeDetails;
 
 import Defenitions.*;
@@ -147,3 +148,4 @@ public class ExeDetailsController {
     }
 }
 
+*/

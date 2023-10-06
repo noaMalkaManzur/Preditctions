@@ -1,3 +1,4 @@
+/*
 package JavaFx.SubComponents.actions.Replace;
 
 import Defenitions.Actions.Proximity.ProximityDTO;
@@ -61,3 +62,4 @@ public class ReplaceScreenController {
 
 
 }
+*/

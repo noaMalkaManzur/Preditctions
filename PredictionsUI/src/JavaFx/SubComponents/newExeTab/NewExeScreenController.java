@@ -1,3 +1,4 @@
+/*
 package JavaFx.SubComponents.newExeTab;
 
 import Defenitions.EnvPropertyDefinitionDTO;
@@ -280,3 +281,4 @@ public class NewExeScreenController {
     }
 }
 
+*/

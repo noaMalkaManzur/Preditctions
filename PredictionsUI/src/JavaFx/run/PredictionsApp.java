@@ -1,3 +1,4 @@
+/*
 package JavaFx.run;
 
 import JavaFx.App.PredictionsAppController;
@@ -37,3 +38,4 @@ public class PredictionsApp extends Application {
     }
 
 }
+*/

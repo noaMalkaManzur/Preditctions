@@ -1,3 +1,4 @@
+/*
 package JavaFx.SubComponents.detailsTab;
 
 import Defenitions.*;
@@ -340,3 +341,4 @@ public class DetailsTabController{
         }
     }
 }
+*/

@@ -1,3 +1,4 @@
+/*
 package JavaFx.SubComponents.envProperty;
 
 import Defenitions.EnvPropertyDefinitionDTO;
@@ -66,3 +67,4 @@ public class EnvScreenController {
         this.detailsTabController = detailsTabController;
     }
 }
+*/

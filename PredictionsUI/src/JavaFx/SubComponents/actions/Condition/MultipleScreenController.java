@@ -1,3 +1,4 @@
+/*
 package JavaFx.SubComponents.actions.Condition;
 
 import Defenitions.Actions.Condition.impl.MultipleDTO;
@@ -59,3 +60,4 @@ public class MultipleScreenController {
 
 
 }
+*/

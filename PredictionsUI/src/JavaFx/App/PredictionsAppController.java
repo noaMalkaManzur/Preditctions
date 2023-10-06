@@ -1,3 +1,4 @@
+/*
 package JavaFx.App;
 
 import Defenitions.*;
@@ -202,3 +203,4 @@ public class PredictionsAppController {
         }
     }
 }
+*/

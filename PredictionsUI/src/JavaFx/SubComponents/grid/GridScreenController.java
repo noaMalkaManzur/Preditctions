@@ -1,3 +1,4 @@
+/*
 package JavaFx.SubComponents.grid;
 
 import Defenitions.ActivationDTO;
@@ -38,3 +39,4 @@ public class GridScreenController {
     }
 
 }
+*/
