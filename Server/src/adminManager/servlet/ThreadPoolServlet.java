@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 @WebServlet(name = "SetThreadPoolSizeServlet", urlPatterns = "/ThreadPool")
 public class ThreadPoolServlet extends HttpServlet {
@@ -15,8 +16,10 @@ public class ThreadPoolServlet extends HttpServlet {
         if (threadpoolParam != null) {
             try {
                 int ThreadPoolSize = Integer.parseInt(threadpoolParam);
-
-                response.getWriter().write("ThreadPoolSize is set to: " + ThreadPoolSize);
+                try(PrintWriter out = response.getWriter()){
+                    out.print("ThreadPoolSize is set to: " + ThreadPoolSize);
+                    out.flush();
+                }
             } catch (NumberFormatException e) {
                 response.getWriter().write("Invalid 'threadpool' parameter");
             }

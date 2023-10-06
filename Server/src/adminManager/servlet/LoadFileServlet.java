@@ -3,6 +3,7 @@ import Defenitions.WorldDefinitionDTO;
 import com.google.gson.Gson;
 import engine.api.Engine;
 import engine.impl.EngineImpl;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -15,23 +16,22 @@ import java.util.Map;
 
 @WebServlet(name = "LoadFileServlet", urlPatterns = "/loadFile")
 public class LoadFileServlet extends HttpServlet {
-    private Engine engine;
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
 
-        if(engine == null){
+        ServletContext context = getServletContext();
+        Engine engine = (Engine) context.getAttribute("engine");
+
+        if (engine == null) {
             engine = new EngineImpl();
-            //getServletContext().setAttribute("engine", engine);
+            context.setAttribute("engine", engine);
         }
         String filePath = req.getParameter("filePath");
-
         try {
             if (filePath != null && !filePath.isEmpty()) {
                 engine.loadXmlFiles(filePath);
-                //Map<String,WorldDefinitionDTO> worldsDefinitionDTO = engine.getWorldsDefinitionDTO();
-                //String jsonRes = gson.toJson(worldDefinitionDTO);
-                try(PrintWriter out = res.getWriter()){
-                    out.print("file Loaded Successfully");
+                try (PrintWriter out = res.getWriter()) {
+                    out.print("File Loaded Successfully");
                     out.flush();
                 }
             } else {
