@@ -137,6 +137,7 @@ public class EngineImpl implements Engine {
             throw new RuntimeException(e);
         }
     }
+
     public void setWorldDefinitionDTO() {
         worlds.forEach( (simulationName,world) -> {
             if (worldsDefinitionDTO == null || !worldsDefinitionDTO.containsKey(simulationName)) {
@@ -155,8 +156,6 @@ public class EngineImpl implements Engine {
         });
     }
 
-
-
     private Map<String, RuleDTO> createRulesDTO() {
         Map<String, RuleDTO> rulesDTOMap = new LinkedHashMap<>();
         rulesDTO.getRuleDTOList().forEach(ruleDTO -> {
@@ -166,12 +165,15 @@ public class EngineImpl implements Engine {
         return rulesDTOMap;
     }
 
-    //todo:delete the thread pool is from adminClient
-    private Integer convertThreadPoolSize(int prdThreadCount) {
-        if (prdThreadCount >= 1)
-            return prdThreadCount;
-        else
-            throw new IllegalArgumentException("Thread count cannot be negative");
+    @Override
+    public void setThreadsAmount(int threadCount) {
+        try{
+            threadManager.setThreadPool(threadCount);
+        }catch (Exception ex)
+        {
+            //ToDo:Handle Exception
+            //throw new Exception(ex.getMessage());
+        }
     }
 
     @Override

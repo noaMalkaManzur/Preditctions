@@ -19,12 +19,11 @@ public class LoadFileServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
 
-        ServletContext context = getServletContext();
-        Engine engine = (Engine) context.getAttribute("engine");
+        Engine engine = (Engine) getServletContext().getAttribute("engine");
 
         if (engine == null) {
             engine = new EngineImpl();
-            context.setAttribute("engine", engine);
+            getServletContext().setAttribute("engine", engine);
         }
         String filePath = req.getParameter("filePath");
         try {

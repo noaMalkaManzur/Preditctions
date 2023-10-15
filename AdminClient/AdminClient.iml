@@ -7,20 +7,28 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="DTO" exported="" />
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../3rdParty/Gson/gson-2.8.8.jar!/" />
-          <root url="jar://$MODULE_DIR$/../3rdParty/okHttp/annotations-13.0.jar!/" />
-          <root url="jar://$MODULE_DIR$/../3rdParty/okHttp/kotlin-stdlib-1.4.10.jar!/" />
-          <root url="jar://$MODULE_DIR$/../3rdParty/okHttp/okhttp-4.9.1.jar!/" />
           <root url="jar://$MODULE_DIR$/../3rdParty/okHttp/okio-2.8.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/../3rdParty/okHttp/okhttp-4.9.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../3rdParty/okHttp/kotlin-stdlib-1.4.10.jar!/" />
+          <root url="jar://$MODULE_DIR$/../3rdParty/okHttp/annotations-13.0.jar!/" />
+          <root url="file://$MODULE_DIR$/.." />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/../3rdParty/Gson/gson-2.8.8-sources.jar!/" />
+          <root url="file://$MODULE_DIR$/src" />
+          <root url="file://$MODULE_DIR$/../DTO/src" />
+          <root url="file://$MODULE_DIR$/../PredictionsLogic/src" />
+          <root url="file://$MODULE_DIR$/../PredictionsUI/src" />
+          <root url="file://$MODULE_DIR$/../Server/src" />
+          <root url="file://$MODULE_DIR$/../UserClient/src" />
         </SOURCES>
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="Utilities" exported="" />
+    <orderEntry type="module" module-name="PredictionsLogic" />
   </component>
 </module>

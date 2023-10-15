@@ -1,4 +1,7 @@
 package adminManager.servlet;
+import engine.api.Engine;
+import engine.impl.EngineImpl;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,21 +14,24 @@ public class ThreadPoolServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String threadpoolParam = request.getParameter("threadpool");
+        String threadPoolParam = request.getParameter("threadPool");
+        Engine engine = (Engine) getServletContext().getAttribute("engine");
 
-        if (threadpoolParam != null) {
+        if (engine == null) {
+            engine = new EngineImpl();
+            getServletContext().setAttribute("engine", engine);
+        }
+
+        if (threadPoolParam != null) {
             try {
-                int ThreadPoolSize = Integer.parseInt(threadpoolParam);
-                try(PrintWriter out = response.getWriter()){
-                    out.print("ThreadPoolSize is set to: " + ThreadPoolSize);
-                    out.flush();
-                }
+                int ThreadPoolSize = Integer.parseInt(threadPoolParam);
+                engine.setThreadsAmount(ThreadPoolSize);
             } catch (NumberFormatException e) {
-                response.getWriter().write("Invalid 'threadpool' parameter");
+                response.getWriter().write("Invalid Thread amount");
             }
         } else {
 
-            response.getWriter().write("'threadpool' parameter is missing");
+            response.getWriter().write("Thread amounts parameter is missing");
         }
     }
 }
